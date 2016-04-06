@@ -1,0 +1,417 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>python urllib2使用（用于解决web跨域访问） | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" content="##urllib2模块的介绍
+###简介：
+urllib2是python的一个获取url（Uniform Resource Locators，统一资源定址器）的模块。它用urlopen函数的形式提供了一个非常简洁的接口。这使得用各种各样的协议获取url成为可能。它同时也提供了一个稍微复杂的接口，来处">
+    
+    
+    
+    
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Hexo" title="Hexo"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/atom.xml">Rss</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/07/技术/2015-9-24-python-urllib2/" title="python urllib2使用（用于解决web跨域访问）" itemprop="url">python urllib2使用（用于解决web跨域访问）</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-11-07T05:15:13.000Z" itemprop="datePublished">2015-11-07</time>
+    Updated:<time datetime="2015-11-07T05:15:13.000Z" itemprop="dateModified">2015-11-07</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+		</div>
+		
+		<p>##urllib2模块的介绍</p>
+<p>###简介：</p>
+<p>urllib2是python的一个获取url（Uniform Resource Locators，统一资源定址器）的模块。它用urlopen函数的形式提供了一个非常简洁的接口。这使得用各种各样的协议获取url成为可能。它同时也提供了一个稍微复杂的接口，来处理常见的状况-如基本的认证，cookies，代理，等等。</p>
+<p>这些都是由叫做opener和handler的对象来处理的。</p>
+<p>###urlib和urllib2</p>
+<p>两者都是接受URL请求的相关模块，但是提供了不同的功能.</p>
+<blockquote>
+<p>区别：</p>
+<p>urllib2可以接受一个Request类的实例来设置URL请求的headers，urllib仅可以接受URL。</p>
+<p>这意味着，你不可以伪装你的User Agent字符串等。</p>
+<p>urllib提供<strong>urlencode</strong>方法用来GET查询字符串的产生，而urllib2没有。这是为何urllib常和urllib2一起使用的原因。</p>
+</blockquote>
+<p>##urllib2的使用</p>
+<p>###基本的用法</p>
+<p>在我们的使用中，只需要import,就可以把urllib2给引入。</p>
+<p>就像下面这么简单：</p>
+<pre><code>import urllib2
+
+response = urllib2.urlopen(&apos;http://python.org/&apos;)
+
+html = response.read()
+</code></pre><p>通过<strong>urlopen</strong>的方法，向对应的url访问，也就是<strong><a href="http://python.org/" target="_blank" rel="external">http://python.org/</a></strong>。</p>
+<p>这上面的response对象，类似file，</p>
+<p>我们通过<strong>read()</strong>函数来读取请求后，得到的信息。</p>
+<blockquote>
+<p>在真正的应用中，我们往往还需要携带数据，来作出请求，比如提交表单信息等。接下来，分别来看看如何用<strong><em>post</em></strong>和<strong><em>get</em></strong>方法来发送我们的请求</p>
+</blockquote>
+<p>###post和get请求方式的介绍和区别</p>
+<p>HTTP定义了与服务器交互的不同方法，最基本的方法有4种，分别是GET，POST，PUT，DELETE。</p>
+<p>这里只介绍post,get：</p>
+<p>GET一般用于<mark>获取/查询</mark>资源信息，根据HTTP规范，GET用于信息获取，而且应该是安全的和幂等的。</p>
+<p>POST一般用于<mark>更新</mark>资源信息。根据HTTP规范，POST表示可能修改变服务器上的资源的请求。</p>
+<p>而最明显看出来的区别，就是在我们传输数据的提交形式</p>
+<blockquote>
+<p>GET请求的数据会附在URL之后,用<mark>“?”</mark>号来分隔。例如：<a href="http://xxxx.com?name=hyddd&amp;password=E4%BD%A0%E5%A5%BD" target="_blank" rel="external">http://xxxx.com?name=hyddd&amp;password=E4%BD%A0%E5%A5%BD</a></p>
+<p>POST提交的数据，则是放置在HTTP包的包体中。一般都要用到form表单进行提交</p>
+</blockquote>
+<p>POST的安全性要比GET的安全性高：</p>
+<blockquote>
+<p>注意：这里所说的安全性, 和上面GET提到的“安全”不是同个概念。</p>
+<p>上面“安全”的含义仅仅是不作数据修改，而这里安全的含义是真正的Security的含义，比如：通过GET提交数据，用户名和密码将明文出现在URL上。因为：<br>(1)登录页面有可能被浏览器缓存<br>(2)其他人查看浏览器的历史纪录，那么别人就可以拿到你的账号和密码了<br>除此之外，使用GET提交数据还可能会造成Cross-site request forgery攻击。</p>
+</blockquote>
+<p>###Urllib2发送POST请求</p>
+<pre><code>import urllib
+
+import urllib2
+
+
+
+url = &apos;http://www.someserver.com/register.cgi&apos;
+
+values = {&apos;name&apos; : &apos;Michael Foord&apos;,&apos;language&apos; : &apos;Python&apos; }
+
+
+
+data = urllib.urlencode(values)
+
+req = urllib2.Request(url, data)
+
+
+
+response = urllib2.urlopen(req)
+
+the_page = response.read()
+</code></pre><p>你肯定注意到了，我们在这里不仅使用了urllib2模块,还用到了之前所说的<strong>urllib</strong>模块。</p>
+<p>原因在于，这些数据需要被以标准的方式encode，而encode需要在urllib中完成。</p>
+<p>在values(要提交的数据)encode完成后，data（encode后的数据）才作为一个数据参数传送给Request对象。</p>
+<p>完成这一系列的操作，我们才使用<strong>urlopen</strong>函数来获得了我们请求后的数据。</p>
+<p>再使用read()函数读取。</p>
+<p>###Urllib2发送GET请求</p>
+<pre><code>import urllib2
+
+import urllib
+
+values[&apos;name&apos;] = &apos;Somebody Here&apos;
+values[&apos;language&apos;] = &apos;Python&apos;
+
+
+data = urllib.urlencode(values)
+ url = &apos;http://www.example.com/example.cgi&apos;
+
+
+full_url = url + &apos;?&apos; + data
+
+
+response = urllib2.open(full_url)
+the_page = response.read()
+</code></pre><p>在GET方式里，我们不需要像POST方式使用到Request函数。</p>
+<p>在values经过encdoe后，直接把full_url按照GET请求的格式，拼凑好，就可以放在<strong>open</strong>函数里去使用了。</p>
+<p>非常方便。</p>
+<p>参考链接：</p>
+<p><a href="http://mxdxm.iteye.com/blog/512728/" target="_blank" rel="external">urlib2模块使用介绍</a></p>
+<p><a href="http://www.cnblogs.com/hyddd/archive/2009/03/31/1426026.html" target="_blank" rel="external">post,get介绍</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/实习工作/">实习工作</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/技术/">技术</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2015/11/07/技术/2015-9-24-python-urllib2/" data-title="python urllib2使用（用于解决web跨域访问） | Hexo" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/11/07/技术/2015-10-14-ios-TableView/" title="IOS开发--自定义TableView">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  IOS开发--自定义TableView</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/11/07/生活/2015-9-20-study-1/"  title="实习（一）">
+ <strong>NEXT:</strong><br/> 
+ <span>实习（一）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+			<li><a href="/categories/技术/" title="技术">技术<sup>11</sup></a></li>
+		
+			<li><a href="/categories/生活/" title="生活">生活<sup>5</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/实习工作/" title="实习工作">实习工作<sup>7</sup></a></li>
+		
+			<li><a href="/tags/资料/" title="资料">资料<sup>4</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://yoursite.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

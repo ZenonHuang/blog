@@ -1,0 +1,367 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>IOS工具--Reveal | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" itemprop="description" content="ios日常工具">
+    
+    <meta name="keywords" content="ios">
+    
+    
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Hexo" title="Hexo"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/atom.xml">Rss</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/11/技术/2015-11-11-Reveal/" title="IOS工具--Reveal" itemprop="url">IOS工具--Reveal</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-11-11T15:02:17.000Z" itemprop="datePublished">2015-11-11</time>
+    Updated:<time datetime="2015-11-11T15:02:17.000Z" itemprop="dateModified">2015-11-11</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		
+		</div>
+		
+		<p>#Reveal能做什么<br>Reveal是一个iOS程序界面调试工具。</p>
+<p>它的好处在于，Reveal类似Chrome的“审查元素”功能，对于我们手写ui的调试好处是显而易见的。</p>
+<p>通过使用它，我们可以方便的调试和修改应用界面。</p>
+<p>#下载Reveal<br>我们可以直接通过Reveal官网来进行下载使用它，非常方便，下载后解压就可以得到。</p>
+<p>下面是官网链接：</p>
+<blockquote>
+<p><a href="http://revealapp.com" target="_blank" rel="external">Reveal官网</a></p>
+</blockquote>
+<p>值得提醒的是我们解压后,reveal.app的位置和我们之后的配置有关。</p>
+<p>#配置Reveal<br>在各种教程里，我推荐通过配置.lldbinit文件来使用Reveal.</p>
+<p>原因在于，它不用通过修改Xcode工程就可以加载和使用Reveal。</p>
+<p>一，进入当前用户目录,输入新建.lldbinit文件的命令:</p>
+<pre><code>touch ~/.lldbinit
+</code></pre><p>二，配置.lldbinit文件，内容如下:</p>
+<pre><code> command alias reveal_load_sim expr (void*)dlopen(&quot;/Applications/Reveal.app/Contents/SharedSupport/iOS-Libraries/libReveal.dylib&quot;, 0x2);
+
+command alias reveal_load_dev expr (void*)dlopen([(NSString*)[(NSBundle*)[NSBundle mainBundle] pathForResource:@&quot;libReveal&quot; ofType:@&quot;dylib&quot;] cStringUsingEncoding:0x4], 0x2);
+
+command alias reveal_start expr (void)[(NSNotificationCenter*)[NSNotificationCenter defaultCenter] postNotificationName:@&quot;IBARevealRequestStart&quot; object:nil];
+
+command alias reveal_stop expr (void)[(NSNotificationCenter*)[NSNotificationCenter defaultCenter] postNotificationName:@&quot;IBARevealRequestStop&quot; object:nil];
+</code></pre><p>以下是关于配置命令的解释：</p>
+<blockquote>
+<p>reveal_load_sim 这个只在iOS模拟器上有效。它从Reveal的应用程序bundle中找到并加载libReveal.dylib（请确保你把Reveal安装到了系统的Application文件夹，如果你换地方了，你修改上述的文件）。</p>
+<p>reveal_load_dev 这个命令在iOS设备和模拟器上都有效。不过，它需要你在Build Phase中的的Copy Bundle Resources中加上libReveal.dylib，请确保没有放到Link Binary With Libraries这个地方。</p>
+<p>reveal_start 这个命令发出一个通知启动Reveal Server。</p>
+<p>reveal_stop 这个命令发出一个通知停止Reveal Serve</p>
+</blockquote>
+<p>#在工程中调用Reveal<br>打开我们的iOS工程,在AppDelegate.m中，找到didFinishLaunchingWithOptions方法。在其中设下一个断点。</p>
+<p>原因在于：</p>
+<blockquote>
+<p>只有在iOS应用发出了UIApplicationDidFinishLaunchingNotification通知之后，比如应用的delegate已经处理过application::didFinishLaunchingWithOptions:之后。才能调用上面的reveal<em> load</em>*命令，然后再调用reveal _start启动Reveal。</p>
+</blockquote>
+<p>1.增加断点，并右击给断点，选择”Edit Brakpoint”:</p>
+<p><img src="http://7xiym9.com1.z0.glb.clouddn.com/breakpoint.png" alt=""></p>
+<p>2.单击”Action”旁边的”add Action”,输入”reveal_loadsim”:</p>
+<p><img src="http://7xiym9.com1.z0.glb.clouddn.com/debug.png" alt=""></p>
+<p>3.勾选“Options”上的”Automatically continue after evaluating”</p>
+<p>#运行Reval<br>在做完以上的准备之后，只需要运行模拟器。打开Reveal，就可以使用了。</p>
+<p>如果配置成功我们会在Xcode的输出中看到类似这样的提示：</p>
+<p><img src="http://7xiym9.com1.z0.glb.clouddn.com/line.png" alt=""></p>
+<p>然后在Reveal的左上角，看到启动的模拟器：</p>
+<p><img src="http://7xiym9.com1.z0.glb.clouddn.com/Reveal-choose.png" alt=""></p>
+<p>选择就可以连接使用了。最后的效果如下图：</p>
+<p><img src="http://7xiym9.com1.z0.glb.clouddn.com/reveal.png" alt=""></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/实习工作/">实习工作</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/技术/">技术</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2015/11/11/技术/2015-11-11-Reveal/" data-title="IOS工具--Reveal | Hexo" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/11/12/技术/2015-11-12-DesignPatterns/" title="iOS设计模式(一)">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  iOS设计模式(一)</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/11/10/技术/2015-11-10-CocoaPosdsDemo/"  title="IOS工具--CocoaPods">
+ <strong>NEXT:</strong><br/> 
+ <span>IOS工具--CocoaPods
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+			<li><a href="/categories/技术/" title="技术">技术<sup>11</sup></a></li>
+		
+			<li><a href="/categories/生活/" title="生活">生活<sup>5</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/实习工作/" title="实习工作">实习工作<sup>7</sup></a></li>
+		
+			<li><a href="/tags/资料/" title="资料">资料<sup>4</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://yoursite.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>

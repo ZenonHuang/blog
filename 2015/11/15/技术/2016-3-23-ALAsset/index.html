@@ -1,0 +1,386 @@
+
+ <!DOCTYPE HTML>
+<html >
+<head>
+  <meta charset="UTF-8">
+  
+    <title>照片框架ALAssetsLibrary | Hexo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="John Doe">
+    
+    <meta name="description" itemprop="description" content="通过ALAssetsLibrary获取系统相片和视频">
+    
+    <meta name="keywords" content="iOS">
+    
+    
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="Hexo" title="Hexo"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Hexo">Hexo</a></h1>
+				<h2 class="blog-motto"></h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="/atom.xml">Rss</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="hidden" name="q" value="site:yoursite.com">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/11/15/技术/2016-3-23-ALAsset/" title="照片框架ALAssetsLibrary" itemprop="url">照片框架ALAssetsLibrary</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://yoursite.com" title="John Doe">John Doe</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-11-15T13:26:14.000Z" itemprop="datePublished">2015-11-15</time>
+    Updated:<time datetime="2016-03-23T15:45:32.000Z" itemprop="dateModified">2016-03-23</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">Contents</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ALAssetsLibrary介绍"><span class="toc-number">1.</span> <span class="toc-text">ALAssetsLibrary介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#坑"><span class="toc-number">2.</span> <span class="toc-text">坑</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#异步"><span class="toc-number">2.1.</span> <span class="toc-text">异步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetsLibrary实例需要强引用"><span class="toc-number">2.2.</span> <span class="toc-text">AssetsLibrary实例需要强引用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用"><span class="toc-number">3.</span> <span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取所有相册"><span class="toc-number">3.1.</span> <span class="toc-text">获取所有相册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#获取相册下的照片"><span class="toc-number">3.2.</span> <span class="toc-text">获取相册下的照片</span></a></li></ol></li></ol>
+		</div>
+		
+		<h1 id="ALAssetsLibrary介绍"><a href="#ALAssetsLibrary介绍" class="headerlink" title="ALAssetsLibrary介绍"></a>ALAssetsLibrary介绍</h1><p>在iOS中，照片库并不只是照片的集合，同时也包含了视频。</p>
+<p>在 AssetsLibrary 中两者都有相同类型的对象去描述，只是类型不同而已。</p>
+<p>这里稍微介绍一下概念：</p>
+<ul>
+<li>AssetsLibrary: 代表整个设备中的资源库（照片库），通过 AssetsLibrary 可以获取设备中的照片和视频</li>
+<li>ALAssetsGroup: 映射照片库中的一个相册，通过 ALAssetsGroup 可以获取某个相册的信息，相册下的资源，同时也可以对某个相册添加资源。</li>
+<li>ALAsset: 映射照片库中的一个照片或视频，通过 ALAsset 可以获取某个照片或视频的详细信息，或者保存照片和视频。</li>
+<li>ALAssetRepresentation: ALAssetRepresentation可以更方便地获取 ALAsset 中的资源信息，每个 ALAsset 都有至少有一个 ALAssetRepresentation 对象，可以通过 defaultRepresentation 获取。</li>
+</ul>
+<h1 id="坑"><a href="#坑" class="headerlink" title="坑"></a>坑</h1><p>注意！注意！先说说坑，否则直接上手你会和我一样悲剧的。</p>
+<p>当然你也可以跳过去不看 : )</p>
+<h2 id="异步"><a href="#异步" class="headerlink" title="异步"></a>异步</h2><p>我在开发过程中，是这样的思路：</p>
+<p>遍历相册-&gt;遍历时添加相册到数组-&gt;遍历完成，取数组，填入照片浏览器</p>
+<p>这样一看好像没啥错，但是由于它的异步处理，意味着“遍历时添加相册到数组”，”遍历完成，取数组填入照片浏览器“不是顺序执行。</p>
+<p>它们将同时开始，相当于没等到添加完，就已经开始填入照片了。这样的话，数组永远都是空的。</p>
+<p>由于整个 AssetsLibrary 中对相册、资源的获取和保存都是使用异步处理（Asynchronous），这是考虑到资源文件体积相当比较大（还可能很大）。</p>
+<p>例如遍历相册操作，相册的结果使用 block 输出，如果相册遍历完毕，则最后一次输出的 block 中的 group 参数值为 nil。</p>
+<p>我们可以通过判断group是否为nil来知道是否遍历完成。</p>
+<h2 id="AssetsLibrary实例需要强引用"><a href="#AssetsLibrary实例需要强引用" class="headerlink" title="AssetsLibrary实例需要强引用"></a>AssetsLibrary实例需要强引用</h2><p>在通过AsssetsLibrary，获取到照片和视频时。以为万事大吉。</p>
+<p>但是当我把对应的asset放进照片浏览器时，却一直没有图片。</p>
+<p>经过一番调试，发现存储asset对象的数组，里面的对象都已经为空了。</p>
+<p>原因在于：</p>
+<blockquote>
+<p>当我们把这些获取到的相册和资源储存到数组时，实际上只是在数组中储存了这些相册和资源在 AssetsLibrary 中的引用（指针）。<br>因而无论把相册和资源储存数组后如何利用这些数据，都首先需要确保 AssetsLibrary 没有被 ARC 释放。<br>否则把数据从数组中取出来时，会发现对应的引用数据已经丢失。这一点较为容易被忽略。</p>
+</blockquote>
+<p>因此建议在使用 AssetsLibrary 的 viewController 中，把 AssetsLibrary 作为一个强持有的 property 或私有变量，避免在枚举出 AssetsLibrary 中所需要的数据后，AssetsLibrary 就被 ARC 释放了。</p>
+<h1 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h1><h2 id="获取所有相册"><a href="#获取所有相册" class="headerlink" title="获取所有相册"></a>获取所有相册</h2><p>通过ALAssetsLibrary的实例方法，得到ALAssetsGroup类数组。</p>
+<pre><code>ALAssetsLibrary *assetsLibrary;
+NSMutableArray *groupArray;
+ assetsLibrary = [[ALAssetsLibrary alloc] init];
+   groupArray=[[NSMutableArray alloc] initWithCapacity:1];
+  [assetsLibrary enumerateGroupsWithTypes:ALAssetsGroupAll usingBlock:^(ALAssetsGroup *group, BOOL *stop) {
+      if (group!=nil) {
+                [groupArray addObject:group];
+                //            通过这个可以知道相册的名字，从而也可以知道安装的部分应用
+               //例如 Name:柚子相机, Type:Album, Assets count:1
+                NSLog(@&quot;%@&quot;,group);
+            }else{
+                if ([_albumsArray count] &gt; 0) {
+                    // 把所有的相册储存完毕，可以展示相册列表
+                } else {
+                    // 没有任何有资源的相册，输出提示
+                }
+            }
+    } failureBlock:^(NSError *error) {
+                NSLog(@&quot;Group not found!\n&quot;);
+}];
+</code></pre><h2 id="获取相册下的照片"><a href="#获取相册下的照片" class="headerlink" title="获取相册下的照片"></a>获取相册下的照片</h2><p>使用类型为ALAssetsGroup的group对象，获取ALAsset，来得到图片资源</p>
+<pre><code>[_group enumerateAssetsUsingBlock:^(ALAsset *result, NSUInteger index, BOOL *stop) {
+    if (result) {
+
+        NSLog(@&quot;%@&quot;,result);
+         image=[UIImage imageWithCGImage: result.thumbnail];
+
+    }else{
+        // result 为 nil，即遍历相片或视频完毕，可以展示资源列表
+}
+}];
+</code></pre><blockquote>
+<p>参考文章</p>
+</blockquote>
+<p><a href="http://blog.csdn.net/shenjx1225/article/details/9293269" target="_blank" rel="external">ALAsset,ALAssetsLibrary,ALAssetsgroup常见属性及用法</a></p>
+<p><a href="http://kayosite.com/ios-development-and-detail-of-photo-framework.html" target="_blank" rel="external">iOS 开发之照片框架详解</a></p>
+<p><a href="http://www.mincoder.com/article/2473.shtml" target="_blank" rel="external">iOS的AssetsLibrary框架访问所有相片</a></p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/资料/">资料</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/技术/">技术</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://yoursite.com/2015/11/15/技术/2016-3-23-ALAsset/" data-title="照片框架ALAssetsLibrary | Hexo" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/11/15/技术/2015-11-15-XcodePlugs/" title="Xcode插件">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Xcode插件</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/11/14/生活/2015-11-14-study-2/"  title="实习（二）">
+ <strong>NEXT:</strong><br/> 
+ <span>实习（二）
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">Contents</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#ALAssetsLibrary介绍"><span class="toc-number">1.</span> <span class="toc-text">ALAssetsLibrary介绍</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#坑"><span class="toc-number">2.</span> <span class="toc-text">坑</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#异步"><span class="toc-number">2.1.</span> <span class="toc-text">异步</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#AssetsLibrary实例需要强引用"><span class="toc-number">2.2.</span> <span class="toc-text">AssetsLibrary实例需要强引用</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#使用"><span class="toc-number">3.</span> <span class="toc-text">使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取所有相册"><span class="toc-number">3.1.</span> <span class="toc-text">获取所有相册</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#获取相册下的照片"><span class="toc-number">3.2.</span> <span class="toc-text">获取相册下的照片</span></a></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">Categories</p>
+		<ul>
+		
+			<li><a href="/categories/技术/" title="技术">技术<sup>11</sup></a></li>
+		
+			<li><a href="/categories/生活/" title="生活">生活<sup>5</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">Tags</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/实习工作/" title="实习工作">实习工作<sup>7</sup></a></li>
+		
+			<li><a href="/tags/资料/" title="资料">资料<sup>4</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<div class="social-font clearfix">
+		
+		
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://yoursite.com" target="_blank" title="John Doe">John Doe</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+
+
+  </body>
+</html>
