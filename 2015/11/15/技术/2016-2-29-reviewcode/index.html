@@ -1,6 +1,6 @@
 
  <!DOCTYPE HTML>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   
@@ -36,24 +36,22 @@
 			
 			<div id="textlogo">
 				<h1 class="site-name"><a href="/" title="blog of zzgo">blog of zzgo</a></h1>
-				<h2 class="blog-motto"></h2>
+				<h2 class="blog-motto">代码小工的作坊</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
 					
-						<li><a href="/">Home</a></li>
+						<li><a href="/">首页</a></li>
 					
-						<li><a href="/archives">Archives</a></li>
-					
-						<li><a href="/atom.xml">Rss</a></li>
+						<li><a href="/archives">归档</a></li>
 					
 					<li>
 					
 					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
 						<input type="hidden" name="q" value="site:zzgoblog.cc">
 					</form>
 					
@@ -77,7 +75,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-11-15T13:26:14.000Z" itemprop="datePublished">2015-11-15</time>
-    Updated:<time datetime="2016-02-29T14:31:45.000Z" itemprop="dateModified">2016-02-29</time>
+    更新日期:<time datetime="2016-02-29T14:31:45.000Z" itemprop="dateModified">2016-02-29</time>
     
   </p>
 </header>
@@ -85,7 +83,7 @@
 		
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">Contents</strong>
+			<strong class="toc-title">文章目录</strong>
 		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#彦祖大神的codeReview平台"><span class="toc-number">1.</span> <span class="toc-text">彦祖大神的codeReview平台</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平台案例整理"><span class="toc-number">2.</span> <span class="toc-text">平台案例整理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要做CodeReview？"><span class="toc-number">2.1.</span> <span class="toc-text">为什么要做CodeReview？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一-命名规范"><span class="toc-number">2.2.</span> <span class="toc-text">一. 命名规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二-编码细节"><span class="toc-number">2.3.</span> <span class="toc-text">二.编码细节</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1）数字与常量"><span class="toc-number">2.3.1.</span> <span class="toc-text">1）数字与常量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2）监听通知的位置"><span class="toc-number">2.3.2.</span> <span class="toc-text">2）监听通知的位置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3）-私有成员-or-Property"><span class="toc-number">2.3.3.</span> <span class="toc-text">3） 私有成员 or Property</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4）-typedef-block"><span class="toc-number">2.3.4.</span> <span class="toc-text">4） typedef block</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5）-数字类型"><span class="toc-number">2.3.5.</span> <span class="toc-text">5） 数字类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6）属性修饰符建议"><span class="toc-number">2.3.6.</span> <span class="toc-text">6）属性修饰符建议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7）-字面量语法"><span class="toc-number">2.3.7.</span> <span class="toc-text">7） 字面量语法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三-设计思路"><span class="toc-number">2.4.</span> <span class="toc-text">三.设计思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1）公有私有混乱"><span class="toc-number">2.4.1.</span> <span class="toc-text">1）公有私有混乱</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2）消息通知满天飞"><span class="toc-number">2.4.2.</span> <span class="toc-text">2）消息通知满天飞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3）单个对象多职责"><span class="toc-number">2.4.3.</span> <span class="toc-text">3）单个对象多职责</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4）盲目新增功能"><span class="toc-number">2.4.4.</span> <span class="toc-text">4）盲目新增功能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5）滥用委托"><span class="toc-number">2.4.5.</span> <span class="toc-text">5）滥用委托</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6）静态DataSource"><span class="toc-number">2.4.6.</span> <span class="toc-text">6）静态DataSource</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7）使用orm"><span class="toc-number">2.4.7.</span> <span class="toc-text">7）使用orm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8）构建易于测试的模块"><span class="toc-number">2.4.8.</span> <span class="toc-text">8）构建易于测试的模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9）不要想当然的使用tableView"><span class="toc-number">2.4.9.</span> <span class="toc-text">9）不要想当然的使用tableView</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10）圆角"><span class="toc-number">2.4.10.</span> <span class="toc-text">10）圆角</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-App沙盒数据存储目录"><span class="toc-number">2.4.11.</span> <span class="toc-text">11) App沙盒数据存储目录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12）-即时抽取函数"><span class="toc-number">2.4.12.</span> <span class="toc-text">12） 即时抽取函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13）-使用懒加载"><span class="toc-number">2.4.13.</span> <span class="toc-text">13） 使用懒加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13）delegate校验参数"><span class="toc-number">2.4.14.</span> <span class="toc-text">13）delegate校验参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四-项目配置"><span class="toc-number">2.5.</span> <span class="toc-text">四. 项目配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1）目录结构"><span class="toc-number">2.5.1.</span> <span class="toc-text">1）目录结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2）合理高效的开发环境"><span class="toc-number">2.5.2.</span> <span class="toc-text">2）合理高效的开发环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3）第三方库管理"><span class="toc-number">2.5.3.</span> <span class="toc-text">3）第三方库管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-自动打包配置"><span class="toc-number">2.5.4.</span> <span class="toc-text">4) 自动打包配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#持续更新"><span class="toc-number">2.6.</span> <span class="toc-text">持续更新</span></a></li></ol></li></ol>
 		</div>
 		
@@ -389,20 +387,20 @@ static const CGFloat kTagLabelWidthInset = 16.0f;
 
 	
 </div>  
-      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">Contents</strong>
+  <strong class="toc-title">文章目录</strong>
   <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#彦祖大神的codeReview平台"><span class="toc-number">1.</span> <span class="toc-text">彦祖大神的codeReview平台</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#平台案例整理"><span class="toc-number">2.</span> <span class="toc-text">平台案例整理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#为什么要做CodeReview？"><span class="toc-number">2.1.</span> <span class="toc-text">为什么要做CodeReview？</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#一-命名规范"><span class="toc-number">2.2.</span> <span class="toc-text">一. 命名规范</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#二-编码细节"><span class="toc-number">2.3.</span> <span class="toc-text">二.编码细节</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1）数字与常量"><span class="toc-number">2.3.1.</span> <span class="toc-text">1）数字与常量</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2）监听通知的位置"><span class="toc-number">2.3.2.</span> <span class="toc-text">2）监听通知的位置</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3）-私有成员-or-Property"><span class="toc-number">2.3.3.</span> <span class="toc-text">3） 私有成员 or Property</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4）-typedef-block"><span class="toc-number">2.3.4.</span> <span class="toc-text">4） typedef block</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5）-数字类型"><span class="toc-number">2.3.5.</span> <span class="toc-text">5） 数字类型</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6）属性修饰符建议"><span class="toc-number">2.3.6.</span> <span class="toc-text">6）属性修饰符建议</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7）-字面量语法"><span class="toc-number">2.3.7.</span> <span class="toc-text">7） 字面量语法</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#三-设计思路"><span class="toc-number">2.4.</span> <span class="toc-text">三.设计思路</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1）公有私有混乱"><span class="toc-number">2.4.1.</span> <span class="toc-text">1）公有私有混乱</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2）消息通知满天飞"><span class="toc-number">2.4.2.</span> <span class="toc-text">2）消息通知满天飞</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3）单个对象多职责"><span class="toc-number">2.4.3.</span> <span class="toc-text">3）单个对象多职责</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4）盲目新增功能"><span class="toc-number">2.4.4.</span> <span class="toc-text">4）盲目新增功能</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#5）滥用委托"><span class="toc-number">2.4.5.</span> <span class="toc-text">5）滥用委托</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#6）静态DataSource"><span class="toc-number">2.4.6.</span> <span class="toc-text">6）静态DataSource</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#7）使用orm"><span class="toc-number">2.4.7.</span> <span class="toc-text">7）使用orm</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#8）构建易于测试的模块"><span class="toc-number">2.4.8.</span> <span class="toc-text">8）构建易于测试的模块</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#9）不要想当然的使用tableView"><span class="toc-number">2.4.9.</span> <span class="toc-text">9）不要想当然的使用tableView</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#10）圆角"><span class="toc-number">2.4.10.</span> <span class="toc-text">10）圆角</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#11-App沙盒数据存储目录"><span class="toc-number">2.4.11.</span> <span class="toc-text">11) App沙盒数据存储目录</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#12）-即时抽取函数"><span class="toc-number">2.4.12.</span> <span class="toc-text">12） 即时抽取函数</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13）-使用懒加载"><span class="toc-number">2.4.13.</span> <span class="toc-text">13） 使用懒加载</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#13）delegate校验参数"><span class="toc-number">2.4.14.</span> <span class="toc-text">13）delegate校验参数</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#四-项目配置"><span class="toc-number">2.5.</span> <span class="toc-text">四. 项目配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#1）目录结构"><span class="toc-number">2.5.1.</span> <span class="toc-text">1）目录结构</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#2）合理高效的开发环境"><span class="toc-number">2.5.2.</span> <span class="toc-text">2）合理高效的开发环境</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#3）第三方库管理"><span class="toc-number">2.5.3.</span> <span class="toc-text">3）第三方库管理</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#4-自动打包配置"><span class="toc-number">2.5.4.</span> <span class="toc-text">4) 自动打包配置</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#持续更新"><span class="toc-number">2.6.</span> <span class="toc-text">持续更新</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">Categories</p>
+	<p class="asidetitle">分类</p>
 		<ul>
 		
 			<li><a href="/categories/技术/" title="技术">技术<sup>11</sup></a></li>
@@ -415,7 +413,7 @@ static const CGFloat kTagLabelWidthInset = 16.0f;
 
   
 <div class="tagslist">
-	<p class="asidetitle">Tags</p>
+	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
 			<li><a href="/tags/实习工作/" title="实习工作">实习工作<sup>7</sup></a></li>
@@ -427,7 +425,7 @@ static const CGFloat kTagLabelWidthInset = 16.0f;
 
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
 </div>
 
 </aside>
@@ -441,11 +439,18 @@ static const CGFloat kTagLabelWidthInset = 16.0f;
 	</div>
 	
 	
+	<section class="info">
+		<p> Hello <br/>
+			This is my blog</p>
+	</section>
+	 
 	<div class="social-font clearfix">
 		
 		<a href="http://weibo.com/zzgoCC" target="_blank" title="weibo"></a>
 		
 		
+		
+		<a href="https://github.com/zzgo" target="_blank" title="github"></a>
 		
 		
 		

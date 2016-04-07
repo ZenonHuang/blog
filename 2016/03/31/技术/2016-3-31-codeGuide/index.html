@@ -1,6 +1,6 @@
 
  <!DOCTYPE HTML>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   
@@ -36,24 +36,22 @@
 			
 			<div id="textlogo">
 				<h1 class="site-name"><a href="/" title="blog of zzgo">blog of zzgo</a></h1>
-				<h2 class="blog-motto"></h2>
+				<h2 class="blog-motto">代码小工的作坊</h2>
 			</div>
-			<div class="navbar"><a class="navbutton navmobile" href="#" title="Menu">
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
 			</a></div>
 			<nav class="animated">
 				<ul>
 					
-						<li><a href="/">Home</a></li>
+						<li><a href="/">首页</a></li>
 					
-						<li><a href="/archives">Archives</a></li>
-					
-						<li><a href="/atom.xml">Rss</a></li>
+						<li><a href="/archives">归档</a></li>
 					
 					<li>
 					
 					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
 						<label>Search</label>
-						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="Search" />
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
 						<input type="hidden" name="q" value="site:zzgoblog.cc">
 					</form>
 					
@@ -77,7 +75,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-03-31T15:50:46.000Z" itemprop="datePublished">2016-03-31</time>
-    Updated:<time datetime="2016-04-06T15:49:43.000Z" itemprop="dateModified">2016-04-06</time>
+    更新日期:<time datetime="2016-04-06T15:49:43.000Z" itemprop="dateModified">2016-04-06</time>
     
   </p>
 </header>
@@ -85,7 +83,7 @@
 		
 		
 		<div id="toc" class="toc-article">
-			<strong class="toc-title">Contents</strong>
+			<strong class="toc-title">文章目录</strong>
 		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#代码组织"><span class="toc-number">1.</span> <span class="toc-text">代码组织</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注释"><span class="toc-number">2.</span> <span class="toc-text">注释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字面量"><span class="toc-number">3.</span> <span class="toc-text">字面量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变量"><span class="toc-number">4.</span> <span class="toc-text">变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例变量"><span class="toc-number">4.1.</span> <span class="toc-text">实例变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#属性"><span class="toc-number">4.2.</span> <span class="toc-text">属性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#属性特性"><span class="toc-number">4.2.1.</span> <span class="toc-text">属性特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可变对象"><span class="toc-number">4.3.</span> <span class="toc-text">可变对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#私有属性"><span class="toc-number">4.3.1.</span> <span class="toc-text">私有属性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量"><span class="toc-number">5.</span> <span class="toc-text">常量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#常量使用"><span class="toc-number">5.0.1.</span> <span class="toc-text">常量使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常量小写k开头"><span class="toc-number">5.1.</span> <span class="toc-text">常量小写k开头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常量应该使用驼峰式命名规则。"><span class="toc-number">5.2.</span> <span class="toc-text">常量应该使用驼峰式命名规则。</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法"><span class="toc-number">6.</span> <span class="toc-text">方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法参数名"><span class="toc-number">6.1.</span> <span class="toc-text">方法参数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#“and”这个词的用法应该保留"><span class="toc-number">6.2.</span> <span class="toc-text">“and”这个词的用法应该保留</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法长度"><span class="toc-number">6.3.</span> <span class="toc-text">方法长度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#避免出现火车链式的情况"><span class="toc-number">6.4.</span> <span class="toc-text">避免出现火车链式的情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#取值方法"><span class="toc-number">6.5.</span> <span class="toc-text">取值方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法调用"><span class="toc-number">6.6.</span> <span class="toc-text">方法调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#委托代理模式"><span class="toc-number">7.</span> <span class="toc-text">委托代理模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#区分delegate和datasource"><span class="toc-number">7.1.</span> <span class="toc-text">区分delegate和datasource</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block"><span class="toc-number">8.</span> <span class="toc-text">Block</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#控制结构"><span class="toc-number">9.</span> <span class="toc-text">控制结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分支结构"><span class="toc-number">9.1.</span> <span class="toc-text">分支结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#循环结构"><span class="toc-number">9.2.</span> <span class="toc-text">循环结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类"><span class="toc-number">10.</span> <span class="toc-text">类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#保持公共API简单"><span class="toc-number">10.1.</span> <span class="toc-text">保持公共API简单</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化"><span class="toc-number">10.2.</span> <span class="toc-text">初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-number">11.</span> <span class="toc-text">其他</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#布尔值"><span class="toc-number">11.1.</span> <span class="toc-text">布尔值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设计模式"><span class="toc-number">12.</span> <span class="toc-text">设计模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单例模式"><span class="toc-number">12.1.</span> <span class="toc-text">单例模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#观察者模式"><span class="toc-number">12.2.</span> <span class="toc-text">观察者模式</span></a></li></ol></li></ol>
 		</div>
 		
@@ -457,20 +455,20 @@ return sharedInstance;
 
 	
 </div>  
-      <div class="openaside"><a class="navbutton" href="#" title="Show Sidebar"></a></div>
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
 
   <div id="toc" class="toc-aside">
-  <strong class="toc-title">Contents</strong>
+  <strong class="toc-title">文章目录</strong>
   <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#代码组织"><span class="toc-number">1.</span> <span class="toc-text">代码组织</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#注释"><span class="toc-number">2.</span> <span class="toc-text">注释</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#字面量"><span class="toc-number">3.</span> <span class="toc-text">字面量</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#变量"><span class="toc-number">4.</span> <span class="toc-text">变量</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#实例变量"><span class="toc-number">4.1.</span> <span class="toc-text">实例变量</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#属性"><span class="toc-number">4.2.</span> <span class="toc-text">属性</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#属性特性"><span class="toc-number">4.2.1.</span> <span class="toc-text">属性特性</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#可变对象"><span class="toc-number">4.3.</span> <span class="toc-text">可变对象</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#私有属性"><span class="toc-number">4.3.1.</span> <span class="toc-text">私有属性</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常量"><span class="toc-number">5.</span> <span class="toc-text">常量</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#常量使用"><span class="toc-number">5.0.1.</span> <span class="toc-text">常量使用</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常量小写k开头"><span class="toc-number">5.1.</span> <span class="toc-text">常量小写k开头</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#常量应该使用驼峰式命名规则。"><span class="toc-number">5.2.</span> <span class="toc-text">常量应该使用驼峰式命名规则。</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#方法"><span class="toc-number">6.</span> <span class="toc-text">方法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#方法参数名"><span class="toc-number">6.1.</span> <span class="toc-text">方法参数名</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#“and”这个词的用法应该保留"><span class="toc-number">6.2.</span> <span class="toc-text">“and”这个词的用法应该保留</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法长度"><span class="toc-number">6.3.</span> <span class="toc-text">方法长度</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#避免出现火车链式的情况"><span class="toc-number">6.4.</span> <span class="toc-text">避免出现火车链式的情况</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#取值方法"><span class="toc-number">6.5.</span> <span class="toc-text">取值方法</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#方法调用"><span class="toc-number">6.6.</span> <span class="toc-text">方法调用</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#委托代理模式"><span class="toc-number">7.</span> <span class="toc-text">委托代理模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#区分delegate和datasource"><span class="toc-number">7.1.</span> <span class="toc-text">区分delegate和datasource</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Block"><span class="toc-number">8.</span> <span class="toc-text">Block</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#控制结构"><span class="toc-number">9.</span> <span class="toc-text">控制结构</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#分支结构"><span class="toc-number">9.1.</span> <span class="toc-text">分支结构</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#循环结构"><span class="toc-number">9.2.</span> <span class="toc-text">循环结构</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#类"><span class="toc-number">10.</span> <span class="toc-text">类</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#保持公共API简单"><span class="toc-number">10.1.</span> <span class="toc-text">保持公共API简单</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#初始化"><span class="toc-number">10.2.</span> <span class="toc-text">初始化</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#其他"><span class="toc-number">11.</span> <span class="toc-text">其他</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#布尔值"><span class="toc-number">11.1.</span> <span class="toc-text">布尔值</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设计模式"><span class="toc-number">12.</span> <span class="toc-text">设计模式</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#单例模式"><span class="toc-number">12.1.</span> <span class="toc-text">单例模式</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#观察者模式"><span class="toc-number">12.2.</span> <span class="toc-text">观察者模式</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
-<div class="closeaside"><a class="closebutton" href="#" title="Hide Sidebar"></a></div>
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
 <aside class="clearfix">
 
   
 <div class="categorieslist">
-	<p class="asidetitle">Categories</p>
+	<p class="asidetitle">分类</p>
 		<ul>
 		
 			<li><a href="/categories/技术/" title="技术">技术<sup>11</sup></a></li>
@@ -483,7 +481,7 @@ return sharedInstance;
 
   
 <div class="tagslist">
-	<p class="asidetitle">Tags</p>
+	<p class="asidetitle">标签</p>
 		<ul class="clearfix">
 		
 			<li><a href="/tags/实习工作/" title="实习工作">实习工作<sup>7</sup></a></li>
@@ -495,7 +493,7 @@ return sharedInstance;
 
 
   <div class="rsspart">
-	<a href="/atom.xml" target="_blank" title="rss">RSS</a>
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
 </div>
 
 </aside>
@@ -509,11 +507,18 @@ return sharedInstance;
 	</div>
 	
 	
+	<section class="info">
+		<p> Hello <br/>
+			This is my blog</p>
+	</section>
+	 
 	<div class="social-font clearfix">
 		
 		<a href="http://weibo.com/zzgoCC" target="_blank" title="weibo"></a>
 		
 		
+		
+		<a href="https://github.com/zzgo" target="_blank" title="github"></a>
 		
 		
 		
