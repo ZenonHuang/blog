@@ -77,7 +77,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-03-31T15:50:46.000Z" itemprop="datePublished">2016-03-31</time>
-    更新日期:<time datetime="2016-04-09T14:42:06.000Z" itemprop="dateModified">2016-04-09</time>
+    更新日期:<time datetime="2016-04-09T14:48:18.000Z" itemprop="dateModified">2016-04-09</time>
     
   </p>
 </header>
@@ -121,16 +121,8 @@
 <p>例外：这不应用在生成文档的注释</p>
 <h2 id="字面量"><a href="#字面量" class="headerlink" title="字面量"></a>字面量</h2><p>NSString、NSDictionary、NSArray和NSNumber的字面值，应该在创建这些类的不可变实例时被使用。</p>
 <p>请特别注意—nil值不能传入NSArray和NSDictionary字面值，因为这样会导致crash。</p>
-<p>推荐</p>
-<pre><code>NSArray *names = @[@&quot;Brian&quot;, @&quot;Matt&quot;, @&quot;Chris&quot;, @&quot;Alex&quot;, @&quot;Steve&quot;, @&quot;Paul&quot;];  
-NSDictionary *productManagers = @{@&quot;iPhone&quot;: @&quot;Kate&quot;, @&quot;iPad&quot;: @&quot;Kamal&quot;, @&quot;Mobile Web&quot;: @&quot;Bill&quot;};  
-NSNumber *shouldUseLiterals = @YES;  
-NSNumber *buildingStreetNumber = @10018;  
-
-{% codeblock lang:objc %}
-	[rectangle setX: 10 y: 10 width: 20 height: 20];
-	{% endcodeblock %}
-</code></pre><p>不推荐</p>
+<p>推荐<br><figure class="highlight objc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">NSArray</span> *names = @[<span class="string">@"Brian"</span>, <span class="string">@"Matt"</span>, <span class="string">@"Chris"</span>, <span class="string">@"Alex"</span>, <span class="string">@"Steve"</span>, <span class="string">@"Paul"</span>];  </span><br><span class="line"><span class="built_in">NSDictionary</span> *productManagers = @&#123;<span class="string">@"iPhone"</span>: <span class="string">@"Kate"</span>, <span class="string">@"iPad"</span>: <span class="string">@"Kamal"</span>, <span class="string">@"Mobile Web"</span>: <span class="string">@"Bill"</span>&#125;;  </span><br><span class="line"><span class="built_in">NSNumber</span> *shouldUseLiterals = @YES;  </span><br><span class="line"><span class="built_in">NSNumber</span> *buildingStreetNumber = @<span class="number">10018</span>;</span><br></pre></td></tr></table></figure></p>
+<p>不推荐</p>
 <pre><code>NSArray *names = [NSArray arrayWithObjects:@&quot;Brian&quot;, @&quot;Matt&quot;, @&quot;Chris&quot;, @&quot;Alex&quot;, @&quot;Steve&quot;, @&quot;Paul&quot;, nil];  
 NSDictionary *productManagers = [NSDictionary dictionaryWithObjectsAndKeys: @&quot;Kate&quot;, @&quot;iPhone&quot;, @&quot;Kamal&quot;, @&quot;iPad&quot;, @&quot;Bill&quot;, @&quot;Mobile Web&quot;, nil];  
 NSNumber *shouldUseLiterals = [NSNumber numberWithBool:YES];  
