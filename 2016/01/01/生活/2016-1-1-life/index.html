@@ -47,6 +47,8 @@
 					
 						<li><a href="/archives">归档</a></li>
 					
+						<li><a href="/resource">资源</a></li>
+					
 					<li>
 					
 					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
@@ -179,18 +181,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2016/03/31/技术/2016-3-31-codeGuide/" title="OC代码小Tips">
+ <a href="/2016/01/01/生活/2016-1-22-plan/" title="一个人的磨练">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  OC代码小Tips</span>
+  一个人的磨练</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2016/01/01/生活/2016-2-1-PlanOfiOS/"  title="iOS技能图谱">
+<a href="/2015/11/15/技术/2015-11-15-XcodePlugs/"  title="Xcode插件">
  <strong>NEXT:</strong><br/> 
- <span>iOS技能图谱
+ <span>Xcode插件
 </span>
 </a>
 </div>
@@ -385,6 +387,27 @@ $(document).ready(function(){
 
 
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
 
 
 

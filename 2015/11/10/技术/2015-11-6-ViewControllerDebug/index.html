@@ -47,6 +47,8 @@
 					
 						<li><a href="/archives">归档</a></li>
 					
+						<li><a href="/resource">资源</a></li>
+					
 					<li>
 					
 					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
@@ -159,9 +161,9 @@ method_exchangeImplementations(originalMethod, swizzledMethod);
 
 
 <div class="next">
-<a href="/2015/11/07/技术/2015-9-24-python-urllib2/"  title="python urllib2使用（用于解决web跨域访问）">
+<a href="/2015/11/07/生活/2015-9-20-study-1/"  title="实习（一）">
  <strong>NEXT:</strong><br/> 
- <span>python urllib2使用（用于解决web跨域访问）
+ <span>实习（一）
 </span>
 </a>
 </div>
@@ -356,6 +358,27 @@ $(document).ready(function(){
 
 
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
 
 
 

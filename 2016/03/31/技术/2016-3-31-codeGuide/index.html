@@ -47,6 +47,8 @@
 					
 						<li><a href="/archives">归档</a></li>
 					
+						<li><a href="/resource">资源</a></li>
+					
 					<li>
 					
 					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
@@ -75,7 +77,7 @@
     </p>
   <p class="article-time">
     <time datetime="2016-03-31T15:50:46.000Z" itemprop="datePublished">2016-03-31</time>
-    更新日期:<time datetime="2016-04-06T15:49:43.000Z" itemprop="dateModified">2016-04-06</time>
+    更新日期:<time datetime="2016-04-09T14:42:06.000Z" itemprop="dateModified">2016-04-09</time>
     
   </p>
 </header>
@@ -124,6 +126,10 @@
 NSDictionary *productManagers = @{@&quot;iPhone&quot;: @&quot;Kate&quot;, @&quot;iPad&quot;: @&quot;Kamal&quot;, @&quot;Mobile Web&quot;: @&quot;Bill&quot;};  
 NSNumber *shouldUseLiterals = @YES;  
 NSNumber *buildingStreetNumber = @10018;  
+
+{% codeblock lang:objc %}
+	[rectangle setX: 10 y: 10 width: 20 height: 20];
+	{% endcodeblock %}
 </code></pre><p>不推荐</p>
 <pre><code>NSArray *names = [NSArray arrayWithObjects:@&quot;Brian&quot;, @&quot;Matt&quot;, @&quot;Chris&quot;, @&quot;Alex&quot;, @&quot;Steve&quot;, @&quot;Paul&quot;, nil];  
 NSDictionary *productManagers = [NSDictionary dictionaryWithObjectsAndKeys: @&quot;Kate&quot;, @&quot;iPhone&quot;, @&quot;Kamal&quot;, @&quot;iPad&quot;, @&quot;Bill&quot;, @&quot;Mobile Web&quot;, nil];  
@@ -444,9 +450,9 @@ return sharedInstance;
 
 
 <div class="next">
-<a href="/2016/01/01/生活/2016-1-1-life/"  title="2016第一天">
+<a href="/2016/03/23/技术/2016-3-23-ALAsset/"  title="照片框架ALAssetsLibrary">
  <strong>NEXT:</strong><br/> 
- <span>2016第一天
+ <span>照片框架ALAssetsLibrary
 </span>
 </a>
 </div>
@@ -641,6 +647,27 @@ $(document).ready(function(){
 
 
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
 
 
 

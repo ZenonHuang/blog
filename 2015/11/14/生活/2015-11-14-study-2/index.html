@@ -47,6 +47,8 @@
 					
 						<li><a href="/archives">归档</a></li>
 					
+						<li><a href="/resource">资源</a></li>
+					
 					<li>
 					
 					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
@@ -141,10 +143,10 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2015/11/15/技术/2016-3-23-ALAsset/" title="照片框架ALAssetsLibrary">
+ <a href="/2015/11/15/技术/2015-11-15-XcodePlugs/" title="Xcode插件">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  照片框架ALAssetsLibrary</span>
+  Xcode插件</span>
 </a>
 </div>
 
@@ -347,6 +349,27 @@ $(document).ready(function(){
 
 
 
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
 
 
 
