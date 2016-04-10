@@ -4,12 +4,14 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>test | blog of zzgo</title>
+    <title>IOS开发--自定义Debug文件 | blog of zzgo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="zzgo">
     
+    <meta name="description" itemprop="description" content="ios日常工具">
     
+    <meta name="keywords" content="ios">
     
     
     <link rel="alternate" href="/atom.xml" title="blog of zzgo" type="application/atom+xml">
@@ -67,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2016/04/06/test/" title="test" itemprop="url">test</a>
+      <a href="/2015/11/06/技术/2015-11-6-ViewControllerDebug/" title="IOS开发--自定义Debug文件" itemprop="url">IOS开发--自定义Debug文件</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://zzgoblog.cc" title="zzgo">zzgo</a>
     </p>
   <p class="article-time">
-    <time datetime="2016-04-06T15:47:46.000Z" itemprop="datePublished">2016-04-06</time>
-    更新日期:<time datetime="2016-04-06T15:47:46.000Z" itemprop="dateModified">2016-04-06</time>
+    <time datetime="2015-11-05T16:00:00.000Z" itemprop="datePublished">2015-11-06</time>
+    更新日期:<time datetime="2016-04-10T11:46:52.000Z" itemprop="dateModified">2016-04-10</time>
     
   </p>
 </header>
@@ -87,16 +89,60 @@
 		
 		</div>
 		
-		  
+		<p>今天介绍一段代码，用于在执行程序的时候，显示控制器的名称。<br>在我们debug的时候比较有用，尤其是项目文件比较多的时候。可以减少我们的功夫，直接的看出问题出在哪一个controller里。</p>
+<p>直接在对应的工程下，新建一个xxxDebug.m文件。</p>
+<p>文件代码如下：</p>
+<pre><code>#import &lt;UIKit/UIKit.h&gt;
+#import &lt;objc/runtime.h&gt;
+
+/**
+*  这个类只做调试用
+*/
+@implementation UIViewController (DFDebug)
+
+- (void)zz_viewDidAppear:(BOOL)animated
+{
+[self zz_viewDidAppear:animated];
+NSLog(@&quot;Debug by zzgo ==&gt; %@&quot;, NSStringFromClass([self class]));
+}
+
++ (void)load
+{
+static dispatch_once_t onceToken;
+dispatch_once(&amp;onceToken, ^{
+Class class = [self class];
+
+SEL originalSelector = @selector(viewDidAppear:);
+SEL swizzledSelector = @selector(zz_viewDidAppear:);
+
+Method originalMethod = class_getInstanceMethod(class, originalSelector);
+Method swizzledMethod = class_getInstanceMethod(class, swizzledSelector);
+
+method_exchangeImplementations(originalMethod, swizzledMethod);
+});
+}
+
+@end
+</code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/实习工作/">实习工作</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/技术/">技术</a>
+</div>
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://zzgoblog.cc/2016/04/06/test/" data-title="test | blog of zzgo" data-tsina="null" class="share clearfix">
+  <div data-url="http://zzgoblog.cc/2015/11/06/技术/2015-11-6-ViewControllerDebug/" data-title="IOS开发--自定义Debug文件 | blog of zzgo" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -106,18 +152,18 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/20156/01/22/生活/2016-1-22-plan/" title="一个人的磨练">
+ <a href="/2015/11/10/技术/2015-11-10-CocoaPosdsDemo/" title="IOS工具--CocoaPods">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  一个人的磨练</span>
+  IOS工具--CocoaPods</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2016/04/06/hello-world/"  title="Hello World">
+<a href="/2015/10/14/技术/2015-10-14-ios-TableView/"  title="IOS开发--自定义TableView">
  <strong>NEXT:</strong><br/> 
- <span>Hello World
+ <span>IOS开发--自定义TableView
 </span>
 </a>
 </div>
