@@ -1,0 +1,408 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>iOS代码Objective-C编程规范 | blog of zzgo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="zzgo">
+    
+    <meta name="description" itemprop="description" content="根据自己经验总结的编程规范">
+    
+    <meta name="keywords" content="iOS">
+    
+    
+    <link rel="alternate" href="/atom.xml" title="blog of zzgo" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/pacman.jpg">
+    <link rel="apple-touch-icon-precomposed" href="/img/pacman.jpg">
+    
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.svg" alt="blog of zzgo" title="blog of zzgo"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="blog of zzgo">blog of zzgo</a></h1>
+				<h2 class="blog-motto">代码小工的作坊</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					
+						<li><a href="/">首页</a></li>
+					
+						<li><a href="/archives">归档</a></li>
+					
+						<li><a href="/resource">资源</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:zzgoblog.cc">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2016/08/21/技术/2016-8-21-Objective-CCodeGuide/" title="iOS代码Objective-C编程规范" itemprop="url">iOS代码Objective-C编程规范</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="http://zzgoblog.cc" title="zzgo">zzgo</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2016-08-21T08:50:46.000Z" itemprop="datePublished">2016-08-21</time>
+    更新日期:<time datetime="2016-08-22T14:57:06.000Z" itemprop="dateModified">2016-08-22</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS代码Objective-C编程规范"><span class="toc-number">1.</span> <span class="toc-text">iOS代码Objective-C编程规范</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目目录结构"><span class="toc-number">1.2.</span> <span class="toc-text">项目目录结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AppDelegate"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">AppDelegate</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Classes"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">Classes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Expand"><span class="toc-number">1.2.0.3.</span> <span class="toc-text">Expand</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Resource"><span class="toc-number">1.2.0.4.</span> <span class="toc-text">Resource</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Vendor"><span class="toc-number">1.2.0.5.</span> <span class="toc-text">Vendor</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件内代码组织"><span class="toc-number">1.3.</span> <span class="toc-text">文件内代码组织</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#文件头注释"><span class="toc-number">1.3.1.</span> <span class="toc-text">文件头注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#interface"><span class="toc-number">1.3.2.</span> <span class="toc-text">@interface</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#接口设计原则"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">接口设计原则</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#m文件的布局顺序"><span class="toc-number">1.3.3.</span> <span class="toc-text">.m文件的布局顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#implementation中的组织"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">@implementation中的组织</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#控制流语句的括号使用"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">控制流语句的括号使用</span></a></li></ol></li></ol></li></ol></li></ol>
+		</div>
+		
+		<h1 id="iOS代码Objective-C编程规范"><a href="#iOS代码Objective-C编程规范" class="headerlink" title="iOS代码Objective-C编程规范"></a>iOS代码Objective-C编程规范</h1><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>在经过一段时间学习和工作之后，自己写了不少代码，也看了不少代码。深知千人千面，每个人写的代码都有自己的风格。</p>
+<p>而坏的代码各有各的”特色”，好的代码总是清晰明了（当然有一些代码由于高度的抽象，导致不那么”清楚”，需要我们深入去理解它们）。</p>
+<p>在一个团队中，如果没有一个文档规范，特别是当新人进入时，每次都进行口头的说教，将带来不必要的时间成本。</p>
+<p>因此有了这一份iOS代码的Objective-C编程规范。</p>
+<h2 id="项目目录结构"><a href="#项目目录结构" class="headerlink" title="项目目录结构"></a>项目目录结构</h2><p>关于目录结构和架构等组织方式，现在总结出一个道理：</p>
+<blockquote>
+<p>架构是逐渐演进的，适合自己的业务的架构才是最好的架构，没有所谓最好的架构</p>
+</blockquote>
+<p>之前自己忙于工作，没记录下来思考过程有些遗憾，这一篇<a href="http://www.jianshu.com/p/15e5b83ab70e" target="_blank" rel="external">《iOS移动端架构的那些事》</a>说的非常好。文中最后的middleman以及urlRoute，我已经有一些涉猎和实践，但是在这里不做讨论。</p>
+<p>在一般的开发当中，我们使用按<code>模块</code>划分的方法，已经足够用了。<br>目前使用的目录结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">|---AppDelegate</span><br><span class="line">  |---AppDelegate+category1</span><br><span class="line">  |---AppDelegate+category2</span><br><span class="line">  ...</span><br><span class="line">|---Classes</span><br><span class="line">  |---Module</span><br><span class="line">    |---Controller</span><br><span class="line">    |---Model</span><br><span class="line">    |---View</span><br><span class="line">  ...</span><br><span class="line">|---Expand</span><br><span class="line">  |---Category</span><br><span class="line">    |---UIKit</span><br><span class="line">    |---Foundation</span><br><span class="line">  |---Const</span><br><span class="line">    |---HZConst</span><br><span class="line">    |---APIConst</span><br><span class="line">  |---Macros</span><br><span class="line">  |---NetWork</span><br><span class="line">  |---Utility</span><br><span class="line">  ...</span><br><span class="line">|---Resource</span><br><span class="line">  |---Image</span><br><span class="line">  |---Plist</span><br><span class="line">  |---File</span><br><span class="line">  |---Video</span><br><span class="line">  |---Sound</span><br><span class="line">  ...</span><br><span class="line">|---Vendor</span><br></pre></td></tr></table></figure>
+<p>乍一看很多，容我慢慢讲解。</p>
+<h4 id="AppDelegate"><a href="#AppDelegate" class="headerlink" title="AppDelegate"></a>AppDelegate</h4><p>App的Delegate类实现，它必须有。但是有时候会在里面做很多操作，比如：监听前后台切换，或者第三方登录，统计分析，通知注册回调等等的操作。因而将代码进行拆分，对AppDelegate按功能分类。</p>
+<h4 id="Classes"><a href="#Classes" class="headerlink" title="Classes"></a>Classes</h4><p>这里是我们写业务的地方。</p>
+<p>首先横向拆分业务、功能模块。</p>
+<p>然后模块里面纵向拆分，一般采用MVC/MVVM/MVP等方式都可以。</p>
+<blockquote>
+<p>注意，这个地方曾经有同事倾向于按界面去分模块。这样有两个不好的地方:第一，比如电商APP，在首页/收藏/商品买卖等等各个地方，都需要一个商品详情模块，那这个模块界面层级，该怎么放？按业务拆分时，就不应该再用界面去划分模块。第二，代码组织的层级很容易过深，如果界面复和功能复杂起来，那展开一个文件可能需要打开很多层文件夹。</p>
+</blockquote>
+<h4 id="Expand"><a href="#Expand" class="headerlink" title="Expand"></a>Expand</h4><p>顾名思义，这里放的都是我们的扩展文件,可以存放Category(分类文件)，Const(常用常量，api常量)，Macros(宏)，Network(网络库的封装扩展)，Utility(工具箱)等等。</p>
+<h4 id="Resource"><a href="#Resource" class="headerlink" title="Resource"></a>Resource</h4><p>在Resource里面，存放我们的各种资源文件,plist,image,video等等。</p>
+<h4 id="Vendor"><a href="#Vendor" class="headerlink" title="Vendor"></a>Vendor</h4><p>这里面统一存放的是我们引入的第三方库和框架。</p>
+<p>虽然可以用CocoaPods和Carthage很方便地管理第三方库，但偶尔也会需要直接引入第三方的文件。</p>
+<h2 id="文件内代码组织"><a href="#文件内代码组织" class="headerlink" title="文件内代码组织"></a>文件内代码组织</h2><p>考虑到知易行难这样亘古不变的道理，我已经整理好代码模板文件到<a href="">我的Github</a>上,直接clone下来后，放在如下路径:</p>
+<blockquote>
+<p>/Applications/Xcode.app/Contents/Developer/Library/Xcode/Templates/File Templates/Source/</p>
+</blockquote>
+<h3 id="文件头注释"><a href="#文件头注释" class="headerlink" title="文件头注释"></a>文件头注释</h3><p>所有的文件在文件头注释上，应当具有:</p>
+<ul>
+<li>文件创建的时间</li>
+<li>文件创建者</li>
+<li>文件创建者的联系方式</li>
+</ul>
+<p>如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//</span><br><span class="line">//  Created by zzgo on 16/8/21.</span><br><span class="line">// 	Contact by zzgoCC@gmail.com</span><br><span class="line">//  Copyright © 2016年 quseit. All rights reserved.</span><br><span class="line">//</span><br></pre></td></tr></table></figure>
+<p>意义在于让后来者知道代码创建的时间，以及碰到问题时，可以及时联系上原作者。</p>
+<h3 id="interface"><a href="#interface" class="headerlink" title="@interface"></a>@interface</h3><p>在接口中，先写属性（delegate在最后），再写方法(类方法在前)。<br>如:</p>
+<pre><code>@interface Object : NSObject
+@property (nonatomic, readwrite, strong) NSString *name;
+@property (nonatomic, readwrite, weak) id&lt;ObjectDelegate&gt; delegate;
++ (void)testLog;
+- (void)configure;
+@end
+</code></pre><h4 id="接口设计原则"><a href="#接口设计原则" class="headerlink" title="接口设计原则"></a>接口设计原则</h4><p>避免 “厨房水槽（kitchen-sink）” 式的 API。如果一个函数压根没必要公开，就不要这么做。提一下接口的设计原则:</p>
+<ul>
+<li>只暴露外部需要看到的。尽可能少的<code>暴露</code>类的方法，属性，和成员变量等。</li>
+<li>合理分组</li>
+<li>避免头文件污染</li>
+<li>避免接口过度设计</li>
+<li>隐藏继承关系中的私有接口</li>
+<li>避免单例的滥用</li>
+</ul>
+<p>有兴趣的可以看一看这个文章<a href="[objc@interface的设计哲学与设计技巧](http://blog.sunnyxx.com/2014/04/13/objc_dig_interface/)">[objc@interface的设计哲学与设计技巧](http://blog.sunnyxx.com/2014/04/13/objc_dig_interface/)</a></p>
+<p>另外，对于一个外部引用对象，且外部不会发生set操作的对象，使用readonly属性:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> //.h文件中</span><br><span class="line">@interface MyClass : NSObject</span><br><span class="line">@property (nonatomic, readonly, strong) NSObject *object;</span><br><span class="line">@end</span><br><span class="line">//.m文件中</span><br><span class="line">@interface MyClass ()</span><br><span class="line">@property (nonatomic, readwrite, strong) NSObject *object;</span><br><span class="line">@end</span><br><span class="line"></span><br><span class="line">@implementation MyClass</span><br><span class="line">//Do Something cool</span><br><span class="line">@end</span><br></pre></td></tr></table></figure>
+<h3 id="m文件的布局顺序"><a href="#m文件的布局顺序" class="headerlink" title=".m文件的布局顺序"></a>.m文件的布局顺序</h3><p>布局顺序如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">//文件头注释</span><br><span class="line">//import</span><br><span class="line">//文件内部使用的宏</span><br><span class="line">//常量定义</span><br><span class="line">//@interface()</span><br><span class="line">//@implementation</span><br></pre></td></tr></table></figure>
+<h4 id="implementation中的组织"><a href="#implementation中的组织" class="headerlink" title="@implementation中的组织"></a>@implementation中的组织</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">#pragma mark - Intial Methods</span><br><span class="line"></span><br><span class="line">#pragma mark - Override/Life Cycle</span><br><span class="line"></span><br><span class="line">#pragma mark - Notification</span><br><span class="line"></span><br><span class="line">#pragma mark - KVO</span><br><span class="line"></span><br><span class="line">#pragma mark - target-action/IBActions</span><br><span class="line"></span><br><span class="line">#pragma mark - delegate dataSource protocol</span><br><span class="line"></span><br><span class="line">#pragma mark - public</span><br><span class="line"></span><br><span class="line">#pragma mark - private</span><br><span class="line"></span><br><span class="line">#pragma mark - getter / setter</span><br></pre></td></tr></table></figure>
+<h4 id="控制流语句的括号使用"><a href="#控制流语句的括号使用" class="headerlink" title="控制流语句的括号使用"></a>控制流语句的括号使用</h4><p>在使用控制流语句时，必须使用括号.<br>推荐:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (someObject) &#123;</span><br><span class="line">  [someObject doSomething];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>不推荐:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">if (someObject) [someObject doSomething];</span><br></pre></td></tr></table></figure>
+<p>括号让我们的控制流语句的执行体看起来更明了。</p>
+<p>关于更细节的代码风格，统一<a href="https://github.com/travisjeffery/ClangFormat-Xcode" target="_blank" rel="external">用clang-format</a>格式化插件格式化代码，采用统一的<code>.clang-format</code>文件</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/资料/">资料</a>
+  </div>
+
+
+<div class="article-categories">
+  <span></span>
+  <a class="article-category-link" href="/categories/技术/">技术</a>
+</div>
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://zzgoblog.cc/2016/08/21/技术/2016-8-21-Objective-CCodeGuide/" data-title="iOS代码Objective-C编程规范 | blog of zzgo" data-tsina="null" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2016/07/10/技术/2016-7-9-Recruitment/"  title="优趣工作室招聘">
+ <strong>NEXT:</strong><br/> 
+ <span>优趣工作室招聘
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#iOS代码Objective-C编程规范"><span class="toc-number">1.</span> <span class="toc-text">iOS代码Objective-C编程规范</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#前言"><span class="toc-number">1.1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#项目目录结构"><span class="toc-number">1.2.</span> <span class="toc-text">项目目录结构</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#AppDelegate"><span class="toc-number">1.2.0.1.</span> <span class="toc-text">AppDelegate</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Classes"><span class="toc-number">1.2.0.2.</span> <span class="toc-text">Classes</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Expand"><span class="toc-number">1.2.0.3.</span> <span class="toc-text">Expand</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Resource"><span class="toc-number">1.2.0.4.</span> <span class="toc-text">Resource</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Vendor"><span class="toc-number">1.2.0.5.</span> <span class="toc-text">Vendor</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#文件内代码组织"><span class="toc-number">1.3.</span> <span class="toc-text">文件内代码组织</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#文件头注释"><span class="toc-number">1.3.1.</span> <span class="toc-text">文件头注释</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#interface"><span class="toc-number">1.3.2.</span> <span class="toc-text">@interface</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#接口设计原则"><span class="toc-number">1.3.2.1.</span> <span class="toc-text">接口设计原则</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#m文件的布局顺序"><span class="toc-number">1.3.3.</span> <span class="toc-text">.m文件的布局顺序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#implementation中的组织"><span class="toc-number">1.3.3.1.</span> <span class="toc-text">@implementation中的组织</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#控制流语句的括号使用"><span class="toc-number">1.3.3.2.</span> <span class="toc-text">控制流语句的括号使用</span></a></li></ol></li></ol></li></ol></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+<div class="categorieslist">
+	<p class="asidetitle">分类</p>
+		<ul>
+		
+			<li><a href="/categories/技术/" title="技术">技术<sup>13</sup></a></li>
+		
+			<li><a href="/categories/生活/" title="生活">生活<sup>5</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/实习工作/" title="实习工作">实习工作<sup>7</sup></a></li>
+		
+			<li><a href="/tags/资料/" title="资料">资料<sup>5</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  <div class="rsspart">
+	<a href="/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> Hello <br/>
+			This is my blog</p>
+	</section>
+	 
+	<div class="social-font clearfix">
+		
+		<a href="http://weibo.com/zzgoCC" target="_blank" title="weibo"></a>
+		
+		
+		
+		<a href="https://github.com/zzgo" target="_blank" title="github"></a>
+		
+		
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://hexo.io" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2016 
+		
+		<a href="http://zzgoblog.cc" target="_blank" title="zzgo">zzgo</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.article-content').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox')) return;
+      var alt = this.alt;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'article' + i);
+    });
+  });
+  if($.fancybox){
+    $('.fancybox').fancybox();
+  }
+}); 
+</script>
+
+
+
+  </body>
+</html>
