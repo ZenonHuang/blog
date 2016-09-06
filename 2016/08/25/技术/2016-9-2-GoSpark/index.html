@@ -84,16 +84,16 @@
 
 
 
-<meta name="description" content="负责四个月的直播总结">
+<meta name="description" content="负责四个月的直播总结，也算是自己的小结">
 <meta property="og:type" content="article">
 <meta property="og:title" content="GoSpark直播">
 <meta property="og:url" content="http://zzgoblog.cc/2016/08/25/技术/2016-9-2-GoSpark/index.html">
 <meta property="og:site_name" content="人若无名，便可安心练剑">
-<meta property="og:description" content="负责四个月的直播总结">
-<meta property="og:updated_time" content="2016-09-04T15:57:52.000Z">
+<meta property="og:description" content="负责四个月的直播总结，也算是自己的小结">
+<meta property="og:updated_time" content="2016-09-06T17:24:56.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="GoSpark直播">
-<meta name="twitter:description" content="负责四个月的直播总结">
+<meta name="twitter:description" content="负责四个月的直播总结，也算是自己的小结">
 
 
 
@@ -333,43 +333,45 @@
       
         <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>GoSpark团队，产品和运营由花姐和老曲亲自操刀。技术团队由严哥牵头，国涛负责后台，宾纷担任设计,我做iOS客户端。</p>
 <p>下面将分为技术，产品，协作三个方面来说。</p>
+<p>最后做一个对我自己的总结。</p>
 <h1 id="技术"><a href="#技术" class="headerlink" title="技术"></a>技术</h1><p>毫无疑问，做直播的技术门槛非常大。之前知乎有一个回答，有兴趣可以进去阅读一下–<a href="https://www.zhihu.com/question/42162310" target="_blank" rel="external">如何搭建一个完整的视频直播系统</a>.</p>
 <p>简单来说，客户端需要涉及到音频/视频处理，图形处理，音频/视频压缩;服务器需要做CDN分发，转码等。如果真的从零开始深入，每种技术都够学几年。</p>
 <p>以上还不包括即时通讯，礼物系统等社交功能。</p>
-<p>好在已经有各个领域的大牛，封装出稳定易用的框架，让我们得以在大牛的肩膀上编程。</p>
+<p>好在已经有各个领域的大牛，封装出稳定易用的框架，让我们得以在前人的基础上编程。</p>
 <h2 id="直播中，移动端的工作"><a href="#直播中，移动端的工作" class="headerlink" title="直播中，移动端的工作"></a>直播中，移动端的工作</h2><p>直播中，移动端的工作还不少。需要兼顾推流端和拉流端，以及礼物效果，弹幕效果等等。</p>
-<h3 id="推流端"><a href="#推流端" class="headerlink" title="推流端"></a>推流端</h3><p>推流端，就是主播端。通过手机摄像头采集视频数据和麦克风采集音频数据，经过一系列前处理、编码、封装，然后推流到CDN进行分发。</p>
+<p>下面简单介绍一下流程，概念。</p>
+<h3 id="推流端"><a href="#推流端" class="headerlink" title="推流端"></a>推流端</h3><p>推流端，就是主播端。通过手机摄像头<code>采集</code>视频数据和麦克风采集音频数据，经过一系列<code>前处理</code>、<code>编码</code>、<code>封装</code>，然后推流到CDN进行分发。</p>
 <h4 id="采集"><a href="#采集" class="headerlink" title="采集"></a>采集</h4><p>采集主要为：<code>视频采集</code>，<code>音频采集</code>。</p>
 <p>采集到的原始音视频的体积是非常大的，需要经过压缩技术处理来提高传输效率。</p>
 <h4 id="前处理"><a href="#前处理" class="headerlink" title="前处理"></a>前处理</h4><p>前处理主要是<code>美颜</code>，<code>水印</code>。</p>
 <h5 id="美颜功能"><a href="#美颜功能" class="headerlink" title="美颜功能"></a>美颜功能</h5><p>美颜几乎是直播的标配功能，它实际上是通过算法去识别图像中的皮肤部分，对皮肤区域进行色值调整。通过颜色对比找到皮肤区域，可以进行色值调整、添加白色图层或调整透明度等来等来达到美白效果。</p>
-<p>磨皮的本质实际上是模糊。而在图像处理领域，模糊就是将像素点的取值与周边的像素点取值相关联。</p>
+<p>磨皮的本质实际上是模糊。而在图像处理领域，模糊就是将像素点的取值与周边的像素点取值相关联。有兴趣的，可以看这篇文章<a href="http://www.jianshu.com/p/945fc806a9b4" target="_blank" rel="external">实时美颜滤镜</a>。</p>
 <h4 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h4><p>为了便于手机视频的推流、拉流以及存储，通常采用视频编码压缩技术来减少视频的体积。</p>
 <p>现在比较常用的视频编码是<code>H.264</code>。在音频方面，比较常用的是用<code>AAC</code>编码格式。</p>
 <p>当然，经过压缩后的视频在播放时必须进行解码。</p>
 <p>另外，<code>硬件编码</code>已经成为移动直播的首选方案，软编码处理在720p以上的视频颓势非常明显。在iOS平台上硬件编码的兼容性比较好，可以直接采用，但在 Android 平台上，MediaCodec 编码器针对不同的芯片平台表现差异还是非常大的，要完全实现全平台兼容的成本还是非常高的。</p>
-<h4 id="推流"><a href="#推流" class="headerlink" title="推流"></a>推流</h4><p>要想用于推流还必须把音视频数据使用传输协议进行封装，变成<code>流数据</code>。</p>
+<h4 id="推流"><a href="#推流" class="headerlink" title="推流"></a>推流</h4><p>要想用于<code>推流</code>还必须把音视频数据使用传输协议进行<code>封装</code>，变成<code>流数据</code>。</p>
 <p>常见流传输协议有RTSP、RTMP、HLS等，使用RTMP传输的延时通常在1–3秒，对于移动直播这种实时性要求非常高的场景，RTMP也成为移动直播中最常用的流传输协议。</p>
-<p>而在网络传输方面全部自己来做太难了，找提供推流服务的CDN服务商提供解决方案，其实是最好的选择，稳定快速和专业的服务，可以节省大量的时间。</p>
+<p>而在网络传输方面全部自己来做太难了，找CDN服务商提供解决方案，其实是最好的选择。稳定快速和专业的服务，可以节省大量的时间。</p>
 <h3 id="拉流端"><a href="#拉流端" class="headerlink" title="拉流端"></a>拉流端</h3><p>拉流实际是推流的逆过程。</p>
 <h4 id="拉流"><a href="#拉流" class="headerlink" title="拉流"></a>拉流</h4><p>首先通过播放端获取码流。</p>
 <p>标准的拉流格式有RTMP、HLS、FLV等:</p>
 <ul>
-<li>RTMP是Adobe的专利协议，直播延迟一般在1–3秒。tcp长连接。</li>
-<li>HLS是苹果提出的基于HTTP的流媒体传输协议，优点是HTML5可以直接打开播放，通过社交分享出去，用户也可以直接观看直播，缺点是延迟通常大于10秒。http短连接。</li>
-<li>FLV（HTTP-FLV）协议是使用HTTP协议传输流媒体内容的一个协议。直播延迟同样可以做到1–3秒。http长连接。</li>
+<li><code>RTMP</code>是Adobe的专利协议，直播延迟一般在1–3秒。tcp长连接。</li>
+<li><code>HLS</code>是苹果提出的基于HTTP的流媒体传输协议，优点是HTML5可以直接打开播放，通过社交分享出去，用户也可以直接观看直播，缺点是延迟通常大于10秒。http短连接。</li>
+<li><code>FLV（HTTP-FLV）</code>协议是使用HTTP协议传输流媒体内容的一个协议。直播延迟同样可以做到1–3秒。http长连接。</li>
 </ul>
 <p>三种协议是可以同时使用的，分别用到自己的场景就可以了。</p>
-<h4 id="解码和渲染"><a href="#解码和渲染" class="headerlink" title="解码和渲染"></a>解码和渲染</h4><p>现在一般播放器都是基于ffmepg的，它是一个跨平台的开源视频框架。</p>
+<h4 id="解码和渲染"><a href="#解码和渲染" class="headerlink" title="解码和渲染"></a>解码和渲染</h4><p>现在一般播放器都是基于<code>ffmepg</code>的，它是一个跨平台的开源视频框架。</p>
 <p>这里有个一<code>硬解码</code>和<code>软解码</code>的概念，硬解码用GPU来解码，减少cpu运算。缺点是兼容不太好。<br>软解码用cpu来解码，容易耗电发热。优点是兼容好。</p>
 <h4 id="秒开"><a href="#秒开" class="headerlink" title="秒开"></a>秒开</h4><p>指点击播放后，一秒内即可看到播放画面。首屏打开越快，说明用户体验越好。技术上指播放器解码第一帧渲染显示画面所花的耗时。</p>
 <p>首帧数据的展示过程，其实是一个下载，解码，渲染的过程。</p>
-<p>GOP ( Group of Pictures ) 是一组连续的画面，由一张 I 帧和数张 B / P 帧组成，是视频图像编码器和解码器存取的基本单位，它的排列顺序将会一直重复到影像结束。简单地讲，I 帧是一个完整的画面，而 P 帧和 B 帧记录的是相对于 I 帧的变化。<br>如果要秒开，就要减少GOP Cache，也意味着画质下降。</p>
+<p><code>GOP ( Group of Pictures )</code> 是一组连续的画面，由一张 I 帧和数张 B / P 帧组成，是视频图像编码器和解码器存取的基本单位，它的排列顺序将会一直重复到影像结束。简单地讲，I 帧是一个完整的画面，而 P 帧和 B 帧记录的是相对于 I 帧的变化。<br>如果要秒开，就要减少GOP Cache，也意味着画质下降。</p>
 <blockquote>
 <p>优化策略: 接口机缓存首帧数据，减少 GOP 分片时间，修改播放器逻辑，解析到I帧就开始播放。</p>
 </blockquote>
-<p>我们在这里是使用了B站开源的ijk播放器，它针对直播进行了优化。</p>
-<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>直播是媒体流、APP 的交互是 API 信令流，两者的状态不能混为一谈。</p>
+<p>我们在这里是使用了B站开源的<a href="https://github.com/Bilibili/ijkplayer" target="_blank" rel="external">ijkplayer</a>的框架，它针对直播进行了优化。</p>
+<h2 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h2><p>直播是 媒体流 ,而 APP 的交互是 API 信令流，两者的状态不能混为一谈。</p>
 <p>尤其是判断网络状况时，不能基于 APP 的交互的 API 状态来判断直播流的状态。</p>
 <p>要想适配各终端和平台，服务端还需要对流进行转码，如支持RTMP、HLS、FLV等格式拉流，支持一路转多路适配不同网络和分辨率的终端设备。</p>
 <h3 id="CDN"><a href="#CDN" class="headerlink" title="CDN"></a>CDN</h3><p>CDN是Content Delivery Network的缩写，即内容分发网络。将网站内容发布到最接近用户的网络”边缘”，让用户就近取得所需要的内容。</p>
@@ -384,6 +386,12 @@
 <h2 id="运营"><a href="#运营" class="headerlink" title="运营"></a>运营</h2><p>产品非常需要运营。这个是我以前没有专门思考过的。就算是真的一匹千里马，也需要伯乐才能发挥它的价值。</p>
 <p>公司是商业的，说直白一点，出于什么样的运营其实都或多或少带点销售性质，无论是什么到最后都是作为变现的工具。</p>
 <p>运营定位的比较宽泛，如果产品需要内容，运营就是编辑，需要推广，运营就是市场。所以一个产品，一定需要好的运营才能发挥价值。</p>
+<p>运营又有:</p>
+<ul>
+<li>内容运营</li>
+<li>用户运营</li>
+<li>市场运营</li>
+</ul>
 <h2 id="文档化"><a href="#文档化" class="headerlink" title="文档化"></a>文档化</h2><p>把一些关键的信息，进行统一存储在服务器上，简化协作沟通的成本。</p>
 <ul>
 <li>每日任务说明</li>
@@ -394,7 +402,26 @@
 </ul>
 <h2 id="scrum保持沟通"><a href="#scrum保持沟通" class="headerlink" title="scrum保持沟通"></a>scrum保持沟通</h2><p>每天组织的scrum，了解各个成员的工作计划。需要什么样的资源，确定什么样的目标等。</p>
 <h2 id="版本总结。"><a href="#版本总结。" class="headerlink" title="版本总结。"></a>版本总结。</h2><p>在重大节点完成后，进行一次大的总结。每个成员，通过自己的角度，评价协作中其他人员不足的地方，针对不足的地方进行优化。</p>
-<h1 id="扩展"><a href="#扩展" class="headerlink" title="扩展"></a>扩展</h1><h2 id="业务驱动技术进步"><a href="#业务驱动技术进步" class="headerlink" title="业务驱动技术进步"></a>业务驱动技术进步</h2><h3 id="mvvm-frp-clang-autoipa-profile-Umeng"><a href="#mvvm-frp-clang-autoipa-profile-Umeng" class="headerlink" title="mvvm , frp,clang,autoipa,profile,Umeng"></a>mvvm , frp,clang,autoipa,profile,Umeng</h3>
+<h1 id="个人的进步"><a href="#个人的进步" class="headerlink" title="个人的进步"></a>个人的进步</h1><h2 id="有挑战的工作，驱动进步"><a href="#有挑战的工作，驱动进步" class="headerlink" title="有挑战的工作，驱动进步"></a>有挑战的工作，驱动进步</h2><p>在接受直播项目的时候，都还没有毕业，经验有限。</p>
+<p>但是一整个流程走下来，学到了很多东西。主要谈学习的方法，具体的技术点更是数不过来了。</p>
+<p>总的来说有：</p>
+<ul>
+<li><code>查看issues</code>。工作中大量使用第三方库，直接去开源的项目下看issues,会得到很多有用的信息。</li>
+<li><code>参与开源</code>，发起pr。对使用到的饿了么网络库/来疯直播推流器/leanCloud的ChatKit，发起pr并被成功合并 : )</li>
+<li><code>自动化流程</code>尝试。由于频繁的打包，尝试用python脚本自动编译打包，上传到fir.im发邮件通知。并进一步了解到 <code>Travis CI</code>，能做初步使用。</li>
+<li><code>热修复技术</code>的使用。因为缺乏足够测试，总有些小问题，但是发版的时间成本太大，就学习了<code>JSPatch</code>的使用。</li>
+<li><code>响应式编程</code>了解。针对繁琐的业务逻辑，相对于面对对象，响应式编程更有优势，同时尝试mvvm的学习。以及了解RAC，和学习rxSwift。</li>
+<li><code>调试技能</code>。学会使用一些<code>lldb命令</code>，进行调试，输出视图层级，查看崩溃调用栈等;学习了解到<code>instruments</code>，学会检测内存泄露，让代码更加优化等。</li>
+</ul>
+<h2 id="思想的进步"><a href="#思想的进步" class="headerlink" title="思想的进步"></a>思想的进步</h2><ul>
+<li>保持成长—交流发现了各个领域的牛人。对照自己，还非常的年轻和不足</li>
+<li>协作的认识—产品不是单靠技术，需要各个角色一起完成</li>
+<li>严谨的思维—做产品，第一还需要理解产品的思维，和逻辑。针对各个情况，代码上进行处理和折中取舍等。</li>
+</ul>
+<blockquote>
+<p>本文参考文章:<br><a href="http://www.jianshu.com/p/d391a0069993" target="_blank" rel="external">《如何快速搭建一个完整的移动直播系统？》</a><br><a href="http://mp.weixin.qq.com/s?__biz=MzAxMzE2Mjc2Ng==&amp;mid=2652155243&amp;idx=1&amp;sn=a4e4178511cd58394058588e66be36c1&amp;scene=0#wechat_redirect" target="_blank" rel="external">《如何快速的开发一个完整的iOS直播app》</a></p>
+</blockquote>
+
       
     </div>
 
@@ -572,7 +599,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#技术"><span class="nav-number">2.</span> <span class="nav-text">技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#直播中，移动端的工作"><span class="nav-number">2.1.</span> <span class="nav-text">直播中，移动端的工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#推流端"><span class="nav-number">2.1.1.</span> <span class="nav-text">推流端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#采集"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">采集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#前处理"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">前处理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#美颜功能"><span class="nav-number">2.1.1.2.1.</span> <span class="nav-text">美颜功能</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编码"><span class="nav-number">2.1.1.3.</span> <span class="nav-text">编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#推流"><span class="nav-number">2.1.1.4.</span> <span class="nav-text">推流</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拉流端"><span class="nav-number">2.1.2.</span> <span class="nav-text">拉流端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#拉流"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">拉流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解码和渲染"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">解码和渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#秒开"><span class="nav-number">2.1.2.3.</span> <span class="nav-text">秒开</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务端"><span class="nav-number">2.2.</span> <span class="nav-text">服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CDN"><span class="nav-number">2.2.1.</span> <span class="nav-text">CDN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#负载均衡"><span class="nav-number">2.2.2.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QoS"><span class="nav-number">2.2.3.</span> <span class="nav-text">QoS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#产品-and-协作"><span class="nav-number">3.</span> <span class="nav-text">产品 and 协作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于产品设计"><span class="nav-number">3.1.</span> <span class="nav-text">关于产品设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运营"><span class="nav-number">3.2.</span> <span class="nav-text">运营</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文档化"><span class="nav-number">3.3.</span> <span class="nav-text">文档化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scrum保持沟通"><span class="nav-number">3.4.</span> <span class="nav-text">scrum保持沟通</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#版本总结。"><span class="nav-number">3.5.</span> <span class="nav-text">版本总结。</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#扩展"><span class="nav-number">4.</span> <span class="nav-text">扩展</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#业务驱动技术进步"><span class="nav-number">4.1.</span> <span class="nav-text">业务驱动技术进步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mvvm-frp-clang-autoipa-profile-Umeng"><span class="nav-number">4.1.1.</span> <span class="nav-text">mvvm , frp,clang,autoipa,profile,Umeng</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#技术"><span class="nav-number">2.</span> <span class="nav-text">技术</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#直播中，移动端的工作"><span class="nav-number">2.1.</span> <span class="nav-text">直播中，移动端的工作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#推流端"><span class="nav-number">2.1.1.</span> <span class="nav-text">推流端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#采集"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">采集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#前处理"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">前处理</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#美颜功能"><span class="nav-number">2.1.1.2.1.</span> <span class="nav-text">美颜功能</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#编码"><span class="nav-number">2.1.1.3.</span> <span class="nav-text">编码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#推流"><span class="nav-number">2.1.1.4.</span> <span class="nav-text">推流</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#拉流端"><span class="nav-number">2.1.2.</span> <span class="nav-text">拉流端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#拉流"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">拉流</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解码和渲染"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">解码和渲染</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#秒开"><span class="nav-number">2.1.2.3.</span> <span class="nav-text">秒开</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#服务端"><span class="nav-number">2.2.</span> <span class="nav-text">服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CDN"><span class="nav-number">2.2.1.</span> <span class="nav-text">CDN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#负载均衡"><span class="nav-number">2.2.2.</span> <span class="nav-text">负载均衡</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QoS"><span class="nav-number">2.2.3.</span> <span class="nav-text">QoS</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#产品-and-协作"><span class="nav-number">3.</span> <span class="nav-text">产品 and 协作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#关于产品设计"><span class="nav-number">3.1.</span> <span class="nav-text">关于产品设计</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#运营"><span class="nav-number">3.2.</span> <span class="nav-text">运营</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#文档化"><span class="nav-number">3.3.</span> <span class="nav-text">文档化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scrum保持沟通"><span class="nav-number">3.4.</span> <span class="nav-text">scrum保持沟通</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#版本总结。"><span class="nav-number">3.5.</span> <span class="nav-text">版本总结。</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#个人的进步"><span class="nav-number">4.</span> <span class="nav-text">个人的进步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#有挑战的工作，驱动进步"><span class="nav-number">4.1.</span> <span class="nav-text">有挑战的工作，驱动进步</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思想的进步"><span class="nav-number">4.2.</span> <span class="nav-text">思想的进步</span></a></li></ol></li></ol></div>
             
           </div>
         </section>
