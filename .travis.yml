@@ -1,0 +1,26 @@
+language: node_js
+node_js: stable
+#- "4"  # nodejs的版本
+branches:
+  only:
+  - dev  # 设置自动化部署的源码分支
+before_install:
+- export TZ='Asia/Shanghai'  # 设置时区
+- npm install -g hexo
+- npm install -g hexo-cli
+before_script:
+# 设置github账户信息
+- git config --global user.name "zzgo" #设置github用户名
+- git config --global user.email "zzgoCC@gmail.com" #设置github用户邮箱
+# github仓库操作
+- sed -i'' "s~git@github.com:zzgo/zzgo.github.io.git~https://${REPO_TOKEN}:x-oauth-basic@github.com/zzgo/zzgo.github.io.git~" _config.yml
+# 安装依赖组件
+install:
+- npm install
+# 执行的命令
+script:
+- hexo clean
+- hexo generate
+# 执行的成功后执行 
+after_success:
+- hexo deploy
