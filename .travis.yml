@@ -2,7 +2,7 @@ language: node_js
 node_js: stable
 branches:
   only:
-  - dev
+  - Dev 
 before_install:
 - export TZ='Asia/Shanghai'
 - npm install -g hexo
