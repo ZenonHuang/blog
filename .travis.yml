@@ -1,26 +1,24 @@
 language: node_js
 node_js: stable
-#- "4"  # nodejs的版本
 branches:
   only:
-  - dev  # 设置自动化部署的源码分支
+  - dev
 before_install:
-- export TZ='Asia/Shanghai'  # 设置时区
+- export TZ='Asia/Shanghai'
 - npm install -g hexo
 - npm install -g hexo-cli
 before_script:
-# 设置github账户信息
-- git config --global user.name "zzgo" #设置github用户名
-- git config --global user.email "zzgoCC@gmail.com" #设置github用户邮箱
-# github仓库操作
-- sed -i'' "s~git@github.com:zzgo/zzgo.github.io.git~https://${REPO_TOKEN}:x-oauth-basic@github.com/zzgo/zzgo.github.io.git~" _config.yml
-# 安装依赖组件
+- git config --global user.name "zzgo"
+- git config --global user.email "zzgoCC@gmail.com"
+- sed -i'' "s~git@github.com:zzgo/zzgo.github.io.git~https://${REPO_TOKEN}:x-oauth-basic@github.com/zzgo/zzgo.github.io.git~"
+  _config.yml
 install:
 - npm install
-# 执行的命令
 script:
 - hexo clean
 - hexo generate
-# 执行的成功后执行 
 after_success:
 - hexo deploy
+env:
+  global:
+    secure: Y4TzSNl+GZIxyVRUd4Lhh97pFbZBhgRil7pgfd4vlJt+9fIh8DZAHmxBfE5DCkrKIbM+ur4/kc/r0hiOoXtkiPlHKLabsav98G0UynFzPAHjP6FYepT/7wuLCGdXaT9gUDLsJJ0DLirb26D//i3aVR1xRzu372aRyAVg5KFquTkCSTue94/ZQq6i/RMaK6oyspxBclZYbNzqHTgbtvO2nhjLZYH2Q6ajQvrIBZe1T2xwAgQUNLOAqnUlJVC6nmb8MlVdRv2Wl0zCR4/op3LuWO6UARaQePasH+pJT9DbRUo1NxFxqJofxBWBmQZ5K7GLUw1cKvLM1VAvbx16tA3nflHkt3GS9jIjxYKFAo/wFHkuR/e16hTXyR2BDC88r6ypXvNh/tfsIMVZhqFO+FRcmun+75dYxwdrA33I33l3sAbftDLiByUhVEbwHxs/QCVZGfS7gCVsZF13aziP4pYrRjlTqK3IKDQG1xnJZjB7YfzBT40i7cqJefpINs/LA6EsDgiuCNJ1wn6laqGoPz2go5MB3qGJsJKV0meI7+JN0od6SsOZq6NSDvnz6yagypV7K8ihNoBgh5RtLwt2GiFTyiErPS0arUfJRLLcqGV3uBl1lZUevJa4XI8FJFoh8myzC0FinBXX7BoGkXiF3hcIMaAImukJMIy2qxHEMtflh+8=
