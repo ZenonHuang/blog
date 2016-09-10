@@ -9,6 +9,7 @@ before_install:
 - export TZ='Asia/Shanghai'
 - npm install -g hexo
 - npm install -g hexo-cli
+- npm install -g minimatch@3.0.2
 - npm install hexo@beta --save
 
 install:
