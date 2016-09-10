@@ -67,8 +67,8 @@ plugins:
 - hexo-renderer-stylus
 ## Themes: https://hexo.io/themes/
 #theme: pacman
-theme: next
-#theme: landscape
+#theme: next
+theme: landscape
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
