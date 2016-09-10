@@ -1,8 +1,8 @@
 language: node_js
 node_js:
- # - '6.0'
+  - '0.12.5'
  # - stable
-  - '5.8'
+ # - '5.8'
 
 branches:
   only:
