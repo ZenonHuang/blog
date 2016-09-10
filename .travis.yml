@@ -16,6 +16,7 @@ before_install:
 #- npm install hexo-renderer-stylus --save
 #- npm install -g minimatch@3.0.2
 #- npm install hexo@beta --save
+- npm install hexo-deployer-git --save
 
 install:
 - npm install
