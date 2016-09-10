@@ -8,7 +8,7 @@ branches:
 before_install:
 - export TZ='Asia/Shanghai'
 #- npm install -g hexo
-- npm install hexo@3.0.0 -g
+- npm install hexo@3.2.0 -g
 - npm install -g hexo-cli
 #- npm install hexo-renderer-stylus --save
 #- npm install -g minimatch@3.0.2
