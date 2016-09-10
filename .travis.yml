@@ -1,24 +1,25 @@
 language: node_js
 node_js: stable
+
 branches:
   only:
   - Dev
+  
 before_install:
 - export TZ='Asia/Shanghai'
 - npm install -g hexo
 - npm install -g hexo-cli
-#before_script:
-#- git config --global user.name "zzgo"
-#- git config --global user.email "zzgoCC@gmail.com"
-#- sed -i'' "s~git@github.com:zzgo/zzgo.github.io.git~https://${REPO_TOKEN}:x-oauth-basic@github.com/zzgo/zzgo.github.io.git~"
-#  _config.yml
+
 install:
 - npm install
+- npm update clean-css
+
 script:
 - git submodule init
 - git submodule update
 - hexo clean
 - hexo generate
+
 after_success:
 - git config --global user.name "zzgo"
 - git config --global user.email "zzgoCC@gmail.com"
