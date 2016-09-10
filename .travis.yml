@@ -9,6 +9,7 @@ before_install:
 - export TZ='Asia/Shanghai'
 - npm install -g hexo
 - npm install -g hexo-cli
+- npm install hexo@beta --save
 
 install:
 - npm install
