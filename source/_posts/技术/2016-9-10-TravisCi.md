@@ -167,13 +167,13 @@ Hexo 是一个快速、简洁且高效的博客框架。Hexo 使用 Markdown（�
 
 >[Hexo官方文档](https://hexo.io/zh-cn/docs/#安装)
 
-## Hexo主题使用submodule
+## submodule形式管理hexo主题
 
 这里我假设大家已经完成了hexo的安装和使用，可以自己切换主题了。
 
 由于
 
-## 配置文件
+## 配置文件版本踩坑
 
 test
 
