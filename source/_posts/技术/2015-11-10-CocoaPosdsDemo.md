@@ -1,13 +1,13 @@
 ---
 layout: post
-title: IOS工具--CocoaPods
+title:  iOS工具--CocoaPods
 date: 2015-11-10
 category: 技术
 tags: 实习工作
-keywords: ios
-description: ios日常工具
+keywords: cocoapods
+description: iOS第三方包管理工具
 ---
-#前言
+# 前言
 学习ios的时间很短，从第一次开始，就接触了对于我来说，很庞大的项目。感谢严哥的信任。
 
 它的界面美观，功能齐全，用户众多。
@@ -19,7 +19,7 @@ description: ios日常工具
 
 很有幸，经过一个大项目，我学会了自己从网上（更多是直接在github）寻找库。
 
-#使用CocoaPods的原因
+# 使用CocoaPods的原因
 目前我负责开发公司实验型的一个app，从基础界面，到主要功能，都要我自己去慢慢做的话，无疑要用到库。
 
 而且越到后期，我估计使用的库也会越多。
@@ -34,7 +34,7 @@ CocoaPods的使用，可以大大节省我们的时间。
 
 4.管理这些依赖包的更新
 
-#安装CocoaPods
+# 安装CocoaPods
 今天我自己做安装的时候，遇到了几点问题：
 
 1.ruby的软件源问题
@@ -43,7 +43,7 @@ CocoaPods的使用，可以大大节省我们的时间。
 
 为了避免这些问题，我建议大家直接先更新ruby的源，再升级一次gem.做完这些工作以后，我相信安装的问题应该不大了。
 
-##ruby源替换
+## ruby源替换
 一，移除原来官方的ruby源：
 
 	gem sources --remove https://rubygems.org/
@@ -67,13 +67,13 @@ CocoaPods的使用，可以大大节省我们的时间。
 
 	https://ruby.taobao.org/
 	
-##gem升级
+## gem升级
 gem升级非常简单，在更换源之后，访问的限制也不存在，相信速度也非常快。只要输入如下代码：
 
 	sudo gem update --system
 
 最后出现“RubyGems system software updated”，即为成功。
-##使用ruby的gem命令下载安装
+## 使用ruby的gem命令下载安装
 相信你已经迫不及待了，它的安装方式异常简单:
 
 	sudo gem install cocoapods
@@ -84,9 +84,23 @@ gem升级非常简单，在更换源之后，访问的限制也不存在，相�
   	
 只要按照顺序，输入两行代码就能ok。不过在pod setup之后，还需要耐心等待一会。出现“Setup completed”就可以结束。
 
-#在项目里使用CocoaPods
+### 报错
+在我换了新的mac后，安装时，出现如下错误提醒：
 
-##Podfile
+```
+ERROR:  Error installing cocoapods:
+	activesupport requires Ruby version >= 2.2.2.
+```
+意思是ruby的版本不够。
+使用homebrew升级：
+```
+brew install ruby
+```
+升级完毕后，重新执行cocoaPods安装命令。
+
+# 在项目里使用CocoaPods
+
+## Podfile
 Podfile是使用CocoaPods的关键文件。
 
 一，新建一个ios项目
@@ -143,3 +157,4 @@ Podfile是使用CocoaPods的关键文件。
 现在就可以import一下，来使用我们的库了。
 
 >本书参考：《ios开发进阶》电子工业出版社
+
