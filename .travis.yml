@@ -1,33 +1,21 @@
 language: node_js
-node_js:
- # - '0.12.5'
- # - stable
- # - '5.8'
-
+node_js: 
 branches:
   only:
   - Dev
-  
 before_install:
 - export TZ='Asia/Shanghai'
 - npm install -g hexo
-#- npm install hexo@3.2.0 -g
 - npm install -g hexo-cli
-#- npm install hexo-renderer-stylus --save
-#- npm install -g minimatch@3.0.2
 - npm install hexo@beta --save
 - npm install hexo-deployer-git --save
-
 install:
 - npm install
-#- npm update clean-css
-
 script:
 - git submodule init
 - git submodule update
 - hexo clean
 - hexo generate
-
 after_success:
 - git config --global user.name "zzgo"
 - git config --global user.email "zzgoCC@gmail.com"
@@ -36,4 +24,4 @@ after_success:
 - hexo deploy
 env:
   global:
-    secure: YQkPNZU3EnjfHDZpxnQAa0/s7aohcBNpx8WIE0A8QS91ZnxYBx5yVjRPKtzkgbqCXOxMWvl8k715MW+4mAuy0R4USjYnqRUd2BisJF0NhQUl0uJwi/QgsrmPrWpajWiUeL2X9SbZDnccf4zJ9DIyKU8u328zv6xNteVrd5LFqaFaViSXmjrKgREYDbDO4aMcgQiM3U3yQppcHQEzEFkhbuUNPvHuVCo7e8qp6qrVlj/u693zWlilIHwMtGSMQoCkuXVMz+r53vjitwpciE1eX6NCUf+atxzRZ6fd2EIpVhncenW9xNrif4FSewOCMTpCQok2Yln1jfJ5lfKyrIYoPz7eGjOuVMDvypdlD5yuaHiughkSoFveDfjduWutYrCJnwxGXEr89WevX1sAwpefwScpZiHunhwsdC52qWwZ7309wWNalnrmLFEisCHXEjWZxA8skvhGrLanAtrWzcwdIQOaNRstgY/z50jz2kDAwkCVM1QrfWrQ8Lkb9DLlBwu7fPTu4YEMMIO7tXsBBjKHaoH60kJm2CB3JlYk1F+7NGyCcJ8NLDiHRwrJ3dlaCCN7+4Jj6QwSFNPxkO0ESGlGSYHVg5/J877r7qlDW5SlcymnII9pyXivw+pj1Ho4CyJMvu37gMsJjWrWtr1NOLDM4IKeea7wrH2DnCfNWN2wM8M=
+    secure: Hf3ouo8BV9jlnKsZyuF+e5wnOvm7cU/ESkXFucaTHCIIzCXaJG+sYKeaYthOqTy2H+DJ+c0ELm95sUDaTmbLWtz5kg2weKP7zwVNeNokYwyKvHGETULYLYFQFPMuBV9IAGr+rbiE2SfHXTeoncSftv11dcQk1AkoUNljvDKq4+sMrDPP7qo2c6XwnWzdivGPFktTL8VmuOJ2+JKzZh/wShAbxy0pu3zEySZl7zRyLwlzNzj1fHKwexSZGDmZaYfMLMtxcLl/2wnbeL12o1jKeC6EAhcOzl8uHj4ADkeHZtcYS+uJSLbyg1SaxwOrzSmTIkXrYne3wyqM65QixrldJFOx+OK18kfAaxXvVybu7oidnjFBhaAnpybjz9aasnIAwGVU7qBZpiPJZrgLSNP1JO8lfwKzaJm1GGvcrwy0HgZXgKMrJEVPGxWxG5NKrPnybkYz36tvlz/PRmK8X78K1NHB0YO8pcy8nsZIvT59Xf8krHhuTV6IeRQCYoRa893ueYdcCk13rk1TD6R4tKmy/rSxEV6GExw49mmTyDpYqPti3J9NiqnxWCsaFi/4bdmLFnt80+2SU72mqaY+fSvUGzoFtKjqd919YsLe1e9gHoFjholbzFfK3GD+QR8eEQdKfxzE3467JiDwyZvc97O3pDboOYcwcPYLnBYTKrmyO3E=
