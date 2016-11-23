@@ -1,13 +1,13 @@
 ---
 layout: post
-title: IOS开发--自定义TableView
+title: iOS开发--自定义TableView
 date: 2015-10-14
 category: 技术
 tags: 实习工作
-keywords: ios
+keywords: iOS
 description: tableView进阶
 ---
-# ios--自定义TableView
+# iOS--自定义TableView
 一般情况来说，我们要对TableView做自定义的话。可以采用两种基本方法：
 
 1.在创建TableViewCell时，通过程序，向UITableViewCell添加子视图。
@@ -233,3 +233,4 @@ description: tableView进阶
 本文参考资料：
 
 >《精通IOS开发（第六版）》人民邮电出版社
+

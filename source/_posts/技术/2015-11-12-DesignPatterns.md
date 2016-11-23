@@ -4,8 +4,8 @@ title: iOS设计模式(一)
 date: 2015-11-12
 category: 技术
 tags: 实习工作
-keywords: ios,设计模式
-description: object-c,ios,设计模式
+keywords: iOS,设计模式
+description: object-c,iOS,设计模式
 ---
 #为什么学习设计模式
 在明白为什么学习设计模式之前，这学期我第一次在学校上了软件工程这门课。
@@ -113,3 +113,4 @@ MVC模式包含了若干更加基本的设计模式。在Cocoa(Touch)的MVC有:
 参考:
 
 >《Object-C编程之道（iOS设计模式解析）》人民邮电出版社
+

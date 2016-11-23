@@ -3,7 +3,9 @@ layout: post
 title: python urllib2使用（用于解决web跨域访问）
 date: 2015-09-24
 category: 技术
-tags: 实习工作
+tags: 
+- 实习工作
+- python
 keywords:
 description: 在实习时用python做内部使用的小工具，碰到的问题
 ---

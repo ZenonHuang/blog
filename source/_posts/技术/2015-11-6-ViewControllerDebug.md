@@ -1,11 +1,11 @@
 ---
 layout: post
-title: IOS开发--自定义Debug文件
+title: iOS开发--自定义Debug文件
 date: 2015-11-06
 category: 技术
 tags: 实习工作
-keywords: ios
-description: ios日常工具
+keywords: iOS
+description: iOS日常工具
 ---
 
 今天介绍一段代码，用于在执行程序的时候，显示控制器的名称。
@@ -50,3 +50,5 @@ description: ios日常工具
 
 
  
+
+

@@ -4,8 +4,8 @@ title: Xcode插件
 date: 2015-11-15
 category: 技术
 tags: 实习工作
-keywords: ios
-description: ios日常工具
+keywords: iOS
+description: iOS日常工具
 ---
 在日常开发中，使用合适的插件，可以提高开发的效率。让我们更集中精力在处理代码的逻辑上。
 
