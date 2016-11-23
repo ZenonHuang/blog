@@ -1,7 +1,7 @@
 ---
 layout: post
 date: 2016-08-25 23:50:46
-title: 安装zsh替代bash
+title: [TODO]安装zsh替代bash
 category: 技术
 tags: 资料
 keywords: iOS
