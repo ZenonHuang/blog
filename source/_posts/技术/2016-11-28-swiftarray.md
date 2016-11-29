@@ -7,16 +7,16 @@ tags:
 - 资料
 - swift
 keywords: swift
-description: 得到crash文件，分析崩溃日志
+description: Map/FlatMap/Filter/Reduce
 ---
 
 # swift数组
 
-##Map
+## Map
 
-##FlatMap
+## FlatMap
 
-##Filter
+## Filter
 
-##Reduce
+## Reduce
 
