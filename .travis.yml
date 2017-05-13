@@ -19,9 +19,9 @@ script:
 after_success:
 - git config --global user.name "zzgo"
 - git config --global user.email "zzgoCC@gmail.com"
-- sed -i'' "s~git@github.com:zzgo/zzgo.github.io.git~https://${REPO_TOKEN}:x-oauth-basic@github.com/zzgo/zzgo.github.io.git~"
+- sed -i'' "s~git@github.com:zernonhuang/zzgo.github.io.git~https://${REPO_TOKEN}:x-oauth-basic@github.com/zernonhuang/zzgo.github.io.git~"
   _config.yml
 - hexo deploy
 env:
   global:
-    secure: t7rvJ7v4+An2rh1RXInxtQ7YIUfMKNfJhkPgBc1voCeC3JpRQ+U2SyRK6pj9XASgue2AXTwGRoaruIkhpvSzWOE4QTia493gC9qtGZoKoRnOrHMA1xUT/Ws9/6O7jgvBCvE8/QXeU91ZVISPQisAH5qZnF66H+BsZ1CRmE8zTS+EQGcTarNMUyCmA60C8YfuPzK4kGcrE8/+fXCW83sXOLvqrn+K+fCQAUoJzqYUMD7mHC7HQpyLkAs1FUeEc2jEENfydIbBkXdU77LxcsGtPvrHI9TjT9YxR9izh+bxJKFAH3ioFefpEUvt6VVYwRjkIbYvmVhJ5upRdWpMsFeBLXM/B4ukSTecHL8rzb1OoMZtD50r4JADgX/qJ0U0UWfXpXFwUErRoSWGSlzwOOsqc/WUY7Ly4pN8xj+R7uZezX49Uk8UdsTQVPl+BAjMzbFeP5gVytrR/GhvOhAXmHAcoaNTNLu4JKF4EfpwmPUvAcWxvQzwMsxd6qWgV8f8U/OfnFanHH4VGwxKnlzAmmfL/PXY4olzwVCqp5tmDsW50VO/+QHyEQyMsvS30BYuQkIZZCKpFbWpKhREQUgQakC2fWaRi8VPQ4eP2G8b5yWl10F0EPyQ2HWExAZ9KhH1f2ILu3ADoexFD7UP9t4plN9F1KmWBjphTJL4zfoNJS1qziQ=
+  - secure: o6UFDTzOWgSiubKvGvu9iOWh2PCzC+Lcue67ViWn4kb/ZwHBFRY+axgyRMxGxglZ8WaGurENYHVzJBLs66Cpnzy3p+d3RRbidO9HLBW+SNUBJ0JXDev/3tfXUvey5FUaUnkyjhXiqkkkJLjGfwDWfWXpemsuZTWWP1e1lo/aGwTJjnmzsVYJGHr9CPitkKx7w00D+Bi1Ck6M+LAaxJ50pzZDHzj6cZs/D4HQDjRKd/gsFZGoC23N7epuPJYIvSlVTLGmZAW2JYth0C++7c2igi0rJ59s0PU2QotJmDREZs4DWMKTnmVOiHvEU6qWiCrdE/hux4NxrT4FwpH2r6bFBcqGup1wZTfewdg/yl8+YajWQKkzZS8BWz6sHLY8OkDvilnAefDQdKSy486tCiRuPb0rv5YnusREGTiqlQ3L4b/R30yCO1711h/HUWRCLFTCjAk/7bewl+Lb+PEzdATHFmyYtSVxRtWZnA+jjgbStS2o+KL/Oamt6MPistmuzGzm7bjT1Gz0qFfaDy7wzksnkeMPmmq7Mjsh3UUxyEgIFPn+XrQLgyyCOpSCQEXwBEZzufS+/Nkl5ABbHkOEOgXXCqKEnL2s50t7zjRFOzSFHGhjHM9vmS00XeUB5LH6UDf5H25CDVhoyYqlvWIUy4Aay2ERdYM/OVsEocUjitYHzqE=
