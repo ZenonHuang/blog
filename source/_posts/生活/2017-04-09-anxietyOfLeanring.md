@@ -2,7 +2,7 @@
 layout: post
 date: 2017-04-09 22:52:46
 title: 关于学习的焦虑感 
-category: 生活
+category: life
 tags: 
 - 学习
 keywords: 学习
