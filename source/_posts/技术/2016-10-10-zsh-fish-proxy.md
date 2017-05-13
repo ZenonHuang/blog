@@ -2,7 +2,7 @@
 layout: post
 date: 2016-08-25 23:50:46
 title: [TODO]安装zsh替代bash
-category: 技术
+category: technology
 tags: 资料
 keywords: iOS
 description: 打造更加效率的shell(附送terminal科学上网种子)
