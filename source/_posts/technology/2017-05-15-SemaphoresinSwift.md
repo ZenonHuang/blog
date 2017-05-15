@@ -1,7 +1,7 @@
 ---
 layout: post
 date: 2017-05-15 10:50:46
-title: Swift 中的信號量
+title:  (轉)Swift 中的信號量
 category: 技术
 tags: 
 - 资料
@@ -11,10 +11,13 @@ description: 转自简书Arco翻译的文章
 ---
 # (譯) Swift 中的信號量 🚦
 
-作者 [Arco_vv](http://www.jianshu.com/u/07d93406ec39) 
-
+作者 [Arco_vv](http://www.jianshu.com/u/07d93406ec39)   
+[简书链接](http://www.jianshu.com/p/f191383473ba) 
 
 > [原文在此](https://medium.com/swiftly-swift/a-quick-look-at-semaphores-6b7b85233ddb)，并經由[作者](https://medium.com/@zntfdr)的同意，擁有翻譯的權利。
+
+
+
 
 首先，如果你對 GCD 或者是隊列調度 (Dispatch Queue) 不夠熟悉，請先讀下這篇來自 [AppCoda](https://medium.com/@appcodamobile) 的[好文章](http://www.appcoda.com/grand-central-dispatch/)。
 
