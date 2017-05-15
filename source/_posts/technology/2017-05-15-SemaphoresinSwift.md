@@ -7,7 +7,7 @@ tags:
 - 资料
 - swift
 keywords: swift
-description: Swift进阶知识，Swift 中的信號量
+description: 转自简书Arco翻译的文章
 ---
 # (譯) Swift 中的信號量 🚦
 
