@@ -11,6 +11,8 @@ description: 使用CoreImage完成基础的滤镜功能，和实时的视频滤�
 ---
 # CoreImage介绍
 
+test
+
 # 基础滤镜使用
 
 # 滤镜链
