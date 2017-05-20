@@ -7,9 +7,14 @@ tags:
 - 资料
 
 keywords: 滤镜
-description: 使用Core Image完成基础的滤镜功能，滤镜链，视频实时滤镜，人脸贴图
+description: 使用 Core Image 完成基础的滤镜功能，滤镜链，视频实时滤镜，人脸贴图
 ---
-# CoreImage滤镜实践
+
+
+
+# Core Image 滤镜实践
+
+![detecotr](http://7xiym9.com1.z0.glb.clouddn.com/detectorEye.gif?imageView2/4/w/300)
 
 最近因为项目需求,接触了Core Image,实现了实时抠图,人脸贴纸。
 
@@ -17,7 +22,7 @@ description: 使用Core Image完成基础的滤镜功能，滤镜链，视频实
 
 相关代码上传在 [GitHub](https://github.com/ZernonHuang/HZImageFilter)
 
-## CoreImage介绍
+## Core Image 介绍
 
 以下是[苹果官方文档](https://developer.apple.com/library/content/documentation/GraphicsImaging/Conceptual/CoreImaging/ci_intro/ci_intro.html)给出 Core Image 的介绍：
 
