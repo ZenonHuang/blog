@@ -1,7 +1,7 @@
 ---
 layout: post
 date: 2017-06-01 10:25:00
-title: 创建私有 CocoaPods 的仓库
+title: 私有 CocoaPods 的仓库
 category: 技术
 keywords: iOS
 description: 公司内部做组件化，采用 CocoaPods 作为管理依赖的工具
@@ -241,5 +241,18 @@ source 'git@github.com:MediatorDemoRepo/PrivatePods.git'
 ```
 
 
-# 更新 / 删除 Pod 
+# 删除和更新
+
+## 删除 Pod  Repo
+
+```
+pod repo remove RepoName
+```
+
+## 更新 Pod  Repo
+
+```
+pod repo update RepoName
+```
+
 
