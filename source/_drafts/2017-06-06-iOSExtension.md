@@ -7,20 +7,28 @@ keywords: iOS
 description: iOS 上进行 VPN 连接
 ---
 
-# 代理通信原理
+本文只讨论技术，而不做它用，坚决维护和拥戴国家的政策。
 
-## Shadowsocks 源码分析——协议与结构
+# 通信原理
+
+## 科学上网为什么可以成功
+
+### 原本的上网姿势
+
+### 加入 GFW 的上网姿势
+
+### SSH 通道
+
+### 改造 SSH 后的 Shadowsocks
 
 ![vpn_shadowshocks](http://7xiym9.com1.z0.glb.clouddn.com/vpn_ss_socks5.png)
 
-### 协议对比
 
-目前我们常用的加密代理有协议有 HTTPS，SOCKS5-TLS 和 shadowsocks,此文从各个角度简单分析各个协议的优劣，以帮助各位选择合适的协议。
-先简单说些背景知识，以上协议都是基于 TCP 的代理协议，代理协议（Proxy Procotol）与 VPN 不同，仅可被用于通过代理服务器转发 TCP 连接（shadowsocks 支持代理 UDP），而 VPN 可被用于 IP 层上的所有协议，如 TCP、UDP、ICMP 等。所以在使用代理时，ping 等 ICMP 应用是不可以被代理的。
+## Shadowsocks 分析
 
-# 实现
+### 基础知识
 
-## ****TCP/IP 协议栈
+#### TCP/IP 协议栈
 
 TCP/IP网络协议栈分为应用层（Application）、传输层（Transport）、网络层（Network）和链路层（Link）四层
 
@@ -33,6 +41,54 @@ TCP/IP网络协议栈分为应用层（Application）、传输层（Transport）
 这些协议最早发源于美国国防部的DARPA互联网项目。
 TCP/IP字面上代表了两个协议:TCP传输控制协议和IP互联网协议。 
 
+#### Socket5协议 
+
+首先介绍一下socks5协议： SOCKS协议位于传输层(TCP/UDP等)与应用层之间，其工作流程为：
+
+1. client向proxy发出请求信息，用以协商传输方式
+2. proxy作出应答
+3. client接到应答后向proxy发送目的主机（destination server)的ip和port
+4. proxy评估该目的主机地址，返回自身IP和port，此时C/P连接建立。
+5. proxy与dst server连接
+6. proxy将client发出的信息传到server，将server返回的信息转发到client。代理完成
+
+##### 握手阶段
+
+##### 建立连接
+
+##### 传输阶段
+
+
+### 协议与结构
+
+
+### 加密代理协议的简单对比
+
+目前我们常用的加密代理有协议有 HTTPS，SOCKS5-TLS 和 shadowsocks,此文从各个角度简单分析各个协议的优劣，以帮助各位选择合适的协议。
+先简单说些背景知识，以上协议都是基于 TCP 的代理协议，代理协议（Proxy Procotol）与 VPN 不同，仅可被用于通过代理服务器转发 TCP 连接（shadowsocks 支持代理 UDP），而 VPN 可被用于 IP 层上的所有协议，如 TCP、UDP、ICMP 等。所以在使用代理时，ping 等 ICMP 应用是不可以被代理的。
+
+#### TLS
+
+TLS 又名 SSL，是针对数据流的安全传输协议。简单来说，一个 TCP 链接，把其中原本要传输的数据，按照 TLS 协议去进行加密传输，那么即可保证其中传输的数据安全。
+
+明文的 HTTP 套上一层 TLS，也就变成了 HTTPS，SOCKS5 套上 TLS，就变成了 SOCKS5-TLS。TLS 协议是整个互联网安全的基石，几乎所有需要安全传输的地方都使用了 TLS，如银行、政府等等。
+
+#### shadowsocks 
+
+
+
+# iOS 客户端实现 
+
+## Proxy Server
+
+## DNS Client
+
+## TUN Interface
+
+用 TUN 处理请求会有一些问题，最大的问题是，由 TUN Interface 处理的流量，DOMAIN 相关的 Rule 会无效，除非使用了 force-remote-dns 选项。
+
+这是由 TCP/IP 协议的特性所决定的，App 会先发出一个 DNS question，获取要连接的服务器的 IP 地址，然后直接向这个 IP 地址发起连接
+
 ## local server
 
 Now we can start a HTTP/SOCKS5 proxy server locally.
@@ -42,9 +98,9 @@ let server = GCDHTTPProxyServer(address: IPv4Address(fromString: "127.0.0.1"), p
 try! server.start()
 ```
 
-# iOS Extension
+## iOS Extension
 
-# Extension 调试  
+### Extension 调试  
 
 # 参考
 
@@ -54,7 +110,7 @@ try! server.start()
 
 [Shadowsocks 源码分析——协议与结构](https://loggerhead.me/posts/shadowsocks-yuan-ma-fen-xi-xie-yi-yu-jie-gou.html)
 
-[各种加密代理协议的简单对比](https://medium.com/@Blankwonder/%E5%90%84%E7%A7%8D%E5%8A%A0%E5%AF%86%E4%BB%A3%E7%90%86%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94-1ed52bf7a803)
+[各种加密代理协议的简单对比--surge作者](https://medium.com/@Blankwonder/%E5%90%84%E7%A7%8D%E5%8A%A0%E5%AF%86%E4%BB%A3%E7%90%86%E5%8D%8F%E8%AE%AE%E7%9A%84%E7%AE%80%E5%8D%95%E5%AF%B9%E6%AF%94-1ed52bf7a803)
 
 [TCP/IP、Http、Socket的区别](http://lib.csdn.net/article/computernetworks/20534)
 
