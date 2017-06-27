@@ -7,7 +7,7 @@ keywords: iOS
 description: iOS 上进行 VPN 连接
 ---
 
-本文只讨论技术，而不做它用，坚决维护和拥戴国家的政策。
+本文只讨论技术，而不做它用，坚决遵守国家的政策 ： )
 
 # 通信原理
 
@@ -15,13 +15,37 @@ description: iOS 上进行 VPN 连接
 
 ### 原本的上网姿势
 
-### 加入 GFW 的上网姿势
+如图，在 GFW 出现之前，我们访问各种网站是这样的：
 
-### SSH 通道
+1.  用户的请求通过互联网发送到服务提供方
+2.  服务提供方直接将信息反馈给用户
+
+![ss_pre_pc2server](http://7xiym9.com1.z0.glb.clouddn.com/ss_pre_pc2server.png)
+
+
+
+### 加入 GFW 之后的上网姿势
+
+![ss_gfw_pc2server](http://7xiym9.com1.z0.glb.clouddn.com/ss_gfw_pc2server.png)
+
+- 加入 GFW 之后，它就像一道墙一样，对信息作筛选和过滤。 request1 / response1 之类的被允许的内容，可以继续通行。
+- 而 request2 之类的请求则会被拒绝，收到 Connection Reset 这样的响应内容，而像 谷歌／脸书 一类的网站将永不能被 GFW 内的 PC 访问。
+
+### SSH Tunnel
+
+因为SSH本身基于RSA加密技术，所以GFW就无法对数据传输过程加密的数据进行分析，从而避免被重置链接、阻断、屏蔽等问题。
+
+由于在创建SSH隧道的过程中有较为明显的特性，所以GFW还是可以通过分析连接的特性进行干扰。
+
+SOCKS5 协议作为一个同时支持 TCP 和 UDP 的应用层协议（RFC 只有短短的 7 页），因为其简单易用的特性而被 shadowsocks 青睐。我们先从 SOCKS5 协议入手，一点一点剖析 shadowsocks。
+
+SOCKS5 协议只负责建立连接，在完成握手阶段和建立连接之后，SOCKS5 服务器就只做简单的转发了
+
 
 ### 改造 SSH 后的 Shadowsocks
 
 ![vpn_shadowshocks](http://7xiym9.com1.z0.glb.clouddn.com/vpn_ss_socks5.png)
+
 
 
 ## Shadowsocks 分析
