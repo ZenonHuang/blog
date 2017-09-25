@@ -35,15 +35,27 @@ description: 最近工作使用 CAAnimation ,它的代理为 strong ，使用 YY
      @end
  */
 ```
-YYWeakProxy 是用来弱引用对象的代理，避免强引用循环。
+YYWeakProxy 是用来持有一个 weak 对象的代理，避免循环引用。
+
+这里引用链是：
+
+>self -> timer -> proxy -> target (self)
+
+由于 target 为弱应用，当 self 引用计数为 0 时, target 将为 nil, 于是打破了引用链。
 
 ## NSProxy
 
 YYWeakProxy 继承于 NSProxy. NSProxy 是什么？
 
+
 ## 实现
 
-一旦 target 被释放,会走消息转发的方法
+以开头的场景为例子,当发送消息时,proxy 的方法列表里找不到 tick: ,就会开始走消息转发。
+
+### 消息转发机制
+
+
+//一旦 target 被释放,会走消息转发的方法
 
 ```
 - (void)forwardInvocation:(NSInvocation *)invocation {
@@ -57,6 +69,7 @@ YYWeakProxy 继承于 NSProxy. NSProxy 是什么？
     return [NSObject instanceMethodSignatureForSelector:@selector(init)];
 }
 ```
+
 
 ### setReturnValue
 
