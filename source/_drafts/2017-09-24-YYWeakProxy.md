@@ -68,6 +68,8 @@ NSProxy 是除了NSObject之外的另一个基类。同时它也是一个抽象�
 
 ## NSProxy 多继承
 
+### TODO 多继承
+
 ## 实现
 
 YYWeakProxy 作为 NSProxy 的子类， **`必须`**实现 forwardInvocation: methodSignatureForSelector: 方法进行对象转发，这是在苹果官方文档中说明的。
@@ -75,6 +77,54 @@ YYWeakProxy 作为 NSProxy 的子类， **`必须`**实现 forwardInvocation: me
 以开头的场景为例子,当发送消息时,proxy 的方法列表里找不到 tick: ,就会开始走消息转发。
 
 ### 消息转发机制
+
+当对象接受到无法响应的消息时，就会进入消息转发(message forwarding)的流程。
+
+
+
+#### 转发流程
+
+##### Dynamic Method resolution
+
+第一阶段，先征询消息接收者所属的类，看其是否能动态添加方法，以处理当前这个无法响应的 selector，这叫做 动态方法解析（dynamic method resolution）。
+
+如果运行期系统（runtime system） 第一阶段执行结束，接收者就无法再以动态新增方法的手段来响应消息，进入第二阶段。
+
+调用以下两个方法，对其进行解析，动态增加方法。
+
+```
++ (BOOL)resolveInstanceMethod:(SEL)sel
+
++ (BOOL)resolveClassMethod:(SEL)sel
+```
+
+首先，系统会调用resolveInstanceMethod(当然，如果这个方法是一个类方法，就会调用resolveClassMethod)让你自己为这个方法增加实现。
+
+
+##### Fast forwarding 
+
+第二阶段，看看有没有其他对象能处理此消息。
+
+如果有，运行期系统会把消息转发给那个对象，转发过程结束；
+如果没有，则启动完整的消息转发机制。
+
+```
+- (id)forwardingTargetForSelector:(SEL)aSelector;
+```
+
+##### Normal forwarding
+
+第三阶段，完整的消息转发机制。运行期系统会把与消息有关的全部细节，都封装到 NSInvocation 对象中，再给接收者最后一次机会，令其设法解决当前还未处理的消息。
+
+```
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector;
+
+- (void)forwardInvocation:(NSInvocation *)invocation;
+```
+
+methodSignatureForSelector用来生成方法签名，这个签名就是给forwardInvocation中的参数NSInvocation调用的。
+
+如果 methodSignatureForSelector:返回nil，Runtime则会发出doesNotRecognizeSelector:消息，程序这时也就挂掉了。
 
 #### forwardingTargetForSelector
 
@@ -90,12 +140,12 @@ YYWeakProxy 作为 NSProxy 的子类， **`必须`**实现 forwardInvocation: me
 
 
 #### methodSignatureForSelector
+
 ```
 - (NSMethodSignature *)methodSignatureForSelector:(SEL)selector {
     return [NSObject instanceMethodSignatureForSelector:@selector(init)];
 }
 ```
-//return [self.target methodSignatureForSelector:selector];
 
 **`methodSignatureForSelector`** 用来生成方法签名，这个签名就是给forwardInvocation中的参数NSInvocation调用的。
 
@@ -110,7 +160,7 @@ YYWeakProxy 作为 NSProxy 的子类， **`必须`**实现 forwardInvocation: me
     [invocation setReturnValue:&null];
 }
 ```
-//[invocation invokeWithTarget:self.target];
+
 **`forwardInvocation:`** 做消息转发的处理。 
 
 ##### setReturnValue
@@ -125,10 +175,20 @@ YYWeakProxy 作为 NSProxy 的子类， **`必须`**实现 forwardInvocation: me
 
 设置消息接受者的返回值。
 
-##### getReturnValue
+这里应该是没有返回值当意思。
 
+#### YYWeakProxy 的实际指向
 
+由于在 `forwardingTargetForSelector:` 方法里，返回的实际上 weak 修饰的 target 。 
 
+```
+YYWeakProxy *proxy = [YYWeakProxy proxyWithTarget:self];
+```
 
+所以在这段代码里，实际上 proxy 就是 weak 修饰的 self,这就意味着当 self 引用计数为 0 的时候， proxy 将被置为 nil.从而打破循环引用.
 
+### 疑问
 
+根据消息转发的机制，我们知道，如果 `forwardingTargetForSelector:` 方法里，返回了不为 nil 的对象。那么就不会进入后面的转发方法。
+
+YYWeakProxy 里重写的 `methodSignatureForSelector` 和 `forwardInvocation` 方法内容，又是有什么作用呢？
