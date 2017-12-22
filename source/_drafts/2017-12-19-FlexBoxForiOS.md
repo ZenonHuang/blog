@@ -42,7 +42,7 @@ B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )
 
 如图：
 
-![B9E4AB21-289F-46F5-A475-EFD6828E2757](http://7xiym9.com1.z0.glb.clouddn.com/B9E4AB21-289F-46F5-A475-EFD6828E2757-1.png)
+![ZenonHuang_FlexBox_1](http://7xiym9.com1.z0.glb.clouddn.com/B9E4AB21-289F-46F5-A475-EFD6828E2757-1.png)
 
 
 ### Cassowary
@@ -56,11 +56,17 @@ B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )
 
 ## Frame / Auto Layout  / FlexBox 的性能对比
 
-在对 `Auto Layout` 进行一番之后,我们很容易得出 `Auto Layout` 因为多余的计算，性能差于 Frame 的结论。
+在对 `Auto Layout` 进行一番了解之后,我们很容易得出 `Auto Layout` 因为多余的计算，性能差于 Frame 的结论。
 
-但究竟差多少呢？到什么地步？FlexBox 的表现又如何呢?
+但究竟差多少呢？FlexBox 的表现又如何呢?
 
 Don't talk, show you my code.
+
+这里根据 [从 Auto Layout 的布局算法谈性能](https://draveness.me/layout-performance) 里的代码进行修改，对 Frame / Auto Layout / FlexBox 使用 N 个视图进行布局，测算其运行时间。
+
+使用 Auto Layout 时，每个视图会随机选择两个视图对它的 top 和 left 进行约束，随机生成一个数字作为 offset；同时，还会用几个优先级高的约束保证视图的布局不会超出整个 keyWindow。
+
+选取 100，200，300，400，500，600，700，800，900，1000 个视图进行测试.
 
 |   | Frame | Auto Layout | FlexBox |
 | --- | --- | --- | --- |
