@@ -60,43 +60,169 @@ B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )
 
 但究竟差多少呢？FlexBox 的表现又如何呢?
 
-Don't talk, show you my code.
+这里根据 [从 Auto Layout 的布局算法谈性能](https://draveness.me/layout-performance) 里的测试代码进行修改，对 Frame / Auto Layout / FlexBox 进行布局，分段测算 10 ～ 350 个 UIView 的布局时间。取 100 次布局时间的平均值作为结果,耗时单位为秒。
 
-这里根据 [从 Auto Layout 的布局算法谈性能](https://draveness.me/layout-performance) 里的代码进行修改，对 Frame / Auto Layout / FlexBox 使用 N 个视图进行布局，测算其运行时间。
+结果如下图:
 
-使用 Auto Layout 时，每个视图会随机选择两个视图对它的 top 和 left 进行约束，随机生成一个数字作为 offset；同时，还会用几个优先级高的约束保证视图的布局不会超出整个 keyWindow。
+![ZenonHuang_FlexBox_2](http://7xiym9.com1.z0.glb.clouddn.com/1C2DBFC6-B0B2-4FE5-BB81-039B196CCA15.png)
 
-选取 100，200，300，400，500，600，700，800，900，1000 个视图进行测试.
 
-|   | Frame | Auto Layout | FlexBox |
-| --- | --- | --- | --- |
-| 非嵌套 |  |  |  |
-| 嵌套 |  |  |  |
+虽然测试结果难免有偏差，但是根据折线图可以明显发现，FlexBox 的布局性能是比较接近 Frame 的。 
+
+60 FPS 作为一个 iOS 流畅度的黄金标准，要求布局在 0.0166667 s 内完成，Auto Layout 在超过 50 个视图的时候，可能保持流畅就会开始有问题了。
+
+本次测试使用的机器配置如下：
+![ZenonHuang_FlexBox_3](http://7xiym9.com1.z0.glb.clouddn.com/36DD7D25-B13A-4A2C-8EC7-A58E29089E59.png)
+
+采用 Xcode9.2 ,iPad Pro (12.9-inch)(2nd generation) 模拟器。
+
+测试布局的项目代码上传在 [GitHub](https://github.com/ZenonHuang/MyDemos/tree/master/LayoutTest)
 
 
 # FlexBox 是什么？
 
-FlexBox 是一种 UI 布局方式，并得到了所有浏览器的支持。和 `Auto Layout`类似，它也采用了描述性的语言去进行布局，而不使用绝对值进行布局。
+`FlexBox` 是一种 UI 布局方式，并得到了所有浏览器的支持。`FlexBox` 首先是基于 [*盒装状型*](https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Introduction_to_the_CSS_box_model) 的，Flexible 意味着弹性，使其能适应不同屏幕，补充盒状模型的灵活性。
 
-FlexBox 首先是基于 盒装模型 的，Flexible 意味着弹性，使其能适应不同屏幕，补充盒装模型的灵活性。
+`FlexBox` 把每个视图，都看作一个矩形盒子，拥有内外边距，沿着主轴方向排列，并且，同级的视图之间没有依赖。
 
+和 `Auto Layout` 类似，`FlexBox` 采用了描述性的语言去进行布局，而不像 Frame 直接用绝对值坐标进行布局。
 
->弹性布局的主要思想是让容器有能力来改变项目的宽度和高度，以填满可用空间（主要是为了容纳所有类型的显示设备和屏幕尺寸）的能力。
+>弹性布局的主要思想是让 Flex Container 有能力来改变 Flex Item 的宽度和高度，以填满可用空间（主要是为了容纳所有类型的显示设备和屏幕尺寸）的能力。
 
->最重要的是弹性盒子布局与方向无关，相对于常规的布局（块是垂直和内联水平为基础），很显然，这些工作以及网页设计缺乏灵活性，无法支持大型和复杂的应用程序（特别当它涉及到改变方向，缩放、拉伸和收缩等）。
-
-## FlexBox 能解决的问题
+最重要的是, `FlexBox` 布局与方向无关，常规的布局设计缺乏灵活性，无法支持大型和复杂的应用程序（特别是涉及到方向转变，缩放、拉伸和收缩等）。
 
 ## FlexBox 组成
 
-采用 Flex 布局的元素，称为 Flex Container。Flex Container 的所有子元素，称为 Flex Item。
+采用 Flex 布局的元素，称为 `Flex Container`。
+
+`Flex Container` 的所有子元素，称为 `Flex Item`。
+
+![ZenonHuang_FlexBox_4](http://7xiym9.com1.z0.glb.clouddn.com/D0FA8E7B-D39D-46FD-9532-FCF1FC212722.png)
+
+
+
+下面会讲一下 FlexBox 里面的一些概念，方便之后进行 FlexBox 的使用。
+
+### Flex Container
+
+前面提到了，FlexBox 的一个特点，就是视图之间，是没有依赖的。
+
+`Flex Item` 的排布，就依赖于 `Flex Container` 的属性设置，而不用相互之间进行设置。
+
+下面就说一下 Flex Containner 的属性设置。
+
+#### Flex Direction
+
+FlexBox 有一个 `主轴(main axis)`，和`侧轴(cross axis)`的概念。
+
+视图排布依据主轴的方向，侧轴，则是垂直于主轴的方向。
+
+`Flex Direction` 决定了 `Flex Containner ` 内的主轴排布方向。方向设置有 `行(Row)`，`列(Column)`的概念,代表水平和垂直方向。
+
+主轴默认为 Row (从左到右):
+
+![87691D2C-34C3-4805-B960-4D8217717D98](http://7xiym9.com1.z0.glb.clouddn.com/87691D2C-34C3-4805-B960-4D8217717D98.png?imageView2/2/h/50)
+
+同时，也可以设置 RowRevers(从右至左):
+![1F430BC5-A0BE-474B-9791-23F2B308AEE9](http://7xiym9.com1.z0.glb.clouddn.com/1F430BC5-A0BE-474B-9791-23F2B308AEE9.png?imageView2/2/h/50)
+
+
+Column(从上到下):
+![AA2DF5F6-1164-4440-ACF2-9897D0D82730](http://7xiym9.com1.z0.glb.clouddn.com/AA2DF5F6-1164-4440-ACF2-9897D0D82730.png?imageView2/2/h/200)
+
+
+ColumnRevers(从下到上):
+![C33D6321-66C3-4A78-B429-E82B3F83CB6E](http://7xiym9.com1.z0.glb.clouddn.com/C33D6321-66C3-4A78-B429-E82B3F83CB6E.png?imageView2/2/h/200)
+
+#### Flex Wrap
+
+Flex Wrap 决定在轴线上排列不下时，视图的换行方式。
+
+Flex Wrap 默认设置为 NoWrap，不会换行，一直沿着主轴排列到屏幕之外:
+
+![9C0FD351-E504-4A6B-A442-E3DE1E084FAC](http://7xiym9.com1.z0.glb.clouddn.com/9C0FD351-E504-4A6B-A442-E3DE1E084FAC.png?imageView2/2/h/50)
+
+设置为 Wrap ,则空间不足时，自动换行:
+
+![2C14AAC1-6DDB-4450-B393-5497E0743AFC](http://7xiym9.com1.z0.glb.clouddn.com/2C14AAC1-6DDB-4450-B393-5497E0743AFC.png?imageView2/2/h/50)
+
+
+设置 WrapReverse，则换行方向与 Wrap 相反:
+
+![35B10621-C2BD-4699-B5B5-4383B35F510E](http://7xiym9.com1.z0.glb.clouddn.com/35B10621-C2BD-4699-B5B5-4383B35F510E.png?imageView2/2/h/50)
+
+这是一个非常有用的属性。比如典型的`九宫格布局`，iOS 如果不是用 `UICollectionView` 做，那么就需要保存 `9` 个实例，然后做判断，计算 frame ，可维护性实在不高。使用`UICollectionView` 可以很好的解决布局，但很多场景并不能复用，做起来也不是特别简单。 
+
+FlexBox 布局的话，用 `Flex Wrap` 属性设置 `Wrap` 就可以直接搞定。
+
+移动平台上相似的方案，比如 Android 的 Linear Layout 和 iOS 的 UIStackView ，但却远没有 FlexBox 强大。
+
+#### Display
+
+Display 选择是否计算它，默认为 Flex. 如果设置为 None 自动忽略该视图的计算。
+
+根据逻辑，选择是否显示 UI 时，比较有用。比如我们现有的业务，需要显示的腾讯身份标示。按照一般做法，多个 icon 互相连成一排，根据身份去设置不同的距离，同时隐藏其他 icon ,比较的麻烦。iOS 最好的办法是使用 UIStackView ，这又有版本兼容等问题。而使用 FlexBox 布局,当不是某个身份时，只要设置 Display 为 None,就不会被纳入 UI 计算当中。
+
+#### Flex Flow
+
+flex-flow属性是flex-direction属性和flex-wrap属性的简写形式
+
+#### Justify-content
+
+`justify-content`属性定义项目在主轴上的对齐方式,
+
+#### Align-items属性
+
+`align-items`属性定义项目在交叉轴上的对齐方式
+
+
+
+### Flex Item
+
+### Align-self
+
+`align-self`属性允许单个项目有与其他项目不一样的对齐方式，可覆盖`align-items`属性。默认值为`auto`，表示继承父元素的`align-items`属性，如果没有父元素，则等同于`stretch`。 
+
+### FlexGrow
+
+用于分配剩余空间的比例。
+
+例如：
+整体宽度 100 , sub1 宽为 10 ，sub2 宽为 20 ，则剩余空间为 70。设置 FlexGrow 就是分配这 70 宽度的比例。
+
+默认值为0，如果没有去定义该属性，该布局是不会拥有分配剩余空间权利的。
+
+默认为`0`，即如果存在剩余空间，也不放大。
+
+本例中b,c两项都显式的定义了flex-grow，可以看到总共将剩余空间分成了4份，其中b占1份，c占3分，即1:3.
+
+如果所有项目的`flex-grow`属性都为`1`，则它们将等分剩余空间（如果有的话）。如果一个项目的`flex-grow`属性为`2`，其他项目都为`1`，则前者占据的剩余空间将比其他项多一倍。
+
+### Flex Shrink
 
 ## FlexBox 的实现 -- Yoga 
 
-### ASDK
 
-###  ComponentKit
+
+###  YGLayout 对象
+
+Flex 方向，对齐内容，对齐项目，填充和边距。
+ 
+一旦完成，你在根视图的 YGLayout 上调用applyLayout(preservingOrigin:)。这会计算并应用布局到根视图和子视图。
+ 
+### applyLayoutPreservingOrigin:
+
+
+
 
 # 基于 Yoga 实现一个 FlexBox 布局系统
+
+# 参考:
+
+[Flex 布局教程：语法篇](http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html)
+
+[YogaKit](https://facebook.github.io/yoga/docs/api/yogakit/)
+
+[Yoga Tutorial: Using a Cross-Platform Layout Engine](https://www.raywenderlich.com/161413/yoga-tutorial-using-cross-platform-layout-engine?utm_source=raywenderlich.com+Weekly&amp;utm_campaign=e7e557ef6a-raywenderlich_com_Weekly_Issue_125&amp;utm_medium=email&amp;utm_term=0_83b6edc87f-e7e557ef6a-415701885)
 
 
