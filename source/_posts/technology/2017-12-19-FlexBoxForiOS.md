@@ -29,7 +29,6 @@ Frame 没什么太多可说的了，直接制定坐标和大小，设置绝对�
 实际上，我们设置 `Auto Layout` 的约束，就构成一系列的条件,成为一个方程。然后解出 Frame 的坐标和大小。
 
 例如，我们设置一个名为 A 的 UI :
-
 ``` 
  A.center = super.center
  A.width  = 40
@@ -39,7 +38,6 @@ Frame 没什么太多可说的了，直接制定坐标和大小，设置绝对�
 A.frame = (super.center.x,super.center.y,40,40)
 
 再设置一个 B:
-
 ```
 B.width  =  A.width
 B.height =  A.height
