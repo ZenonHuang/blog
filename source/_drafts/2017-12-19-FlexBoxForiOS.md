@@ -161,29 +161,63 @@ FlexBox 布局的话，用 `Flex Wrap` 属性设置 `Wrap` 就可以直接搞定
 
 Display 选择是否计算它，默认为 Flex. 如果设置为 None 自动忽略该视图的计算。
 
-根据逻辑，选择是否显示 UI 时，比较有用。比如我们现有的业务，需要显示的腾讯身份标示。按照一般做法，多个 icon 互相连成一排，根据身份去设置不同的距离，同时隐藏其他 icon ,比较的麻烦。iOS 最好的办法是使用 UIStackView ，这又有版本兼容等问题。而使用 FlexBox 布局,当不是某个身份时，只要设置 Display 为 None,就不会被纳入 UI 计算当中。
+在根据逻辑显示 UI 时，比较有用。
+
+比如我们现有的业务，需要显示的腾讯身份标示。按照一般做法，多个 icon 互相连成一排，根据身份去设置不同的距离，同时隐藏其他 icon ,比较的麻烦。iOS 最好的办法是使用 UIStackView ，这又有版本兼容等问题。而使用 FlexBox 布局,当不是某个身份时，只要设置 Display 为 None,就不会被纳入 UI 计算当中。
 
 #### Flex Flow
 
 flex-flow属性是flex-direction属性和flex-wrap属性的简写形式
 
-#### Justify-content
+#### Justify Content
 
-`justify-content`属性定义项目在主轴上的对齐方式,
+`justify-content` 用于定义 `Flex Item` 在主轴上的对齐方式:FlexStart(主轴起点对齐)，FlexEnd(主轴终点对齐)，Center(居中对齐)。
 
-#### Align-items属性
+还有SpaceBetween（两端对齐）:
 
-`align-items`属性定义项目在交叉轴上的对齐方式
+![7F4F84F0-6B50-462A-BDA6-D11D087FFCE0](http://7xiym9.com1.z0.glb.clouddn.com/7F4F84F0-6B50-462A-BDA6-D11D087FFCE0.png?imageView2/2/h/50)
 
+设置两端对齐，让 `Flex Item` 之间的间隔相等。
+
+SpaceAround(间隔相等排列)：
+
+![3B7E08DD-6F78-4A8D-9D56-07565E5F9E24](http://7xiym9.com1.z0.glb.clouddn.com/3B7E08DD-6F78-4A8D-9D56-07565E5F9E24.png?imageView2/2/h/50)
+
+让 `Flex Item` 两侧的间隔相等
+
+#### Align Items
+
+`align-items` 属性定义 `Flex Item` 在侧轴上的对齐方式。和主轴对齐方式  `Justify Content` 类似，除了 FlexStart ,FlexEnd,Center,SpaceBetween,SpaceAround 可以设置之外，还有 Baseline(基线对齐)：
+
+![25B54897-E6D4-4742-837E-13E5E4D827DA](http://7xiym9.com1.z0.glb.clouddn.com/25B54897-E6D4-4742-837E-13E5E4D827DA.png?imageView2/2/h/100)
+
+Baseline 如果伸缩项目的行内轴与侧轴为同一条，则该值与[flex-start]等效。 其它情况下，该值将参与基线对齐。
+
+
+Stretch：
+
+Stretch伸缩项目拉伸填充整个伸缩容器。此值会使项目的外边距盒的尺寸在遵照「min/max-width/height」属性的限制下尽可能接近所在行的尺寸。
+
+Auto:
+![F40B6D31-225F-4A99-9209-15886475CC1F](http://7xiym9.com1.z0.glb.clouddn.com/F40B6D31-225F-4A99-9209-15886475CC1F.png?imageView2/2/h/100)
+
+
+如果 `Flex Item` 未设置数值或设为auto，将占满整个容器的高度
+
+#### Align Content
+
+align-content定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用。属性可以用来调准伸缩行在伸缩容器里的对齐方式，这与调准伸缩项目在主轴上对齐方式的[justify-content]属性类似。只不过这里元素是以一行为单位。请注意本属性在只有一行的伸缩容器上没有效果。当使用flex-wrap:wrap时候多行效果就出来了。
+
+![6C8FB222-16DC-4B6E-A2D9-251C4CA69F8E](http://7xiym9.com1.z0.glb.clouddn.com/6C8FB222-16DC-4B6E-A2D9-251C4CA69F8E.png)
 
 
 ### Flex Item
 
-### Align-self
+#### Align-self
 
 `align-self`属性允许单个项目有与其他项目不一样的对齐方式，可覆盖`align-items`属性。默认值为`auto`，表示继承父元素的`align-items`属性，如果没有父元素，则等同于`stretch`。 
 
-### FlexGrow
+#### FlexGrow
 
 用于分配剩余空间的比例。
 
@@ -198,7 +232,13 @@ flex-flow属性是flex-direction属性和flex-wrap属性的简写形式
 
 如果所有项目的`flex-grow`属性都为`1`，则它们将等分剩余空间（如果有的话）。如果一个项目的`flex-grow`属性为`2`，其他项目都为`1`，则前者占据的剩余空间将比其他项多一倍。
 
-### Flex Shrink
+#### Flex Shrink
+
+#### flexBasis
+
+
+
+想了解更多 FlexBox 属性，可以参考 [A Complete Guide to Flexbox](https://css-tricks.com/snippets/css/a-guide-to-flexbox/)
 
 ## FlexBox 的实现 -- Yoga 
 
