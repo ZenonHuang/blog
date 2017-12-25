@@ -7,9 +7,10 @@ keywords: iOS
 description: 学习 FlexBox 布局的思想，并对 iOS 上的 FlexBox 布局进行实践。 
 ---
 
+
 # 为什么要了解 FlexBox?
 
-最近时不时的听到关于 FlexBox 的声音，除了在 `Weex` 以及 `React Native` 两个著名的跨平台项目里有用到 FlexBox 外，` AsyncDisplayKit` 也同样引入了 FlexBox 。 
+最近时不时的听到关于 FlexBox 的声音，除了在 **Weex** 以及 **React Native** 两个著名的跨平台项目里有用到 FlexBox 外，**AsyncDisplayKit** 也同样引入了 FlexBox 。 
 
 先说说 iOS 本身提供给我们 2 种布局方式:
 
@@ -49,7 +50,7 @@ B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )
 
 如图：
 
-![ZenonHuang_FlexBox_1](http://7xiym9.com1.z0.glb.clouddn.com/B9E4AB21-289F-46F5-A475-EFD6828E2757-1.png)
+![ZenonHuang_FlexBox_1](https://user-gold-cdn.xitu.io/2017/12/25/1608d2744632d1f8?w=341&h=290&f=png&s=5192)
 
 
 ### Cassowary
@@ -71,7 +72,7 @@ B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )
 
 结果如下图:
 
-![ZenonHuang_FlexBox_2](http://7xiym9.com1.z0.glb.clouddn.com/1C2DBFC6-B0B2-4FE5-BB81-039B196CCA15.png)
+![ZenonHuang_FlexBox_2](https://user-gold-cdn.xitu.io/2017/12/25/1608d27446d5177d?w=1886&h=1418&f=png&s=225064)
 
 
 虽然测试结果难免有偏差，但是根据折线图可以明显发现，FlexBox 的布局性能是比较接近 Frame 的。 
@@ -79,7 +80,7 @@ B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )
 `60 FPS` 作为一个 iOS 流畅度的黄金标准，要求布局在 0.0166667 s 内完成，`Auto Layout` 在超过 50 个视图的时候，可能保持流畅就会开始有问题了。
 
 本次测试使用的机器配置如下：
-![ZenonHuang_FlexBox_3](http://7xiym9.com1.z0.glb.clouddn.com/36DD7D25-B13A-4A2C-8EC7-A58E29089E59.png?imageView2/2/h/150)
+![ZenonHuang_FlexBox_3](https://user-gold-cdn.xitu.io/2017/12/25/1608d27446a5cc5a?w=291&h=150&f=png&s=44836)
 
 采用 Xcode9.2 ,iPad Pro (12.9-inch)(2nd generation) 模拟器。
 
@@ -104,7 +105,7 @@ B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )
 
 `Flex Container` 的所有子元素，称为 `Flex Item`。
 
-![ZenonHuang_FlexBox_4](http://7xiym9.com1.z0.glb.clouddn.com/D0FA8E7B-D39D-46FD-9532-FCF1FC212722.png?imageView2/2/h/300)
+![ZenonHuang_FlexBox_4](https://user-gold-cdn.xitu.io/2017/12/25/1608d2744660ab9c?w=602&h=300&f=png&s=17165)
 
 
 下面会讲一下 FlexBox 里面的一些概念，方便之后进行 FlexBox 的使用。
@@ -128,24 +129,24 @@ FlexBox 有一个 `主轴(main axis)` 和 `侧轴(cross axis)`的概念。侧轴
 
 主轴默认为 `Row` , 侧轴默认为 `Column`：
 
-![0DF515D1-1EEF-4C38-9782-F875C1433AE0](http://7xiym9.com1.z0.glb.clouddn.com/0DF515D1-1EEF-4C38-9782-F875C1433AE0-1.png)
+![0DF515D1-1EEF-4C38-9782-F875C1433AE0](https://user-gold-cdn.xitu.io/2017/12/25/1608d27447ccff3d?w=769&h=276&f=png&s=60925)
 
 `Flex Direction` 决定了 `Flex Containner ` 内的主轴排布方向。
 
 主轴默认为 Row (从左到右):
 
-![87691D2C-34C3-4805-B960-4D8217717D98](http://7xiym9.com1.z0.glb.clouddn.com/87691D2C-34C3-4805-B960-4D8217717D98.png?imageView2/2/h/50)
+![87691D2C-34C3-4805-B960-4D8217717D98](https://user-gold-cdn.xitu.io/2017/12/25/1608d274448a4734?w=338&h=50&f=jpeg&s=7002)
 
 同时，也可以设置 RowRevers(从右至左):
-![1F430BC5-A0BE-474B-9791-23F2B308AEE9](http://7xiym9.com1.z0.glb.clouddn.com/1F430BC5-A0BE-474B-9791-23F2B308AEE9.png?imageView2/2/h/50)
+![1F430BC5-A0BE-474B-9791-23F2B308AEE9](https://user-gold-cdn.xitu.io/2017/12/25/1608d274f5df32a4?w=329&h=50&f=png&s=7728)
 
 
 Column(从上到下):
-![AA2DF5F6-1164-4440-ACF2-9897D0D82730](http://7xiym9.com1.z0.glb.clouddn.com/AA2DF5F6-1164-4440-ACF2-9897D0D82730.png?imageView2/2/h/200)
+![AA2DF5F6-1164-4440-ACF2-9897D0D82730](https://user-gold-cdn.xitu.io/2017/12/25/1608d274f3d36520?w=119&h=200&f=png&s=7603)
 
 
 ColumnRevers(从下到上):
-![C33D6321-66C3-4A78-B429-E82B3F83CB6E](http://7xiym9.com1.z0.glb.clouddn.com/C33D6321-66C3-4A78-B429-E82B3F83CB6E.png?imageView2/2/h/200)
+![C33D6321-66C3-4A78-B429-E82B3F83CB6E](https://user-gold-cdn.xitu.io/2017/12/25/1608d274f88da247?w=98&h=200&f=png&s=7477)
 
 #### Flex Wrap
 
@@ -153,16 +154,16 @@ Flex Wrap 决定在轴线上排列不下时，视图的换行方式。
 
 Flex Wrap 默认设置为 NoWrap，不会换行，一直沿着主轴排列到屏幕之外:
 
-![9C0FD351-E504-4A6B-A442-E3DE1E084FAC](http://7xiym9.com1.z0.glb.clouddn.com/9C0FD351-E504-4A6B-A442-E3DE1E084FAC.png?imageView2/2/h/50)
+![9C0FD351-E504-4A6B-A442-E3DE1E084FAC](https://user-gold-cdn.xitu.io/2017/12/25/1608d274fd9310c9?w=419&h=50&f=png&s=9444)
 
 设置为 Wrap ,则空间不足时，自动换行:
 
-![2C14AAC1-6DDB-4450-B393-5497E0743AFC](http://7xiym9.com1.z0.glb.clouddn.com/2C14AAC1-6DDB-4450-B393-5497E0743AFC.png?imageView2/2/h/50)
+![2C14AAC1-6DDB-4450-B393-5497E0743AFC](https://user-gold-cdn.xitu.io/2017/12/25/1608d27504a1e778?w=202&h=50&f=png&s=6615)
 
 
 设置 WrapReverse，则换行方向与 Wrap 相反:
 
-![35B10621-C2BD-4699-B5B5-4383B35F510E](http://7xiym9.com1.z0.glb.clouddn.com/35B10621-C2BD-4699-B5B5-4383B35F510E.png?imageView2/2/h/50)
+![35B10621-C2BD-4699-B5B5-4383B35F510E](https://user-gold-cdn.xitu.io/2017/12/25/1608d275053823fd?w=203&h=50&f=png&s=6569)
 
 这是一个非常有用的属性。比如典型的`九宫格布局`，iOS 如果不是用 `UICollectionView` 做，那么就需要保存 `9` 个实例，然后做判断，计算 frame ，可维护性实在不高。使用`UICollectionView` 可以很好的解决布局，但很多场景并不能复用，做起来也不是特别简单。 
 
@@ -178,25 +179,21 @@ Display 选择是否计算它，默认为 Flex. 如果设置为 None 自动忽�
 
 比如我们现有的业务，需要显示的腾讯身份标示。按照一般做法，多个 icon 互相连成一排，根据身份去设置不同的距离，同时隐藏其他 icon ,比较的麻烦。iOS 最好的办法是使用 UIStackView ，这又有版本兼容等问题。而使用 FlexBox 布局,当不是某个身份时，只要设置 Display 为 None,就不会被纳入 UI 计算当中。
 
-#### Flex Flow
-
-flex-flow属性是flex-direction属性和flex-wrap属性的简写形式
-
 #### Justify Content
 
-`justify-content` 用于定义 `Flex Item` 在主轴上的对齐方式:FlexStart(主轴起点对齐)，FlexEnd(主轴终点对齐)，Center(居中对齐)。
+`Justify Content` 用于定义 `Flex Item` 在主轴上的对齐方式:FlexStart(主轴起点对齐)，FlexEnd(主轴终点对齐)，Center(居中对齐)。
 
 还有SpaceBetween（两端对齐）:
 
-![7F4F84F0-6B50-462A-BDA6-D11D087FFCE0](http://7xiym9.com1.z0.glb.clouddn.com/7F4F84F0-6B50-462A-BDA6-D11D087FFCE0.png?imageView2/2/h/50)
+![7F4F84F0-6B50-462A-BDA6-D11D087FFCE0](https://user-gold-cdn.xitu.io/2017/12/25/1608d2751e764ed5?w=414&h=50&f=png&s=7247)
 
 设置两端对齐，让 `Flex Item` 之间的间隔相等。
 
-SpaceAround(间隔相等排列)：
+SpaceAround(外边距相等排列)：
 
-![3B7E08DD-6F78-4A8D-9D56-07565E5F9E24](http://7xiym9.com1.z0.glb.clouddn.com/3B7E08DD-6F78-4A8D-9D56-07565E5F9E24.png?imageView2/2/h/50)
+![3B7E08DD-6F78-4A8D-9D56-07565E5F9E24](https://user-gold-cdn.xitu.io/2017/12/25/1608d27526597add?w=412&h=50&f=png&s=7178)
 
-让 `Flex Item` 两侧的间隔相等
+让每个 `Flex Item` 四周的外边距相等
 
 #### Align Items
 
@@ -204,7 +201,7 @@ SpaceAround(间隔相等排列)：
 
 除了可以和主轴对齐方式  `Justify Content` 一样设置FlexStart ,FlexEnd,Center,SpaceBetween,SpaceAround 之外，还有 Baseline(基线对齐)：
 
-![25B54897-E6D4-4742-837E-13E5E4D827DA](http://7xiym9.com1.z0.glb.clouddn.com/25B54897-E6D4-4742-837E-13E5E4D827DA.png?imageView2/2/h/100)
+![25B54897-E6D4-4742-837E-13E5E4D827DA](https://user-gold-cdn.xitu.io/2017/12/25/1608d27528e5b368?w=346&h=100&f=png&s=6160)
 
 如图所示，它是基于 `Flex Item` 的第一行文字的基线对齐。
 
@@ -212,7 +209,7 @@ SpaceAround(间隔相等排列)：
 
 
 Stretch：
-![F40B6D31-225F-4A99-9209-15886475CC1F](http://7xiym9.com1.z0.glb.clouddn.com/F40B6D31-225F-4A99-9209-15886475CC1F.png?imageView2/2/h/100)
+![F40B6D31-225F-4A99-9209-15886475CC1F](https://user-gold-cdn.xitu.io/2017/12/25/1608d27529552a7b?w=341&h=100&f=png&s=6099)
 
 `Stretch` 让 `Flex Item` 拉伸填充整个`Flex Container`。`Stretch`会使`Flex Item`的外边距在遵照对应属性限制下,尽可能接近所在行或列的尺寸。
 
@@ -227,7 +224,7 @@ Stretch：
 
 调整为 `FlexWrap` 为 `Wrap`,效果才显示出来： 
 
-![6C8FB222-16DC-4B6E-A2D9-251C4CA69F8E](http://7xiym9.com1.z0.glb.clouddn.com/6C8FB222-16DC-4B6E-A2D9-251C4CA69F8E.png?imageView2/2/h/300)
+![6C8FB222-16DC-4B6E-A2D9-251C4CA69F8E](https://user-gold-cdn.xitu.io/2017/12/25/1608d2754269c25f?w=271&h=300&f=png&s=24290)
 
 
 ### Flex Item
@@ -367,7 +364,7 @@ Stretch：
 
 效果如下:
 
-![75F9B6E0-1C63-4A91-97EE-3F3A6087BE3B](http://7xiym9.com1.z0.glb.clouddn.com/75F9B6E0-1C63-4A91-97EE-3F3A6087BE3B-1.png?imageView2/2/h/300)
+![75F9B6E0-1C63-4A91-97EE-3F3A6087BE3B](https://user-gold-cdn.xitu.io/2017/12/25/1608d27539c27747?w=168&h=300&f=png&s=4181)
 
 我们真正的布局代码，只用设置 `Flex Container` 的 `justifyContent` 和 `alignItems` 就可以了.
 
@@ -387,7 +384,7 @@ Stretch：
 
 效果如下：
 
-![E2BE382B-85DA-47E9-93D3-FD94DD7A1ABA](http://7xiym9.com1.z0.glb.clouddn.com/E2BE382B-85DA-47E9-93D3-FD94DD7A1ABA-1.png?imageView2/2/h/300)
+![E2BE382B-85DA-47E9-93D3-FD94DD7A1ABA](https://user-gold-cdn.xitu.io/2017/12/25/1608d2754cd48389?w=169&h=300&f=png&s=4414)
 
 布局代码只用设置, View 的 `margin` 和 `flexGrow `.
 
@@ -423,7 +420,7 @@ Stretch：
 
 效果如下:
 
-![8E963A9D-F9AF-47A6-966C-5AEAA836E598](http://7xiym9.com1.z0.glb.clouddn.com/8E963A9D-F9AF-47A6-966C-5AEAA836E598-1.png?imageView2/2/h/300)
+![8E963A9D-F9AF-47A6-966C-5AEAA836E598](https://user-gold-cdn.xitu.io/2017/12/25/1608d2754fec530a?w=169&h=300&f=png&s=5987)
 
 只要设置 `Flex Container` 的 `layout.justifyContent =  YGJustifySpaceBetween`，就可以很轻松的做到。
 
@@ -461,7 +458,7 @@ Stretch：
 
 效果如下 :
 
-![7221D26D-E78E-4AF3-B129-6D983C842](http://7xiym9.com1.z0.glb.clouddn.com/7221D26D-E78E-4AF3-B129-6D983C842C39-1.png?imageView2/2/h/300)
+![7221D26D-E78E-4AF3-B129-6D983C842](https://user-gold-cdn.xitu.io/2017/12/25/1608d2756ab3039f?w=169&h=300&f=png&s=4475)
 
 我们只要设置 `Flex Container` 的 paddingHorizontal ，以及 `Flex Item`的marginHorizontal，flexGrow 就可以了。并且可以复用  `Flex Item` 的 layout 布局样式。
 
@@ -519,7 +516,7 @@ Stretch：
 
 效果如下:
 
-![679CD74E-2C82-4B4F-871A-46D42832C8CB](http://7xiym9.com1.z0.glb.clouddn.com/679CD74E-2C82-4B4F-871A-46D42832C8CB-1.png?imageView2/2/h/300)
+![679CD74E-2C82-4B4F-871A-46D42832C8CB](https://user-gold-cdn.xitu.io/2017/12/25/1608d2756ff7af1e?w=171&h=300&f=jpeg&s=4742)
 
 
 布置 `UIScrollView` 主要是使用了一个中间 `contentView`,起到了计算 `scrollview` 的 `contentSize` 的作用。这里要注意的是，要在`scrollview`调用完 `applyLayoutPreservingOrigin:` 后进行设置,否则得不到结果。
@@ -545,4 +542,8 @@ FlexBox 的确是一个非常适用于移动端的布局方式，语意清晰，
 [Yoga Tutorial: Using a Cross-Platform Layout Engine](https://www.raywenderlich.com/161413/yoga-tutorial-using-cross-platform-layout-engine?utm_source=raywenderlich.com+Weekly&amp;utm_campaign=e7e557ef6a-raywenderlich_com_Weekly_Issue_125&amp;utm_medium=email&amp;utm_term=0_83b6edc87f-e7e557ef6a-415701885)
 
 [从 Auto Layout 的布局算法谈性能](https://draveness.me/layout-performance)
+
+
+
+
 
