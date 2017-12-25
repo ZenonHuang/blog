@@ -14,11 +14,11 @@ description: 学习 FlexBox 布局的思想，并对 iOS 上的 FlexBox 布局�
 先说说 iOS 本身提供给我们 2 种布局方式:
 
 - Frame,直接设置横纵坐标，并指定宽高。
-- Auto Layout，相对布局，设置相对位置的约束进行布局。
+- Auto Layout，通过设置相对位置的约束进行布局。
 
-Frame 没什么太多可说的了，相对于原点坐标，设置绝对值。
+Frame 没什么太多可说的了，直接制定坐标和大小，设置绝对值。
 
-`Auto Layout` 本身用意是好的，试图让我们从 Frame 中解放出来，摆脱关于坐标，大小的刻板思考方式。转而利用 UI 之间的相对位置关系，设置对应约束进行布局。
+`Auto Layout` 本身用意是好的，试图让我们从 Frame 中解放出来，摆脱关于坐标和大小的刻板思考方式。转而利用 UI 之间的相对位置关系，设置对应约束进行布局。
 
 但是 `Auto Layout` 好心并未做成好事，它的语法又臭又长! 至今学习 iOS 两年，我使用到原生 `Auto Layout` 语法的时候屈指可数。只能靠 [Masonry](https://github.com/SnapKit/Masonry) 这样的第三方库来使用它。
 
@@ -78,10 +78,10 @@ B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )
 
 虽然测试结果难免有偏差，但是根据折线图可以明显发现，FlexBox 的布局性能是比较接近 Frame 的。 
 
-60 FPS 作为一个 iOS 流畅度的黄金标准，要求布局在 0.0166667 s 内完成，Auto Layout 在超过 50 个视图的时候，可能保持流畅就会开始有问题了。
+`60 FPS` 作为一个 iOS 流畅度的黄金标准，要求布局在 0.0166667 s 内完成，`Auto Layout` 在超过 50 个视图的时候，可能保持流畅就会开始有问题了。
 
 本次测试使用的机器配置如下：
-![ZenonHuang_FlexBox_3](http://7xiym9.com1.z0.glb.clouddn.com/36DD7D25-B13A-4A2C-8EC7-A58E29089E59.png)
+![ZenonHuang_FlexBox_3](http://7xiym9.com1.z0.glb.clouddn.com/36DD7D25-B13A-4A2C-8EC7-A58E29089E59.png?imageView2/2/h/150)
 
 采用 Xcode9.2 ,iPad Pro (12.9-inch)(2nd generation) 模拟器。
 
@@ -532,7 +532,7 @@ UIScrollView 的用法，目前在网上也没找到比较官方的示例，完�
 
 # 总结
 
-FlexBox 的确是一个非常适用于移动端的布局方式，在 UI 视图越来越复杂多样的今天可以提升性能，尤其是在所有浏览器都已经支持了 FlexBox 之后，作为移动开发者有必要了解新的解决方式。
+FlexBox 的确是一个非常适用于移动端的布局方式，语意清晰，性能稳定，现在移动端 UI 视图越来越复杂，尤其是在所有浏览器都已经支持了 FlexBox 之后，作为移动开发者有必要了解新的解决方式。
 
 大家在熟练使用 YogaKit 的方式之后，也可以尝试自己封装一套布局代码，加快开发效率。
 
