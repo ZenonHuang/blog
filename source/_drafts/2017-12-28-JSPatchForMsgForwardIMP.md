@@ -1,86 +1,25 @@
-# 方法替换之 Special Struct -- 给 JSPatch 提PR
+# 年终献礼之 Special Struct -- 给 JSPatch 提 PR
 
-## JSPatch 是什么
+# 前言
 
+>本文需要对消息转发机制有了解，建议阅读 [Objective-C 消息发送与转发机制原理](http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/)
 
+[JSPatch](https://github.com/bang590/JSPatch) 目前的 Star 数已经破万，知名度可见一斑。面试时，也会经常被提及。
 
-## 方法替换是什么
+恰巧在 8 月学习 Method Swizzling ，阅读了 Aspects 和 JSPatch 做方法替换的处理，注意到了我们这次介绍的主角 -- Special Struct.
 
-     Class class = aspect_hookClass(object);
-     Method targetMethod = class_getInstanceMethod(class, selector);
-     IMP targetMethodIMP = method_getImplementation(targetMethod);
+在消息转发时，我们根据返回值的不同，来决定 IMP 使用 `_objc_msgForward` 或者 `_objc_msgForward_stret`.
 
+那到底如何判断呢？根据苹果的文档描述，使用 `_objc_msgForward_stret` 的肯定是一个结构体:
+>Sends a message with a data-structure return value to an instance of a class.
 
-不太了解的，可以推荐去看看:
-[Objective-C Method Swizzling](http://yulingtianxia.com/blog/2017/04/17/Objective-C-Method-Swizzling/)
+而只判断返回值是不是结构体，在有些情况下是不行的，下面就来看看两个著名开源库的实现。
 
+## JSPatch 的判断 
 
-## _objc_msgForward_stret 和 _objc_msgForward 的不同
-
-[objc_msgSend_stret](http://sealiesoftware.com/blog/archive/2008/10/30/objc_explain_objc_msgSend_stret.html)
-
-
-### _objc_msgForward 返回值直接存储在寄存器上
-
-函数在执行完后，返回值也会保存在寄存器上，取这个寄存器的值就是返回值。
-
-### _objc_msgForward_stret 返回值存在指针中
-
-对于某些架构，某些 struct。寄存器要腾出一个位置放这个指针，返回的时候，读取指针写入的数据。
+首先我们来看 JSPatch , 在 JPEngine.m 文件里的 overrideMethod 方法,是如何去判断是否使用 `_objc_msgForward_stret`:
 
 
-#### 哪些 CPU 架构需要判断
-
-A function result can be returned in registers or in memory, depending on the data type of the function’s return value.
-
-> 放在相同的寄存器中。When the return value of the called function would be passed in registers, if it were passed as a parameter in a function call, the called function places its return value in the same registers
-
-> 指向内存中。Otherwise, the function places its result at the location pointed to by GPR3。
-
-
-##### ppc32 is trivial: structs never return in registers.
-
-PowerPC32 结构体从来都不在寄存器中返回。
-
-##### i386 is straightforward: structs with sizeof exactly equal to 1, 2, 4, or 8 return in registers
-
-i386 是清晰明了的，寄存器大小等于 1,2,4,8 的结构。
-
-##### x86_64 is more complicated, including rules for returning floating-point struct fields in FPU registers, and ppc64's rules and exceptions will make your head spin
-
-x86_64 和 PowerPC64 的返回规则是非常复杂和让人头疼。
-
-
-首先判断返回值类型，如果是结构体，就进一步判断.
-
-到苹果官方文档查看
-[method_getTypeEncoding](https://developer.apple.com/documentation/objectivec/1418488-method_gettypeencoding)，说明：
->Returns a string describing a method's parameter and return types。
-
-返回值具体字符串代表什么，可以查看 [Type Encodings](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100)  
-
-因为不是所有的结构体，都需要用 _objc_msgForward_stret 去存储。
-
-##### IA-32
-
-##### 32bit-PowerPC
-
-##### 64bit-PowerPC
-
-## JSPatch 对 IMP 的实现
-
-
-    static void overrideMethod(Class cls, NSString *selectorName, JSValue *function, BOOL isClassMethod, const char *typeDescription)
-    {
-    SEL selector = NSSelectorFromString(selectorName);
-    
-    if (!typeDescription) {
-        Method method = class_getInstanceMethod(cls, selector);
-        typeDescription = (char *)method_getTypeEncoding(method);
-    }
-    
-    IMP originalImp = class_respondsToSelector(cls, selector) ? class_getMethodImplementation(cls, selector) : NULL;
-    
     IMP msgForwardIMP = _objc_msgForward;
     #if !defined(__arm64__)
         if (typeDescription[0] == '{') {
@@ -93,40 +32,18 @@ x86_64 和 PowerPC64 的返回规则是非常复杂和让人头疼。
             }
         }
     #endif
-
-    if (class_getMethodImplementation(cls, @selector(forwardInvocation:)) != (IMP)JPForwardInvocation) {
-        IMP originalForwardImp = class_replaceMethod(cls, @selector(forwardInvocation:), (IMP)JPForwardInvocation, "v@:@");
-        if (originalForwardImp) {
-            class_addMethod(cls, @selector(ORIGforwardInvocation:), originalForwardImp, "v@:@");
-        }
-    }
-
-    [cls jp_fixMethodSignature];
-    if (class_respondsToSelector(cls, selector)) {
-        NSString *originalSelectorName = [NSString stringWithFormat:@"ORIG%@", selectorName];
-        SEL originalSelector = NSSelectorFromString(originalSelectorName);
-        if(!class_respondsToSelector(cls, originalSelector)) {
-            class_addMethod(cls, originalSelector, originalImp, typeDescription);
-        }
-    }
     
-    NSString *JPSelectorName = [NSString stringWithFormat:@"_JP%@", selectorName];
-    
-    _initJPOverideMethods(cls);
-    _JSOverideMethods[cls][JPSelectorName] = function;
-    
-    // Replace the original selector at last, preventing threading issus when
-    // the selector get called during the execution of `overrideMethod`
-    class_replaceMethod(cls, selector, msgForwardIMP, typeDescription);
-    }
 
-其中在非 arm64 使用了如下代码，来判断 Special Struct:
+上面的代码，第一判断在非 arm64 下，第二判断是否为 union 或者 struct (详见[Type Encodings](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100)  )。
 
-    if ([methodSignature.debugDescription rangeOfString:@"is special struct return? YES"].location != NSNotFound)
-    
-可以说是一个非常 trick 的做法了.
+最后，通过判断方法签名的 debugDescription 是不是包含某个特定字符串，进而决定是否使用 `_objc_msgForward_stret` .这个可以说是一个非常神奇的做法了.
 
-## Aspects 对 IMP 的实现
+这一点作者自己也在 [JSPatch 实现原理详解](https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3) 中提到了.
+
+
+## Aspects 的判断
+
+Aspects 同样也是一个非常有名的开源项目，通过查看 Aspects 的相关 commit,发现作者对 `_objc_msgForward_stret` 的判断也是颇下功夫:
 
 ### Commit 对比
 
@@ -136,7 +53,9 @@ x86_64 和 PowerPC64 的返回规则是非常复杂和让人头疼。
         BOOL isStruct = (*typeSignature == '{') ? YES : NO;
         class_replaceMethod(class, selector, isStruct ? (IMP)_objc_msgForward_stret : _objc_msgForward, typeSignature);
 
-Improve debug, rename class, better detection if we need _objc_msgForward_stret ：
+第 1 次，只判断返回值是  union 或者 struct 。
+
+2014年5月4日 ，Improve debug, rename class, better detection if we need _objc_msgForward_stret ：
 
             // As an ugly internal runtime implementation detail, we need to determine of the method we hook returns a struct or anything larger than double.
         // https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/LowLevelABI/000-Introduction/introduction.html
@@ -144,7 +63,9 @@ Improve debug, rename class, better detection if we need _objc_msgForward_stret 
         BOOL useStret = *typeEncoding == '{' || signature.methodReturnLength > sizeof(double);
         class_replaceMethod(class, selector, useStret ? (IMP)_objc_msgForward_stret : _objc_msgForward, typeEncoding);
 
-make it work on arm64：
+第 2 次，增加判断返回值的长度大于 sizeof(double)。
+
+2014年5月4日 ，make it work on arm64：
 
         IMP msgForwardIMP = _objc_msgForward;
         #if !defined(__arm64__)
@@ -155,16 +76,7 @@ make it work on arm64：
         #endif
         class_replaceMethod(class, selector, msgForwardIMP, typeEncoding);
 
-further arm64 fixes:
-
-            if (targetMethodIMP != _objc_msgForward
-            #if !defined(__arm64__)
-                && targetMethodIMP != (IMP)_objc_msgForward_stret
-            #endif
-             ) 
-             
-
-1.0.0 Release
+第 3 次，增加条件为非 arm64 的。
 
 
 2014年5月6日 ，Improve detection when to use _objc_msgForward vs _objc_msgForward_stret :
@@ -194,10 +106,10 @@ further arm64 fixes:
             return msgForwardIMP;
             }
 
+            
+第 4 次，非 arm64 下
 
-            class_replaceMethod(klass, selector, aspect_getMsgForwardIMP(self, selector), typeEncoding);
-
-negate logic to actually do what the function implies :
+2014年5月6日 ，negate logic to actually do what the function implies :
 
              static BOOL aspect_isMsgForwardIMP(IMP impl) {
 
@@ -238,6 +150,53 @@ negate logic to actually do what the function implies :
             }
         
 2014年5月11日 ,Fix 64 bit usage:
+
+
+
+### _objc_msgForward 返回值直接存储在寄存器上
+
+函数在执行完后，返回值也会保存在寄存器上，取这个寄存器的值就是返回值。
+
+### _objc_msgForward_stret 返回值存在指针中
+
+对于某些架构，某些 struct。寄存器要腾出一个位置放这个指针，返回的时候，读取指针写入的数据。
+
+
+#### 哪些 CPU 架构需要判断
+
+A function result can be returned in registers or in memory, depending on the data type of the function’s return value.
+
+> 放在相同的寄存器中。When the return value of the called function would be passed in registers, if it were passed as a parameter in a function call, the called function places its return value in the same registers
+
+> 指向内存中。Otherwise, the function places its result at the location pointed to by GPR3。
+
+
+##### ppc32 is trivial: structs never return in registers.
+
+PowerPC32 结构体从来都不在寄存器中返回。
+
+##### i386 is straightforward: structs with sizeof exactly equal to 1, 2, 4, or 8 return in registers
+
+i386 是清晰明了的，结构体大小等于 1,2,4,8 的结构在 寄存器 中返回。
+
+##### x86_64 is more complicated, including rules for returning floating-point struct fields in FPU registers, and ppc64's rules and exceptions will make your head spin
+
+x86_64 和 PowerPC64 的返回规则是非常复杂和让人头疼。
+
+
+
+
+
+返回值具体字符串代表什么，可以查看 [Type Encodings](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100)  
+
+因为不是所有的结构体，都需要用 _objc_msgForward_stret 去存储。
+
+##### IA-32
+
+##### 32bit-PowerPC
+
+##### 64bit-PowerPC
+
 
 ## 提交PR,测试失败更进一步研究
 
@@ -402,4 +361,7 @@ CPU 的访问粒度不仅仅是大小限制，地址上也有限制。也就是�
 [64-bit PowerPC Function Calling Conventions](https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/LowLevelABI/110-64-bit_PowerPC_Function_Calling_Conventions/64bitPowerPC.html#//apple_ref/doc/uid/TP40002471-SW14)
 
 [objc_msgSend_stret](http://sealiesoftware.com/blog/archive/2008/10/30/objc_explain_objc_msgSend_stret.html)
+
+[重识 Objective-C Runtime - 看透 Type 与 Value](http://blog.sunnyxx.com/2016/08/13/reunderstanding-runtime-1/)
+
 
