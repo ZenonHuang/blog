@@ -1,10 +1,19 @@
+---
+layout: post
+date: 2017-12-31 14:25:00
+title: 你真的会判断 _objc_msgForward_stret 吗
+category: 技术
+keywords: iOS
+description: 从 JSPatch/Aspects 的代码里，学习探究 _objc_msgForward_stret 的判断
+---
+
 # 前言
 
 >本文需要对消息转发机制有了解，建议阅读 [Objective-C 消息发送与转发机制原理](http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/)
 
-[JSPatch](https://github.com/bang590/JSPatch) 目前的 Star 数已经破万，知名度可见一斑。面试时，也会经常被提及。
-
 恰巧在 8 月学习 Method Swizzling ，阅读了 Aspects 和 JSPatch 做方法替换的处理，注意到了我们这次介绍的主角 --`_objc_msgForward_stret `.
+>[JSPatch](https://github.com/bang590/JSPatch) 目前的 Star 数已经破万，知名度可见一斑。面试时，也会经常被提及。[Aspects](https://github.com/steipete/Aspects)也是一个在 AOP 方面非常著名的库。
+
 
 在消息转发时，我们根据方法返回值的类型，来决定 IMP 使用 `_objc_msgForward` 或者 `_objc_msgForward_stret`.
 
@@ -32,20 +41,18 @@
     #endif
     
 
-上面的代码，第一判断在非 arm64 下，第二判断是否为 union 或者 struct (详见[Type Encodings](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100)  )。
+上面的代码，第一判断在非 `arm64` 下，第二判断是否为 `union` 或者 `struct` (详见[Type Encodings](https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100)  )。
 
-最后，通过判断方法签名的 debugDescription 是不是包含特定字符串-"is special struct return? YES"，进而决定是否使用 `_objc_msgForward_stret` .可以说是一个非常 trick 的做法了.
+最后，通过判断方法签名的 debugDescription 是不是包含特定字符串-`is special struct return? YES`，进而决定是否使用 `_objc_msgForward_stret` .可以说是一个非常 trick 的做法了.
 
-关于 `special struct` ，JSPatch 作者自己也在 [JSPatch 实现原理详解](https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3) 中提到了原因.
-
-说明在非 arm64 下都会存在 special struct 这样的问题。而具体判断的规则，苹果并没有提供给我们，所以使用到了这样的方法进行判断也是无奈之举。
+关于 `Special Struct` ，JSPatch 作者自己也在 [JSPatch 实现原理详解](https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3) 中提到了原因.文章说明在非 arm64 下都会存在 `Special Struct` 这样的问题。而具体判断的规则，苹果并没有提供给我们，所以使用到了这样的方法进行判断也是无奈之举。
 
 好在经过大量项目运行以来，证明这个方法还是靠谱的。
 
 
 ## Aspects 的判断
 
-Aspects 同样也是一个非常有名的开源项目,查看 Aspects 中与 `_objc_msgForward_stret` 相关的 commit,作者对  `special struct` 的判断颇下功夫，前后修改了很多次。
+Aspects 同样也是一个非常有名的开源项目,查看 Aspects 中与 `_objc_msgForward_stret` 相关的 commit,作者对  `Special Struct` 的判断颇下功夫，前后修改了很多次。
 
 最后的版本是这样的:
 
@@ -221,7 +228,7 @@ typedef struct {
 }TestBigStruct;
 ```
 
-测试 `TestBigStruct` ，打印它的方法签名的 `debugDescription`,包含的内容是 `is special struct return? NO`. valueSize 却是 640，肯定是存放不下，使用的指针。
+测试 `TestBigStruct` ，打印它的方法签名的 `debugDescription`,包含的内容是 `is special struct return? NO`. valueSize 却是 640，寄存器肯定是存放不下,使用的指针指向内存。
 
 
 ### 规则汇总
@@ -234,7 +241,7 @@ typedef struct {
 |arm-32|大于4字节|
 |arm-64|不存在的 ：）|
 
-
+当然，还有判断方法签名的 `debugDescription` 是否含有 `is special struct return? YES` 的方法。
 
 ## 总结
 
@@ -242,9 +249,9 @@ typedef struct {
 
 说起来对 `JSPatch` 的原理解读文章，应该没有谁写的比作者本人还好了，里面介绍了项目实际遇到的各种难点。读完下来，其中关于 `super关键字` 的解读，给了我另一个问题的灵感。
 
-学习新知识的，不妨结合知名的项目进行借鉴，能学到许多知识。
+建议大家学习新知识时，不妨结合知名的项目进行借鉴，能学到许多知识 : )
 
-这次的探究过程，完全属于本菜鸟自己一步步摸索的，如果有不对的地方，希望大家多拍砖，让我进一步学习。
+这次的探究过程，完全属于本菜鸟自己瞎摸索的，如果有不对的地方，希望大家多拍砖，让我进一步学习。
 
 # 参考
 
@@ -271,6 +278,5 @@ ARM® Architecture](http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IH
 [重识 Objective-C Runtime - 看透 Type 与 Value](http://blog.sunnyxx.com/2016/08/13/reunderstanding-runtime-1/)
 
 [什么是-x86、i386、ia32等等](http://blog.csdn.net/dagnet/article/details/6162168)
-
 
 
