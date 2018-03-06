@@ -172,23 +172,40 @@ dispatch_semaphore 是 GCD 中同步的一种方式，与他相关的只有三�
 
 ## @synchonized
 
-@synchonized(self) 更适合使用在你 需要确保在发生错误时代码不会死锁，而是抛出异常的时候。两个公共锁交替使用的场景就容易出现死锁.
-正确的做法是传入一个类内部维护的NSObject对象，而且这个对象是对外不可见的。
+@synchonized 是一个递归锁。
 
-苹果官方文档更强调它“防止不同的线程同时获取相同的锁”。
+### 递归锁
 
-objc_sync_enter
+递归锁也称为可重入锁。互斥锁可以分为非递归锁/递归锁两种，主要区别在于:同一个线程可以重复获取递归锁，不会死锁; 同一个线程重复获取非递归锁，则会产生死锁。
 
-objc_sync_exit
+因为是递归锁，我们可以类似这样的代码:
 
-递归锁在被同一线程重复获取时不会产生死锁。
+   	- (void)testLock{
+       if(_count>0){ 
+		  @synchronized (obj) {
+		     _count = _count - 1;
+    		 [self testLock];
+	 	  }
+	 	}
+	 }
+	
+而如果换成 NSLock ，它就会因为递归发生死锁了。
 
-### 递归mutex
+### 实际使用问题
 
-@synchronized(obj) {
-  //code
-}
+如果 obj 为 nil,或者 obj 地址不同，锁会失效。
 
+所以我们要防止如下的情况:
+		
+		@synchronized (obj) {
+			obj = newObj;
+		}	
+
+这里的 obj 被更改后，等到其它线程访问时，就和没加锁一样直接进去了。
+
+另外一种情况，就是 `@synchonized(self)`. 不少代码都是直接将self传入@synchronized当中，而 `self` 很容易作为一个外部对象，被调用和修改。所以它和上面是一样的情况，需要避免使用。
+
+正确的做法是什么？obj 传入一个类内部维护的NSObject对象，而且这个对象是对外不可见的,不在被随便修改的。
 
 ## pthread_mutex
 
@@ -219,6 +236,10 @@ NSCondition 的底层是通过条件变量(condition variable) pthread_cond_t�
 
 ## NSRecursiveLock
 
+## NSDistributedLock分布式锁
+
+[](http://www.tanhao.me/pieces/1731.html/)
+
 
 ## 保证线程安全的方式
 
@@ -236,7 +257,11 @@ NSCondition 的底层是通过条件变量(condition variable) pthread_cond_t�
 
 如果实在要使用多线程，也不必过分追求效率，而是更多的考虑安全问题，使用对应的锁。
 
+对于平时编写应用层多线程安全代码，我还是建议大家多使用@synchronized，NSLock，或者dispatch_semaphore_t，多线程安全比多线程性能更重要
+
 # 参考
+
+[Objective-C中不同方式实现锁(一)](http://www.tanhao.me/pieces/616.html/)
 
 [关于 @synchronized，这儿比你想知道的还要多](http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/)
 
