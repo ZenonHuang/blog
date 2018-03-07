@@ -2,7 +2,7 @@
 
 翻看目前关于 iOS 开发里的锁的文章，大部分都起源于 ibireme 的 [《不再安全的 OSSpinLock》](https://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/)。
 
-我想依次解决几个关于锁的疑问:
+这里不会说锁的使用，主要在于想依次解决关于锁的疑问:
 
 1. 锁是什么?
 2. 为什么要有锁？
@@ -13,6 +13,7 @@
 7. 自旋锁和互斥锁的关系是平行对立的吗？
 8. 信号量和互斥量的关系
 9. 递归锁使用的场景
+10. 信号量和条件变量的区别
 
 # 锁是什么
 
@@ -178,7 +179,7 @@ dispatch_semaphore 是 GCD 中同步的一种方式，与他相关的只有三�
 
 递归锁也称为可重入锁。互斥锁可以分为非递归锁/递归锁两种，主要区别在于:同一个线程可以重复获取递归锁，不会死锁; 同一个线程重复获取非递归锁，则会产生死锁。
 
-因为是递归锁，我们可以类似这样的代码:
+因为是递归锁，我们可以写类似这样的代码:
 
    	- (void)testLock{
        if(_count>0){ 
@@ -205,61 +206,124 @@ dispatch_semaphore 是 GCD 中同步的一种方式，与他相关的只有三�
 
 另外一种情况，就是 `@synchonized(self)`. 不少代码都是直接将self传入@synchronized当中，而 `self` 很容易作为一个外部对象，被调用和修改。所以它和上面是一样的情况，需要避免使用。
 
-正确的做法是什么？obj 传入一个类内部维护的NSObject对象，而且这个对象是对外不可见的,不在被随便修改的。
+正确的做法是什么？obj 应当传入一个类内部维护的NSObject对象，而且这个对象是对外不可见的,不被随便修改的。
 
 ## pthread_mutex
 
-pthread 定义了一组跨平台的线程相关的 API，其中可以使用 pthread_mutex 作为互斥锁。`pthread_mutex ` 不是使用忙等，而是同信号量一样，会阻塞线程并进行等待，调用时进行线程上下文切换。
+pthread 定义了一组跨平台的线程相关的 API，其中可以使用 pthread_mutex 作为互斥锁。
 
-`pthread_mutex` 它本身就拥有一个优先级继承的设置。
+`pthread_mutex ` 不是使用忙等，而是同信号量一样，会阻塞线程并进行等待，调用时进行线程上下文切换。
 
-通过设置它的协议，来解决优先级反转:
+`pthread_mutex` 本身拥有设置协议的功能，通过设置它的协议，来解决优先级反转:
 >pthread_mutexattr_setprotocol(pthread_mutexattr_t *attr, int protocol) 
 
-其中协议包括以下几种：
+其中协议类型包括以下几种：
 - PTHREAD_PRIO_NONE：线程的优先级和调度不会受到互斥锁拥有权的影响。 - PTHREAD_PRIO_INHERIT：当高优先级的等待低优先级的线程锁定互斥量时，低优先级的线程以高优先级线程的优先级运行。这种方式将以继承的形式传递。当线程解锁互斥量时，线程的优先级自动被降到它原来的优先级。该协议就是支持优先级继承类型的互斥锁，它不是默认选项，需要在程序中进行设置。 - PTHREAD_PRIO_PROTECT：当线程拥有一个或多个使用 PTHREAD_PRIO_PROTECT 初始化的互斥锁时，此协议值会影响其他线程（如 thrd2）的优先级和调度。thrd2 以其较高的优先级或者以 thrd2 拥有的所有互斥锁的最高优先级上限运行。基于被 thrd2 拥有的任一互斥锁阻塞的较高优先级线程对于 thrd2的调度没有任何影响。
 
-所以，我们也可以通过设置协议为 `PTHREAD_PRIO_INHERIT` 类型，解决优先级反转的问题。
+所以，设置协议类型为 `PTHREAD_PRIO_INHERIT` ，运用优先级继承的方式，解决优先级反转的问题。
 
-而我们在 iOS 中使用的 NSLock,NSCondition,NSConditionLock,NSRecursiveLock 都是基于 pthread_mutex 做实现的。
+而我们在 iOS 中使用的 NSLock,NSRecursiveLock 都是基于 pthread_mutex 做实现的。
 
 
 ## NSLock
 
-属于 pthread_mutex 的一层封装。
+NSLock 属于 pthread_mutex 的一层封装, 设置了属性为 PTHREAD_MUTEX_ERRORCHECK。
+
+它会损失一定性能换来错误提示。并简化直接使用 pthread_mutex 的定义。
 
 ## NSCondition
 
-NSCondition 的底层是通过条件变量(condition variable) pthread_cond_t 来实现的。条件变量有点像信号量，提供了线程阻塞与信号机制，因此可以用来阻塞某个线程，并等待某个数据就绪，随后唤醒线程，比如常见的生产者-消费者模式。
+NSCondition 是通过**条件变量(condition variable)** pthread_cond_t 来实现的。
+
+NSCondition 其实是封装了一个互斥锁和条件变量， 它把前者的 lock 方法和后者的 wait/signal 统一在 NSCondition 对象中，暴露给使用者。
+
+
+[conditionLock wait];
+[conditionLock signal];
+
+
+### 条件变量
+
+条件变量，它有点像信号量，提供了线程阻塞与信号机制，因此可以用来阻塞某个线程，并等待某个数据就绪，随后唤醒线程，比如常见的生产者-消费者模式。
+
+线程间的同步还有这样一种情况：
+线程A需要等某个条件成立,才能继续往下执行.现在这个条件不成立，线程A就阻塞等待.
+而线程B在执行过程中使这个条件成立了，就唤醒线程A继续执行。
+
+在pthread库中通过条件变量（Condition Variable）来阻塞等待一个条件，或者唤醒等待这个条件的线程。
+Condition Variable用pthread_cond_t类型的变量表示。
+
+一个Condition Variable总是和一个Mutex搭配使用的。一个线程可以调用pthread_cond_wait在一个Condition Variable上阻塞等待。
+
+采用条件变量控制线程同步，最为经典的例子要数生产者和消费者问题。
+
+#### 生产者-消费者问题
+
+生产者消费者问题,是一个著名的线程同步问题，该问题描述如下：
+
+有一个生产者在生产产品，这些产品将提供给若干个消费者去消费，为了使生产者和消费者能并发执行，在两者之间设置一个具有多个缓冲区的缓冲池，生产者将它生产的产品放入一个缓冲区中，消费者可以从缓冲区中取走产品进行消费，显然生产者和消费者之间必须保持同步，即不允许消费者到一个空的缓冲区中取产品，也不允许生产者向一个已经放入产品的缓冲区中再次投放产品。
+
+使用 NSCondition 解决生产消费者问题。[Demo]()
+
+#### 条件变量和信号量的区别
+
+每个信号量有一个与之关联的值，挂出时+1，等待时-1，那么任何线程都可以挂出一个信号，即使没有线程在等待该信号量的值。
+
+不过对于条件变量来说，如果pthread_cond_signal之后，没有任何线程阻塞在 pthread_cond_wait 上，那么此条件变量上的信号丢失。
+
 
 ## NSConditionLock
 
+NSConditionLock，即条件锁，可以设置自定义的条件来获得锁。
+
+NSConditionLock 借助 NSCondition 来实现，它的本质就是一个生产者-消费者模型。“条件被满足”可以理解为生产者提供了新的内容。
+
+相比于 NSLock 多了个 condition 参数，我们可以理解为一个条件标示。
+
+[conditionLock lockWhenCondition:3];
+[conditionLock unlockWithCondition:3];
+
+值得注意的是，利用 NSConditionLock 还可以实现任务之间的依赖.
+
 ## NSRecursiveLock
 
-## NSDistributedLock分布式锁
+NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t 对象的类型不同，前者的类型为 PTHREAD_MUTEX_RECURSIVE。
 
-[](http://www.tanhao.me/pieces/1731.html/)
+## NSDistributedLock
+
+这里顺带提一下 `NSDistributedLock`, 是 macOS 下的一种锁. 
+
+[苹果文档](https://developer.apple.com/documentation/foundation/nsdistributedlock?language=objc) 对于NSDistributedLock 的描述是:
+>A lock that multiple applications on multiple hosts can use to restrict access to some shared resource, such as a file
+
+意思是说，它是一个用在多个主机间的多应用的锁，可以限制访问一些共享资源，例如文件。
+
+按字面意思翻译，`NSDistributedLock` 应该就叫做 分布式锁。但是看概念和资料，在 [解决NSDistributedLock进程互斥锁的死锁问题(一)](http://www.tanhao.me/pieces/1731.html/) 里面看到，NSDistributedLock 更类似于文件锁的概念。 有兴趣的可以看一看 [Linux 2.6 中的文件锁](https://www.ibm.com/developerworks/cn/linux/l-cn-filelock/)
 
 
 ## 保证线程安全的方式
 
 ### 使用单线程访问
 
-尽量避免多线程的设计，因为多线程访问会出现很多不可控制的情况。有些情况即使上锁，也无法保证百分之百的安全，例如自旋锁的问题。
+首先，尽量避免多线程的设计。因为多线程访问会出现很多不可控制的情况。有些情况即使上锁，也无法保证百分之百的安全，例如自旋锁的问题。
 
 ### 不对资源做修改
 
-因此，如果都是访问共享资源而不去修改共享资源也可以保证线程安全。
+而如果还是得用多线程，那么避免对资源做修改。
 
-总的来说，比如 NSArry 这样不可变类是线程安全的。然而它们的可变版本，比如 NSMutableArray 是线程不安全的。事实上，如果是在一个队列中串行地进行访问的话，在不同线程中使用它们也是没有问题的。
+如果都是访问共享资源，而不去修改共享资源，也可以保证线程安全。
+
+比如 NSArry 这样不可变类是线程安全的。然而它们的可变版本，比如 NSMutableArray 是线程不安全的。事实上，如果是在一个队列中串行地进行访问的话，在不同线程中使用它们也是没有问题的。
 
 # 总结
 
 如果实在要使用多线程，也不必过分追求效率，而是更多的考虑安全问题，使用对应的锁。
 
-对于平时编写应用层多线程安全代码，我还是建议大家多使用@synchronized，NSLock，或者dispatch_semaphore_t，多线程安全比多线程性能更重要
+对于平时编写应用层多线程安全代码，我还是建议大家多使用 @synchronized，NSLock，或者dispatch_semaphore_t，多线程安全比多线程性能更重要。
 
 # 参考
+
+[线程同步：互斥锁，条件变量，信号量](http://www.cnblogs.com/549294286/p/3687678.html)
 
 [Objective-C中不同方式实现锁(一)](http://www.tanhao.me/pieces/616.html/)
 
