@@ -9,7 +9,7 @@ description: 记录自己在学习过程中对于锁的几个疑问
 
 又到了春天挪坑的季节，想起多次被问及到锁的概念，决定好好总结一番。
 
-翻看目前关于 iOS 开发锁的文章，大部分都起源于 ibireme 的 [《不再安全的 OSSpinLock》](https://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/)，在学习的过程中对一些问题发生了疑问。这里不会具体说锁的使用，主要想解决这些疑问:
+翻看目前关于 iOS 开发锁的文章，大部分都起源于 ibireme 的 [《不再安全的 OSSpinLock》](https://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/)，我在看文章的时候有一些疑惑。这次主要想解决这些疑问:
 
 1. 锁是什么?
 2. 为什么要有锁？
@@ -35,7 +35,7 @@ description: 记录自己在学习过程中对于锁的几个疑问
 
 程序执行的顺序会被打乱,可能造成提前释放一个变量,计算结果错误等情况。
 
-所以我们需要将线程不安全的代码 “锁” 起来。保证一段代码或者多段代码操作的原子性，保证多个线程对同一个数据的访问**同步 (Synchronization)**。
+所以我们需要将线程不安全的代码 “锁” 起来。保证一段代码或者多段代码操作的原子性，保证多个线程对同一个数据的访问 **同步 (Synchronization)**。
 
 ### 属性设置 atomic  
 
@@ -51,11 +51,10 @@ description: 记录自己在学习过程中对于锁的几个疑问
 	for (int i = 0; i < 100000; i ++) {
     if (i % 2 == 0) {
         self.arr = @[@"1", @"2", @"3"];
-    }
-    else {
+    }else {
         self.arr = @[@"1"];
     }
-    	NSLog(@"Thread A: %@\n", self.arr);
+    NSLog(@"Thread A: %@\n", self.arr);
 	}
 
     
@@ -67,19 +66,24 @@ description: 记录自己在学习过程中对于锁的几个疑问
 
 就算在 **thread B** 中针对 arr 数组进行了大小判断，但是仍然可能在 `objectAtIndex:` 操作时被改变数组长度，导致出错。这种情况声明为 atomic 也没有用。
 
-而解决方式，就是进行加锁。需要注意的是，读/写的操作都需要加锁，不仅仅是对一段代码加锁。
+而解决方式，就是进行加锁。
+
+需要注意的是，读/写的操作都需要加锁，不仅仅是对一段代码加锁。
 
 # 锁的分类
 
-锁的分类方式，可以根据锁的状态，锁的特性等进行不同的分类，很多锁之间其实并不是并列的关系，而是一种锁下的不同实现。可以参考 [几个关于锁的名词联系是什么](https://www.zhihu.com/question/39850927) 中 `Tim Chen` 的回答。
+锁的分类方式，可以根据锁的状态，锁的特性等进行不同的分类，很多锁之间其实并不是并列的关系，而是一种锁下的不同实现。关于锁的分类，可以参考
+[Java中的锁分类](https://www.cnblogs.com/qifengshi/p/6831055.html) 看一下。
 
-很多谈论锁的文章，都会提到互斥锁，自旋锁。很少有提到它们的关系，其实自旋锁，也是互斥锁的一种实现，`spin lock`和 `mutex` 都是为了解决某项资源的互斥使用,在任何时刻只能有一个保持者。
+## 自旋锁和互斥锁的关系
+
+很多谈论锁的文章，都会提到互斥锁，自旋锁。很少有提到它们的关系，其实自旋锁，也是互斥锁的一种实现，而 `spin lock`和 `mutex` 两者都是为了解决某项资源的互斥使用,在任何时刻只能有一个保持者。
 
 区别在于 `spin lock`和 `mutex` 调度机制上有所不同。
 
 # OSSpinLock 
 
-OSSpinLock 是一种自旋锁。 它的特点是在线程等待时会一直轮询，处于忙等状态。自旋锁由此得名。
+OSSpinLock 是一种自旋锁。它的特点是在线程等待时会一直轮询，处于忙等状态。自旋锁由此得名。
 
 自旋锁看起来是比较耗费 cpu 的，然而在互斥临界区计算量较小的场景下，它的效率远高于其它的锁。
 
@@ -139,7 +143,7 @@ wikipedia 上是这么定义的：
 
 ## 线程调度
 
-为了帮助理解，要提一下有关`线程调度`的概念。
+为了帮助理解，要提一下有关`线程调度`的概念。
 
 无论多核心还是单核，我们的线程运行总是 "并发" 的。
 
@@ -227,19 +231,19 @@ pthread 定义了一组跨平台的线程相关的 API，其中可以使用 pthr
 - PTHREAD_PRIO_INHERIT：当高优先级的等待低优先级的线程锁定互斥量时，低优先级的线程以高优先级线程的优先级运行。这种方式将以继承的形式传递。当线程解锁互斥量时，线程的优先级自动被降到它原来的优先级。该协议就是支持优先级继承类型的互斥锁，它不是默认选项，需要在程序中进行设置。
 - PTHREAD_PRIO_PROTECT：当线程拥有一个或多个使用 PTHREAD_PRIO_PROTECT 初始化的互斥锁时，此协议值会影响其他线程（如 thrd2）的优先级和调度。thrd2 以其较高的优先级或者以 thrd2 拥有的所有互斥锁的最高优先级上限运行。基于被 thrd2 拥有的任一互斥锁阻塞的较高优先级线程对于 thrd2的调度没有任何影响。
 
-所以，设置协议类型为 `PTHREAD_PRIO_INHERIT` ，运用优先级继承的方式，解决优先级反转的问题。
+设置协议类型为 `PTHREAD_PRIO_INHERIT` ，运用优先级继承的方式，可以解决优先级反转的问题。
 
 而我们在 iOS 中使用的 NSLock,NSRecursiveLock 等都是基于 pthread_mutex 做实现的。
 
 # NSLock
 
-NSLock 属于 pthread_mutex 的一层封装, 设置了属性为 `PTHREAD_MUTEX_ERRORCHECK` 。
+NSLock 属于 pthread_mutex 的一层封装, 设置了属性为 `PTHREAD_MUTEX_ERRORCHECK` 。
 
 它会损失一定性能换来错误提示。并简化直接使用 pthread_mutex 的定义。
 
 # NSCondition
 
-NSCondition 是通过**条件变量(condition variable)** pthread_cond_t 来实现的。
+NSCondition 是通过 pthread 中的**条件变量(condition variable)** pthread_cond_t 来实现的。
 
 ## 条件变量
 
@@ -326,7 +330,9 @@ NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t �
 按字面意思翻译，`NSDistributedLock` 应该就叫做 分布式锁。但是看概念和资料，在 [解决NSDistributedLock进程互斥锁的死锁问题(一)](http://www.tanhao.me/pieces/1731.html/) 里面看到，NSDistributedLock 更类似于文件锁的概念。 有兴趣的可以看一看 [Linux 2.6 中的文件锁](https://www.ibm.com/developerworks/cn/linux/l-cn-filelock/)
 
 
-# 保证线程安全的方式
+# 其它保证线程安全的方式
+
+除了用锁之外，有其它方法保证线程安全吗？
 
 ## 使用单线程访问
 
@@ -338,17 +344,23 @@ NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t �
 
 如果都是访问共享资源，而不去修改共享资源，也可以保证线程安全。
 
-比如 NSArry 这样不可变类是线程安全的。然而它们的可变版本，比如 NSMutableArray 是线程不安全的。事实上，如果是在一个队列中串行地进行访问的话，在不同线程中使用它们也是没有问题的。
+比如 NSArry 作为不可变类是线程安全的。然而它们的可变版本，比如 NSMutableArray 是线程不安全的。事实上，如果是在一个队列中串行地进行访问的话，在不同线程中使用它们也是没有问题的。
 
 # 总结
 
 如果实在要使用多线程，也没有必要过分追求效率，而更多的考虑线程安全问题，使用对应的锁。
 
-对于平时编写应用里的多线程代码，还是仍然 @synchronized，NSLock 等，可读性和安全性都好，多线程安全比多线程性能更重要。
+对于平时编写应用里的多线程代码，还是建议用 @synchronized，NSLock 等，可读性和安全性都好，多线程安全比多线程性能更重要。
 
-这里提供了我学习锁用的代码，感兴趣的可以看一看[实验 Demo 地址](https://github.com/ZenonHuang/MyDemos/tree/master/LockForiOS)
+这里提供了我学习锁用的代码，感兴趣的可以看一看 [实验 Demo](https://github.com/ZenonHuang/MyDemos/tree/master/LockForiOS)
 
 # 参考
+
+[程序员的自我修养](https://www.amazon.cn/dp/B0027VSA7U)
+
+[iOS多线程到底不安全在哪里？](http://mrpeak.cn/blog/ios-thread-safety/)
+
+[几个关于锁的名词联系是什么](https://www.zhihu.com/question/39850927) 
 
 [线程同步：互斥锁，条件变量，信号量](http://www.cnblogs.com/549294286/p/3687678.html)
 
@@ -362,12 +374,10 @@ NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t �
 
 [linux c学习笔记----互斥锁属性](http://lobert.iteye.com/blog/1762844)
 
-[Java中的锁分类](https://www.cnblogs.com/qifengshi/p/6831055.html)
-
 [正确使用多线程同步锁@synchronized()](http://mrpeak.cn/blog/synchronized/)
 
-[iOS多线程到底不安全在哪里？](http://mrpeak.cn/blog/ios-thread-safety/)
-
 [iOS 中几种常用的锁总结](https://www.jianshu.com/p/1e59f0970bf5)
+
+
 
 
