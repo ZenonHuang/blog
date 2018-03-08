@@ -1,19 +1,27 @@
+---
+layout: post
+date: 2018-03-08 7:25:00
+title: 谈 iOS 的锁
+category: 技术
+keywords: iOS
+description: 记录自己在学习过程中对于锁的几个疑问
+---
+
 又到了春天挪坑的季节，想起多次被问及到锁的概念，决定好好总结一番。
 
-翻看目前关于 iOS 开发里的锁的文章，大部分都起源于 ibireme 的 [《不再安全的 OSSpinLock》](https://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/)。
+翻看目前关于 iOS 开发锁的文章，大部分都起源于 ibireme 的 [《不再安全的 OSSpinLock》](https://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/)，
 
-这里不会说锁的使用，主要在于想依次解决关于锁的疑问:
+这里不会具体说锁的使用，主要想解决关于锁的疑问:
 
 1. 锁是什么?
 2. 为什么要有锁？
 3. 锁的分类问题
 4. 为什么 OSSpinLock 不安全？
-5. 解决自旋锁不安全问题的几种方式
+5. 解决自旋锁不安全问题有几种方式
 6. 为什么换用其它的锁，可以解决 OSSpinLock 的问题？
 7. 自旋锁和互斥锁的关系是平行对立的吗？
 8. 信号量和互斥量的关系
-9. 递归锁使用的场景
-10. 信号量和条件变量的区别
+9. 信号量和条件变量的区别
 
 # 锁是什么
 
@@ -169,8 +177,6 @@ dispatch_semaphore 是 GCD 中同步的一种方式，与他相关的只有三�
 
 这里的关键，就是理解信号量，可以允许 N 个信号量允许 N 个线程并发地执行任务。
 
-在这里附上一个实验的 [Demo]() 
-
 ## @synchonized
 
 @synchonized 是一个递归锁。
@@ -218,16 +224,18 @@ pthread 定义了一组跨平台的线程相关的 API，其中可以使用 pthr
 >pthread_mutexattr_setprotocol(pthread_mutexattr_t *attr, int protocol) 
 
 其中协议类型包括以下几种：
-- PTHREAD_PRIO_NONE：线程的优先级和调度不会受到互斥锁拥有权的影响。 - PTHREAD_PRIO_INHERIT：当高优先级的等待低优先级的线程锁定互斥量时，低优先级的线程以高优先级线程的优先级运行。这种方式将以继承的形式传递。当线程解锁互斥量时，线程的优先级自动被降到它原来的优先级。该协议就是支持优先级继承类型的互斥锁，它不是默认选项，需要在程序中进行设置。 - PTHREAD_PRIO_PROTECT：当线程拥有一个或多个使用 PTHREAD_PRIO_PROTECT 初始化的互斥锁时，此协议值会影响其他线程（如 thrd2）的优先级和调度。thrd2 以其较高的优先级或者以 thrd2 拥有的所有互斥锁的最高优先级上限运行。基于被 thrd2 拥有的任一互斥锁阻塞的较高优先级线程对于 thrd2的调度没有任何影响。
+
+- PTHREAD_PRIO_NONE：线程的优先级和调度不会受到互斥锁拥有权的影响。
+- PTHREAD_PRIO_INHERIT：当高优先级的等待低优先级的线程锁定互斥量时，低优先级的线程以高优先级线程的优先级运行。这种方式将以继承的形式传递。当线程解锁互斥量时，线程的优先级自动被降到它原来的优先级。该协议就是支持优先级继承类型的互斥锁，它不是默认选项，需要在程序中进行设置。
+- PTHREAD_PRIO_PROTECT：当线程拥有一个或多个使用 PTHREAD_PRIO_PROTECT 初始化的互斥锁时，此协议值会影响其他线程（如 thrd2）的优先级和调度。thrd2 以其较高的优先级或者以 thrd2 拥有的所有互斥锁的最高优先级上限运行。基于被 thrd2 拥有的任一互斥锁阻塞的较高优先级线程对于 thrd2的调度没有任何影响。
 
 所以，设置协议类型为 `PTHREAD_PRIO_INHERIT` ，运用优先级继承的方式，解决优先级反转的问题。
 
-而我们在 iOS 中使用的 NSLock,NSRecursiveLock 都是基于 pthread_mutex 做实现的。
-
+而我们在 iOS 中使用的 NSLock,NSRecursiveLock 等都是基于 pthread_mutex 做实现的。
 
 ## NSLock
 
-NSLock 属于 pthread_mutex 的一层封装, 设置了属性为 PTHREAD_MUTEX_ERRORCHECK。
+NSLock 属于 pthread_mutex 的一层封装, 设置了属性为 `PTHREAD_MUTEX_ERRORCHECK` 。
 
 它会损失一定性能换来错误提示。并简化直接使用 pthread_mutex 的定义。
 
@@ -235,59 +243,78 @@ NSLock 属于 pthread_mutex 的一层封装, 设置了属性为 PTHREAD_MUTEX_E
 
 NSCondition 是通过**条件变量(condition variable)** pthread_cond_t 来实现的。
 
-NSCondition 其实是封装了一个互斥锁和条件变量， 它把前者的 lock 方法和后者的 wait/signal 统一在 NSCondition 对象中，暴露给使用者。
-
-
-[conditionLock wait];
-[conditionLock signal];
-
-
 ### 条件变量
 
-条件变量，它有点像信号量，提供了线程阻塞与信号机制，因此可以用来阻塞某个线程，并等待某个数据就绪，随后唤醒线程，比如常见的生产者-消费者模式。
+在线程间的同步中，有这样一种情况：
+线程 A 需要等条件 C 成立,才能继续往下执行.现在这个条件不成立，线程 A 就阻塞等待.
+而线程 B 在执行过程中，使条件 C 成立了，就唤醒线程 A 继续执行。
 
-线程间的同步还有这样一种情况：
-线程A需要等某个条件成立,才能继续往下执行.现在这个条件不成立，线程A就阻塞等待.
-而线程B在执行过程中使这个条件成立了，就唤醒线程A继续执行。
+对于上述情况，可以使用条件变量来操作。
 
-在pthread库中通过条件变量（Condition Variable）来阻塞等待一个条件，或者唤醒等待这个条件的线程。
-Condition Variable用pthread_cond_t类型的变量表示。
+条件变量，类似信号量，提供线程阻塞与信号机制，可以用来阻塞某个线程，等待某个数据就绪后，随后唤醒线程。
 
-一个Condition Variable总是和一个Mutex搭配使用的。一个线程可以调用pthread_cond_wait在一个Condition Variable上阻塞等待。
+一个条件变量总是和一个互斥量搭配使用。
 
-采用条件变量控制线程同步，最为经典的例子要数生产者和消费者问题。
+而 NSCondition 其实就是封装了一个互斥锁和条件变量，互斥锁的 lock/unlock 方法和后者的 wait/signal 统一封装在 NSCondition 对象中，暴露给使用者。
+
+用条件变量控制线程同步，最为经典的例子就是 生产者-消费者问题。
 
 #### 生产者-消费者问题
 
 生产者消费者问题,是一个著名的线程同步问题，该问题描述如下：
 
-有一个生产者在生产产品，这些产品将提供给若干个消费者去消费，为了使生产者和消费者能并发执行，在两者之间设置一个具有多个缓冲区的缓冲池，生产者将它生产的产品放入一个缓冲区中，消费者可以从缓冲区中取走产品进行消费，显然生产者和消费者之间必须保持同步，即不允许消费者到一个空的缓冲区中取产品，也不允许生产者向一个已经放入产品的缓冲区中再次投放产品。
+有一个生产者在生产产品，这些产品将提供给若干个消费者去消费。要求让生产者和消费者能并发执行，在两者之间设置一个具有多个缓冲区的缓冲池，生产者将它生产的产品放入一个缓冲区中，消费者可以从缓冲区中取走产品进行消费，显然生产者和消费者之间必须保持同步，即不允许消费者到一个空的缓冲区中取产品，也不允许生产者向一个已经放入产品的缓冲区中再次投放产品。
 
-使用 NSCondition 解决生产消费者问题。[Demo]()
+我们可以刚好可以使用 NSCondition 解决生产者-消费者问题。具体的代码放置在文末的 Demo 里了。
+
+这里需要注意，实际操作 NSCondition 做 wait 操作时,如果用 if 判断:
+
+	if(count==0){
+		[condition wait];
+	}
+	
+上面这样是不能保证消费者是线程安全的。
+
+因为 NSCondition 可以给每个线程分别加锁，但加锁后不影响其他线程进入临界区。所以 NSCondition 使用 wait 并加锁后，并不能真正保证线程的安全。
+
+当一个 signal 操作发出时，如果有两个线程都在做 消费者 操作，那同时都会消耗掉资源，于是绕过了检查。 
+
+例如我们的条件是，count == 0 执行等待。
+
+假设当前 count = 0,线程A 要判断到 count == 0,执行等待；
+
+线程B 执行了 count = 1 ，并唤醒线程A 执行 count - 1 ，同时线程C 也判断到 count > 0 。因为处在不同的线程锁，同样判断执行了 count - 1。2 个线程都会执行 count - 1,但是 count = 1，实际就出现count = -1 的情况。
+
+所以为了保证消费者操作的正确，使用 while 循环中的判断,进行二次确认:
+
+	    while (count == 0) {
+        	[condition wait];
+    	}
+
+
 
 #### 条件变量和信号量的区别
 
-每个信号量有一个与之关联的值，挂出时+1，等待时-1，那么任何线程都可以挂出一个信号，即使没有线程在等待该信号量的值。
+每个信号量有一个与之关联的值，发出时+1，等待时-1，任何线程都可以发出一个信号，即使没有线程在等待该信号量的值。
 
-不过对于条件变量来说，如果pthread_cond_signal之后，没有任何线程阻塞在 pthread_cond_wait 上，那么此条件变量上的信号丢失。
+可是对于条件变量，例如 pthread_cond_signal 发出信号后，没有任何线程阻塞在 pthread_cond_wait 上，那这个条件变量上的信号会直接丢失掉。
 
 
 ## NSConditionLock
 
-NSConditionLock，即条件锁，可以设置自定义的条件来获得锁。
+NSConditionLock 称为条件锁，只有 condition 参数与初始化时候的 condition 相等，lock 才能正确进行加锁操作。
 
-NSConditionLock 借助 NSCondition 来实现，它的本质就是一个生产者-消费者模型。“条件被满足”可以理解为生产者提供了新的内容。
+这里分清两个概念：
+- `unlockWithCondition:`,它是先解锁，再修改 condition 参数的值。 并不是当 condition 符合某个件值去解锁。
+- `lockWhenCondition:`,它与 `unlockWithCondition:` 不一样，不会修改 condition 参数的值，而是符合 condition 的值再上锁。
 
-相比于 NSLock 多了个 condition 参数，我们可以理解为一个条件标示。
-
-[conditionLock lockWhenCondition:3];
-[conditionLock unlockWithCondition:3];
-
-值得注意的是，利用 NSConditionLock 还可以实现任务之间的依赖.
+在这里可以利用 NSConditionLock 实现任务之间的依赖.
 
 ## NSRecursiveLock
 
-NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t 对象的类型不同，前者的类型为 PTHREAD_MUTEX_RECURSIVE。
+NSRecursiveLock 和前面提到的 @synchonized 一样，是一个递归锁。
+
+NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t 对象的类型不同，` NSRecursiveLock` 的类型被设置为 `PTHREAD_MUTEX_RECURSIVE`。
 
 ## NSDistributedLock
 
@@ -317,15 +344,21 @@ NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t �
 
 # 总结
 
-如果实在要使用多线程，也不必过分追求效率，而是更多的考虑安全问题，使用对应的锁。
+如果实在要使用多线程，也没有必要过分追求效率，而更多的考虑线程安全问题，使用对应的锁。
 
-对于平时编写应用层多线程安全代码，我还是建议大家多使用 @synchronized，NSLock，或者dispatch_semaphore_t，多线程安全比多线程性能更重要。
+对于平时编写应用里的多线程代码，还是仍然 @synchronized，NSLock 等，可读性和安全性都好，多线程安全比多线程性能更重要。
+
+[实验 Demo 地址](https://github.com/ZenonHuang/MyDemos/tree/master/LockForiOS)
 
 # 参考
 
 [线程同步：互斥锁，条件变量，信号量](http://www.cnblogs.com/549294286/p/3687678.html)
 
 [Objective-C中不同方式实现锁(一)](http://www.tanhao.me/pieces/616.html/)
+
+[iOS多线程-各种线程锁的简单介绍](https://www.jianshu.com/p/35dd92bcfe8c)
+
+[深入理解 iOS 开发中的锁](https://bestswifter.com/ios-lock/)
 
 [关于 @synchronized，这儿比你想知道的还要多](http://yulingtianxia.com/blog/2015/11/01/More-than-you-want-to-know-about-synchronized/)
 
@@ -338,6 +371,5 @@ NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t �
 [iOS多线程到底不安全在哪里？](http://mrpeak.cn/blog/ios-thread-safety/)
 
 [iOS 中几种常用的锁总结](https://www.jianshu.com/p/1e59f0970bf5)
-
 
 
