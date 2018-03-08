@@ -175,11 +175,11 @@ dispatch_semaphore 是 GCD 中同步的一种方式，与他相关的只有三�
 
 这里的关键，就是理解信号量可以允许 N 个信号量允许 N 个线程并发地执行任务。
 
-## @synchonized
+# @synchonized
 
 @synchonized 是一个递归锁。
 
-### 递归锁
+## 递归锁
 
 递归锁也称为可重入锁。互斥锁可以分为非递归锁/递归锁两种，主要区别在于:同一个线程可以重复获取递归锁，不会死锁; 同一个线程重复获取非递归锁，则会产生死锁。
 
@@ -196,7 +196,7 @@ dispatch_semaphore 是 GCD 中同步的一种方式，与他相关的只有三�
 	
 而如果换成 NSLock ，它就会因为递归发生死锁了。
 
-### 实际使用问题
+## 实际使用问题
 
 如果 obj 为 nil,或者 obj 地址不同，锁会失效。
 
@@ -212,7 +212,7 @@ dispatch_semaphore 是 GCD 中同步的一种方式，与他相关的只有三�
 
 正确的做法是什么？obj 应当传入一个类内部维护的NSObject对象，而且这个对象是对外不可见的,不被随便修改的。
 
-## pthread_mutex
+# pthread_mutex
 
 pthread 定义了一组跨平台的线程相关的 API，其中可以使用 pthread_mutex 作为互斥锁。
 
@@ -231,17 +231,17 @@ pthread 定义了一组跨平台的线程相关的 API，其中可以使用 pthr
 
 而我们在 iOS 中使用的 NSLock,NSRecursiveLock 等都是基于 pthread_mutex 做实现的。
 
-## NSLock
+# NSLock
 
 NSLock 属于 pthread_mutex 的一层封装, 设置了属性为 `PTHREAD_MUTEX_ERRORCHECK` 。
 
 它会损失一定性能换来错误提示。并简化直接使用 pthread_mutex 的定义。
 
-## NSCondition
+# NSCondition
 
 NSCondition 是通过**条件变量(condition variable)** pthread_cond_t 来实现的。
 
-### 条件变量
+## 条件变量
 
 在线程间的同步中，有这样一种情况：
 线程 A 需要等条件 C 成立,才能继续往下执行.现在这个条件不成立，线程 A 就阻塞等待.
@@ -257,7 +257,7 @@ NSCondition 是通过**条件变量(condition variable)** pthread_cond_t 来�
 
 用条件变量控制线程同步，最为经典的例子就是 生产者-消费者问题。
 
-#### 生产者-消费者问题
+## 生产者-消费者问题
 
 生产者消费者问题,是一个著名的线程同步问题，该问题描述如下：
 
@@ -291,14 +291,14 @@ NSCondition 是通过**条件变量(condition variable)** pthread_cond_t 来�
 
 
 
-#### 条件变量和信号量的区别
+## 条件变量和信号量的区别
 
 每个信号量有一个与之关联的值，发出时+1，等待时-1，任何线程都可以发出一个信号，即使没有线程在等待该信号量的值。
 
 可是对于条件变量，例如 pthread_cond_signal 发出信号后，没有任何线程阻塞在 pthread_cond_wait 上，那这个条件变量上的信号会直接丢失掉。
 
 
-## NSConditionLock
+# NSConditionLock
 
 NSConditionLock 称为条件锁，只有 condition 参数与初始化时候的 condition 相等，lock 才能正确进行加锁操作。
 
@@ -308,13 +308,13 @@ NSConditionLock 称为条件锁，只有 condition 参数与初始化时候的 c
 
 在这里可以利用 NSConditionLock 实现任务之间的依赖.
 
-## NSRecursiveLock
+# NSRecursiveLock
 
 NSRecursiveLock 和前面提到的 @synchonized 一样，是一个递归锁。
 
 NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t 对象的类型不同，` NSRecursiveLock` 的类型被设置为 `PTHREAD_MUTEX_RECURSIVE`。
 
-## NSDistributedLock
+# NSDistributedLock
 
 这里顺带提一下 `NSDistributedLock`, 是 macOS 下的一种锁. 
 
@@ -326,13 +326,13 @@ NSRecursiveLock 与 NSLock 的区别在于内部封装的 pthread_mutex_t �
 按字面意思翻译，`NSDistributedLock` 应该就叫做 分布式锁。但是看概念和资料，在 [解决NSDistributedLock进程互斥锁的死锁问题(一)](http://www.tanhao.me/pieces/1731.html/) 里面看到，NSDistributedLock 更类似于文件锁的概念。 有兴趣的可以看一看 [Linux 2.6 中的文件锁](https://www.ibm.com/developerworks/cn/linux/l-cn-filelock/)
 
 
-## 保证线程安全的方式
+# 保证线程安全的方式
 
-### 使用单线程访问
+## 使用单线程访问
 
 首先，尽量避免多线程的设计。因为多线程访问会出现很多不可控制的情况。有些情况即使上锁，也无法保证百分之百的安全，例如自旋锁的问题。
 
-### 不对资源做修改
+## 不对资源做修改
 
 而如果还是得用多线程，那么避免对资源做修改。
 
