@@ -14,6 +14,16 @@
 - 如何进行一个文件的上传和下载
 - 如何处理 HTTPS 
 
+
+# HTTP 协议
+
+请求的组成
+
+请求头
+
+URL 参数 字符百分号化
+
+
 # 如何使用
 
 首先说一下简单的使用,例如发出一个 `GET` 请求:
@@ -615,10 +625,62 @@ NSString * AFPercentEscapedStringFromString(NSString *string) {
 
 ### AFMultipartFormData 
 
+AFMultipartFormData 也是一个协议，用于 HTTP 中 Content-Type 为 multipart/form-data 的请求做文件上传。
 
-### AFStreamingMultipartFormData 
 
-遵守 AFMultipartFormData 协议
+> Content-Type ：
+>通常我们都会在请求头中，指定 Content-Type 的值，来声明请求的内容类型。如果没有指定 ContentType ，会默认为 text/html。
+
+注意到在 Content-Type 里还有个boundary,这个是用来做分隔的字符串。
+
+TODO  基础 http 文件上传知识
+[ HTTP请求 ContentType](https://imququ.com/post/four-ways-to-post-data-in-http.html)
+[ContentType](http://homeway.me/2015/07/19/understand-http-about-content-type/)
+
+#### AFStreamingMultipartFormData 
+
+AFStreamingMultipartFormData 遵守 AFMultipartFormData 协议，用于文件上传。
+
+[AFStreamingMultipartFormData](https://blog.csdn.net/tsunamier/article/details/53611811)
+
+初始化:
+
+```objc
+
+- (instancetype)initWithURLRequest:(NSMutableURLRequest *)urlRequest
+                    stringEncoding:(NSStringEncoding)encoding
+{
+    self = [super init];
+    if (!self) {
+        return nil;
+    }
+    
+    //将传入的参数赋值
+    self.request = urlRequest;
+    self.stringEncoding = encoding;
+    
+    // AFCreateMultipartFormBoundary() 创建 boundary 
+    self.boundary = AFCreateMultipartFormBoundary();
+    
+    //对 bodyStream 根据 encoding 格式做设置
+    self.bodyStream = [[AFMultipartBodyStream alloc] initWithStringEncoding:encoding];
+
+    return self;
+}
+
+```
+
+这里要解释一下 boundary 的概念:
+
+> ContentType 中的 boundary ，是文件分割符，在 HTTP 中这么设置:
+> 
+> Content-Type: multipart/form-data; boundary=BoundaryValue
+>
+>而之后在 body 里，就会根据 boundary 分割的位置，一块一块的发送出去。
+
+TODO 超过多少字节使用 boundary ? 还是分文件和内容用 boundary ?比如同时 post 传 用户名，文件 A ,文件 B.
+
+
 
 ## AFURLSessionManager 
 
