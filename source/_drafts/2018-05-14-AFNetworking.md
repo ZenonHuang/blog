@@ -2,20 +2,28 @@
 
 [AFNetworking](https://github.com/AFNetworking/AFNetworking) 是 iOS 开发里一个经常使用的库，我们有必要了解它的实现。
 
-为方便大家理解，本文会按以下顺序进行说明: 
+为方便大家理解，会按以下三个部分来进行说明 : 
 
-- AFHTTPSessionManager 是使用方直接接触的类，是我们分析的入口。对它主要的内容有： 1.如何初始化，以及支持哪一些HTTP请求方法 2.如何构建一个请求 -- AFHTTPSessionManager 会使用 AFHTTPRequestSerializer 构建一个 request, 再把 request 交由AFURLSessionManger 处理，得到一个 dataTask 来发起请求。
-- 序列化：请求的必要格式:请求头/响应头，方法，地址，参数
-- AFHTTPRequestSerializer 负责请求的序列化，一个 HTTP 请求需要有符合格式的地址，参数，请求方法。对它的主要内容有: 1.如何对不同类型的数据进行拆解，例如数组，字典。2.如何对数据进行拼接 3.如何根据方法不同，决定请求参数的写入位置。
-- AFHTTPResponseSerializer 响应结果的序列化
-- 1
-- AFURLSessionManger 负责了 dataTask 的构建和回调等大量的工作，会是重点分析的类。
-- 1
-- 如何进行一个文件的上传和下载
+**NSURLSession**
+
+ - AFHTTPSessionManager 是使用方直接接触的类，是我们分析的入口。
+ - AFURLSessionManger 负责了 dataTask 的构建和回调等大量的工作，会是重点分析的类。
+  
+**Serialization**
+  
+  - AFHTTPRequestSerializer 负责请求的序列化，一个 HTTP 请求需要有符合格式的地址，参数，请求方法。对它的主要内容有: 1.如何对不同类型的数据进行拆解，例如数组，字典。2.如何对数据进行拼接 3.如何根据方法不同，决定请求参数的写入位置。
+  - AFHTTPResponseSerializer 响应结果的序列化
+
+**Additional Functionality**
+ 
+- AFSecurityPolicy
+- AFNetworkReachabilityManager
 - 如何处理 HTTPS 
 
 
 # HTTP 协议
+
+AFNNetworking
 
 请求的组成
 
@@ -625,7 +633,7 @@ NSString * AFPercentEscapedStringFromString(NSString *string) {
 
 ### AFMultipartFormData 
 
-AFMultipartFormData 也是一个协议，用于 HTTP 中 Content-Type 为 multipart/form-data 的请求做文件上传。
+AFMultipartFormData 也是一个协议，用于 Content-Type 的值为 multipart/form-data 的请求，做文件上传。
 
 
 > Content-Type ：
@@ -639,9 +647,18 @@ TODO  基础 http 文件上传知识
 
 #### AFStreamingMultipartFormData 
 
-AFStreamingMultipartFormData 遵守 AFMultipartFormData 协议，用于文件上传。
-
 [AFStreamingMultipartFormData](https://blog.csdn.net/tsunamier/article/details/53611811)
+
+AFStreamingMultipartFormData 遵守 AFMultipartFormData 协议，它只对对外暴露两个方法: 
+
+```objc
+@interface AFStreamingMultipartFormData : NSObject <AFMultipartFormData>
+- (instancetype)initWithURLRequest:(NSMutableURLRequest *)urlRequest
+                    stringEncoding:(NSStringEncoding)encoding;
+
+- (NSMutableURLRequest *)requestByFinalizingMultipartFormData;
+@end
+```
 
 初始化:
 
@@ -680,6 +697,36 @@ AFStreamingMultipartFormData 遵守 AFMultipartFormData 协议，用于文件上
 
 TODO 超过多少字节使用 boundary ? 还是分文件和内容用 boundary ?比如同时 post 传 用户名，文件 A ,文件 B.
 
+
+AFCreateMultipartFormBoundary() 的方法实现为: 
+
+```
+static NSString * AFCreateMultipartFormBoundary() {
+    return [NSString stringWithFormat:@"Boundary+%08X%08X", arc4random(), arc4random()];
+}
+```
+
+AFMultipartBodyStream 用于设置 HTTP 请求中的 bodyStream ，方法 `requestByFinalizingMultipartFormData` 的实现为:
+
+```objc
+- (NSMutableURLRequest *)requestByFinalizingMultipartFormData {
+    //bodyStream 如果为空，就直接返回 request
+    if ([self.bodyStream isEmpty]) {
+        return self.request;
+    }
+
+    //对 bodySteam 做初始化和最后的 boundaries 设置
+    [self.bodyStream setInitialAndFinalBoundaries];
+    //设置 request 的 bodyStream
+    [self.request setHTTPBodyStream:self.bodyStream];
+    
+    // 设置 Content-Type 和 Content-Length 的值
+    [self.request setValue:[NSString stringWithFormat:@"multipart/form-data; boundary=%@", self.boundary] forHTTPHeaderField:@"Content-Type"];
+    [self.request setValue:[NSString stringWithFormat:@"%llu", [self.bodyStream contentLength]] forHTTPHeaderField:@"Content-Length"];
+
+    return self.request;
+}
+```
 
 
 ## AFURLSessionManager 
@@ -863,7 +910,7 @@ static void url_session_manager_create_task_safely(dispatch_block_t block) {
 ```
 
 使用下面的代码指定 task 为通知发送方:
-
+ 
 ```objc
 - (void)addNotificationObserverForTask:(NSURLSessionTask *)task {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(taskDidResume:) name:AFNSURLSessionTaskDidResumeNotification object:task];
@@ -995,4 +1042,7 @@ TODO - HTTPS
 
 
 # HTTPS 策略的处理
+
+
+
 
