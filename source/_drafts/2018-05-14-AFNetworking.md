@@ -1,34 +1,21 @@
 # 前言
 
-[AFNetworking](https://github.com/AFNetworking/AFNetworking) 是 iOS 开发里一个经常使用的库，我们有必要了解它的实现。首先根据 HTTP 协议的定义，再来看它是如何实现的。
-
-为方便大家理解，会按以下三个部分来进行说明 : 
-
-**NSURLSession**
-
- - AFHTTPSessionManager 是使用方直接接触的类，是我们分析的入口。
- - AFURLSessionManger 负责了 dataTask 的构建和回调等大量的工作，会是重点分析的类。
-  
-**Serialization**
-  
-  - AFHTTPRequestSerializer 负责请求的序列化，一个 HTTP 请求需要有符合格式的地址，参数，请求方法。对它的主要内容有: 1.如何对不同类型的数据进行拆解，例如数组，字典。2.如何对数据进行拼接 3.如何根据方法不同，决定请求参数的写入位置。
-  - AFHTTPResponseSerializer 响应结果的序列化
-
-**Additional Functionality**
- 
-- AFSecurityPolicy
-- AFNetworkReachabilityManager
-- 如何处理 HTTPS 
-
+[AFNetworking](https://github.com/AFNetworking/AFNetworking) 是 iOS 开发里一个经常使用的库，用于发起 HTTP 请求，而我们往往忽视这些核心库的细节，有必要了解它的内部实现。
 
 # HTTP 协议
 
+暂时抛开 AFNetworking 不谈，先来了解 HTTP 协议。因为 AFNetworking 本质上也只是发起和响应 HTTP 的一个实现。
+
 HTTP 协议是 HyperText Transfer Protocol 的缩写，翻译为超文本传输协议。
+
+作为使用 HTTP 协议进行通信的两台终端，请求访问文本/图像等资源的一端，称为客户端，提供资源响应的一端，称为服务端。
+
+在 iOS 开发中，我们的 iPhone 一般都是作为客户端的角色（iPhone 也能作为服务端，响应其它终端的请求），而客户端首先面临的问题，就是构造一个符合 HTTP 协议定义的请求。
 
 
 ## HTTP 请求报文
 
-一个 HTTP 请求的分为三部分组成:
+一个 HTTP 请求分为 Request Line / Request Header / Request Body 三部分组成，报文结构如下:
 
 HTTP 请求报文结构   |
 ------- | 
@@ -39,11 +26,15 @@ CRLF |
 Request Body（请求体，可选） |
 
 
->CRLF: CRLF由两个字节组成。CR值为16进制的0x0D，对应ASCII中的回车键，LF值为0x0A，对应ASCII中的换行键，CRLF合起来就是我们平常所说的\r\n，即: 回车符和换行符。
+> 关于 CRLF 
+> CRLF 由两个字节组成 :
+> CR 值为 16 进制的 0x0D ，对应 ASCII 中的回车键;
+> LF 值为 16 进制的 0x0A，对应ASCII中的换行键。
+> CRLF 合起来就是我们平常所说的 \r\n ，即: 回车符和换行符。
 
 ### 请求行
 
-**Request Line** 包括： Method , URI , HTTP Version 。一个请求行看起来是这样的： 
+**Request Line** 包括： Method , URI , HTTP Version 。一个请求行结构是这样的： 
 
 Method  | 空格 | URI | 空格 | HTTP Version | CRLF 
 ------- | ------- | ------- | ------- | ------- | -------
@@ -51,22 +42,25 @@ GET     | | /user/avatar.jpg?t=1480992153.564331 | | HTTP/1.1 | \r\n
 
 
 
-其中利用空格，分割不同部分。 要注意的是， URI 可以是相对的路径， host 可以被放在请求头里，也可以是一个完整的 absoluteURI，包含 Schema 和 Host .
+其中利用空格，分割不同部分。 
+
+> 要注意的是， URI 可以是相对的路径， Host 可以被放在请求头里 . URI 也可以是一个完整的 AbsoluteURI，包含 Schema 和 Host .
 
 ### 请求头
 
-**Request Header** 相当于一个字典，里面存储一些键值对，键值对的形式为: `Key: 空格 Value CRLF`. 
+**Request Header** 相当于一个字典，会存储一些键值对，键值对的形式为 `Key: 空格 Value CRLF`,像下面这样：
  
- 类似于下面:
-> Host: abc.com\r\n
-> User-Agent: xxxxfds\r\n
-> ...
+Key      | 空格 | Value  | CRLF 
+------- | ------- | ------- | ------- |
+Content-Type | | application/x-www-form-urlencoded  | \r\n 
+ 
 
 ### 请求体
 
-**Request Body** 是可选的，例如对于方法为 GET 的请求， body 是空的。而对于 POST 的请求说， body 一般不为空。
+**Request Body** 是可选的，例如对于方法为 GET 的请求， body 是空的，而这样的情况，Header 后面两个 CRLF 就代表一个请求的结束。
 
-[扒一扒HTTP的构成](http://mrpeak.cn/blog/http-constitution/)
+而对于 POST 这类的请求， body 一般不为空。和 GET 请求把参数放在 URI 里不同，一般 POST 的数据是放在 Body 里的，当然我们也可以选择放在 URI 里。
+
 
 ## HTTP 响应报文
 
@@ -76,12 +70,21 @@ Status Line（响应行） |
 CRLF | 
 Response Header（响应头） |
 CRLF | 
-ResPonse Body（响应体，可选） |
+Response Body（响应体，可选） |
 
 ### 响应行
 
-响应行，又叫 status line 或者 状态行 ，包含了 HTTP Version ， HTTP Status Code : 
+响应行，又叫 status line 或者 状态行 ，包含了 HTTP Version ， HTTP Status Code , Reason-phrase (原因短语): 
 
+ Version      | 空格 |  Status Code | 空格 |Reason-phrase| CRLF 
+------- | ------- | ------- | ------- |-------| ------|
+HTTP/1.1 | | 200  | | OK |\r\n 
+
+### 响应头和响应体
+
+响应头和请求头的结构一样，都采用字典形式存储键值对。
+
+响应体则由服务器返回对应类型的数据（可以是二进制，json, xml，纯文本 text 等各种格式）。
 
 # 如何使用
 
@@ -98,6 +101,31 @@ ResPonse Body（响应体，可选） |
                               //请求失败
     }];
 ```
+
+
+首先根据 HTTP 协议的定义，再来看它是如何实现的。
+
+为方便大家理解，会按以下三个部分来进行说明 : 
+
+**NSURLSession**
+
+一个请求发起和响应的流程
+
+ - AFHTTPSessionManager 是使用方直接接触的类，是我们分析的入口。
+ - AFURLSessionManger 负责了 dataTask 的构建和回调等大量的工作，会是重点分析的类。
+  
+**Serialization**
+  
+  负责 UrlEncode
+  
+  - AFHTTPRequestSerializer 负责请求的序列化，一个 HTTP 请求需要有符合格式的地址，参数，请求方法。对它的主要内容有: 1.如何对不同类型的数据进行拆解，例如数组，字典。2.如何对数据进行拼接 3.如何根据方法不同，决定请求参数的写入位置。
+  - AFHTTPResponseSerializer 响应结果的序列化
+
+**Additional Functionality**
+ 
+- AFSecurityPolicy
+- AFNetworkReachabilityManager
+- 如何处理 HTTPS
 
 # AFHTTPSessionManger 
 
@@ -1095,5 +1123,7 @@ TODO - HTTPS
 # HTTPS 策略的处理
 
 
+# 参考
 
+[扒一扒HTTP的构成](http://mrpeak.cn/blog/http-constitution/)
 
