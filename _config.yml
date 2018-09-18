@@ -14,7 +14,7 @@ avatar: /images/author.jpg
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 #url: http://zzgoblog.cc
-url: http://zenonhuang.me
+url: https://zenonhuang.me
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
