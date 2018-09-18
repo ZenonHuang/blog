@@ -1,7 +1,9 @@
 ---
 layout: post
-date: 2018-09-18 8:25:00
+date: 2018-09-18
 title: 个人职业上的思考
+tags: 
+keywords: 
 category: 生活
 description: 半年来，工作中接连发生变化。记录下来。
 ---
