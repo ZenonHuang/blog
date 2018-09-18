@@ -1,3 +1,3 @@
 [submodule "themes/next"]
     path = themes/next
-    url= https://github.com/zenonhuang/BlogTheme.git
+url=git@github.com:ZenonHuang/BlogTheme.git
