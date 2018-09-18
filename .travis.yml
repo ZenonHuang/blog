@@ -8,9 +8,9 @@ before_install:
 - export TZ='Asia/Shanghai'
 - npm install -g hexo
 - npm install -g hexo-cli
-- npm install
+#- npm install
 - npm install hexo --save
-#- npm install hexo-renderer-stylus --save
+- npm install hexo-renderer-stylus --save
 - npm install hexo-deployer-git --save
 install:
 - npm install
