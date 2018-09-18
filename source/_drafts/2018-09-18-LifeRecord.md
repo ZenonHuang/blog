@@ -1,6 +1,6 @@
 ---
 layout: post
-date: 2018-09-18 12:25:00
+date: 2018-09-18
 title: 个人职业上的思考
 tags: 
 keywords: 
