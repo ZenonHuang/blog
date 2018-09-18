@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="学习 FlexBox 布局的思想，并对 iOS 上的 FlexBox 布局进行实践。">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="iOS 上的 FlexBox 布局">
+<meta property="og:url" content="https://zenonhuang.me/2017/12/25/technology/2017-12-19-FlexBoxForiOS/index.html">
+<meta property="og:site_name" content="ZenonHuang">
+<meta property="og:description" content="学习 FlexBox 布局的思想，并对 iOS 上的 FlexBox 布局进行实践。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2744632d1f8?w=341&h=290&f=png&s=5192">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d27446d5177d?w=1886&h=1418&f=png&s=225064">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d27446a5cc5a?w=291&h=150&f=png&s=44836">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2744660ab9c?w=602&h=300&f=png&s=17165">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d27447ccff3d?w=769&h=276&f=png&s=60925">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d274448a4734?w=338&h=50&f=jpeg&s=7002">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d274f5df32a4?w=329&h=50&f=png&s=7728">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d274f3d36520?w=119&h=200&f=png&s=7603">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d274f88da247?w=98&h=200&f=png&s=7477">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d274fd9310c9?w=419&h=50&f=png&s=9444">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d27504a1e778?w=202&h=50&f=png&s=6615">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d275053823fd?w=203&h=50&f=png&s=6569">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2751e764ed5?w=414&h=50&f=png&s=7247">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d27526597add?w=412&h=50&f=png&s=7178">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d27528e5b368?w=346&h=100&f=png&s=6160">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d27529552a7b?w=341&h=100&f=png&s=6099">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2754269c25f?w=271&h=300&f=png&s=24290">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d27539c27747?w=168&h=300&f=png&s=4181">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2754cd48389?w=169&h=300&f=png&s=4414">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2754fec530a?w=169&h=300&f=png&s=5987">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2756ab3039f?w=169&h=300&f=png&s=4475">
+<meta property="og:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2756ff7af1e?w=171&h=300&f=jpeg&s=4742">
+<meta property="og:updated_time" content="2018-09-18T13:45:17.820Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="iOS 上的 FlexBox 布局">
+<meta name="twitter:description" content="学习 FlexBox 布局的思想，并对 iOS 上的 FlexBox 布局进行实践。">
+<meta name="twitter:image" content="https://user-gold-cdn.xitu.io/2017/12/25/1608d2744632d1f8?w=341&h=290&f=png&s=5192">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zenonhuang.me/2017/12/25/technology/2017-12-19-FlexBoxForiOS/"/>
+
+
+
+
+
+  <title>iOS 上的 FlexBox 布局 | ZenonHuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZenonHuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">人若无名，便可安心练剑</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zenonhuang.me/2017/12/25/technology/2017-12-19-FlexBoxForiOS/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZenonHuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZenonHuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">iOS 上的 FlexBox 布局</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-25T16:25:00+08:00">
+                2017-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/25/technology/2017-12-19-FlexBoxForiOS/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/25/technology/2017-12-19-FlexBoxForiOS/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/12/25/technology/2017-12-19-FlexBoxForiOS/" class="leancloud_visitors" data-flag-title="iOS 上的 FlexBox 布局">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  学习 FlexBox 布局的思想，并对 iOS 上的 FlexBox 布局进行实践。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="为什么要了解-FlexBox"><a href="#为什么要了解-FlexBox" class="headerlink" title="为什么要了解 FlexBox?"></a>为什么要了解 FlexBox?</h1><p>最近时不时的听到关于 FlexBox 的声音，除了在 <strong>Weex</strong> 以及 <strong>React Native</strong> 两个著名的跨平台项目里有用到 FlexBox 外，<strong>AsyncDisplayKit</strong> 也同样引入了 FlexBox 。 </p>
+<p>先说说 iOS 本身提供给我们 2 种布局方式:</p>
+<ul>
+<li>Frame,直接设置横纵坐标，并指定宽高。</li>
+<li>Auto Layout，通过设置相对位置的约束进行布局。</li>
+</ul>
+<p>Frame 没什么太多可说的了，直接制定坐标和大小，设置绝对值。</p>
+<p><code>Auto Layout</code> 本身用意是好的，试图让我们从 Frame 中解放出来，摆脱关于坐标和大小的刻板思考方式。转而利用 UI 之间的相对位置关系，设置对应约束进行布局。</p>
+<p>但是 <code>Auto Layout</code> 好心并未做成好事，它的语法又臭又长! 至今学习 iOS 两年，我使用到原生 <code>Auto Layout</code> 语法的时候屈指可数。只能靠 <a href="https://github.com/SnapKit/Masonry" target="_blank" rel="noopener">Masonry</a> 这样的第三方库来使用它。</p>
+<h2 id="Auto-Layout-的原理"><a href="#Auto-Layout-的原理" class="headerlink" title="Auto Layout 的原理"></a>Auto Layout 的原理</h2><p>说完了 <code>Auto Layout</code> 的使用，再来看看它工作原理。 </p>
+<p>实际上，我们设置 <code>Auto Layout</code> 的约束，就构成一系列的条件,成为一个方程。然后解出 Frame 的坐标和大小。</p>
+<p>例如，我们设置一个名为 A 的 UI :</p>
+<pre><code>A.center = super.center
+A.width  = 40
+A.height = 40
+</code></pre><p>则:<br>A.frame = (super.center.x,super.center.y,40,40)</p>
+<p>再设置一个 B:</p>
+<pre><code>B.width  =  A.width
+B.height =  A.height
+B.top    =  A.bottom + 50
+B.left   =  A.left
+</code></pre><p>则:<br>B.frame =  ( A.x , A.y + A.height + 50 , A.width , A.height )</p>
+<p>如图：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d2744632d1f8?w=341&amp;h=290&amp;f=png&amp;s=5192" alt="ZenonHuang_FlexBox_1"></p>
+<h3 id="Cassowary"><a href="#Cassowary" class="headerlink" title="Cassowary"></a>Cassowary</h3><p><code>Auto Layout</code> 内部有专门用来处理约束关系的算法，我一直以为是苹果自家研发的，查阅资料才发现是来自一个叫 <code>Cassowary</code> 的算法。</p>
+<blockquote>
+<p>Cassowary是个解析工具包，能够有效解析线性等式系统和线性不等式系统，用户的界面中总是会出现不等关系和相等关系，Cassowary开发了一种规则系统可以通过约束来描述视图间关系。约束就是规则，能够表示出一个视图相对于另一个视图的位置。</p>
+<ul>
+<li>戴铭 <a href="https://ming1016.github.io/2015/11/03/deeply-analyse-autolayout/" target="_blank" rel="noopener">&lt;深入剖析Auto Layout，分析iOS各版本新增特性&gt;</a></li>
+</ul>
+</blockquote>
+<p>有兴趣的可以进一步了解该算法的实现。</p>
+<h2 id="Frame-Auto-Layout-FlexBox-的性能对比"><a href="#Frame-Auto-Layout-FlexBox-的性能对比" class="headerlink" title="Frame / Auto Layout  / FlexBox 的性能对比"></a>Frame / Auto Layout  / FlexBox 的性能对比</h2><p>在对 <code>Auto Layout</code> 进行一番了解之后,我们很容易得出 <code>Auto Layout</code> 因为多余的计算，性能差于 Frame 的结论。</p>
+<p>但究竟差多少呢？FlexBox 的表现又如何呢?</p>
+<p>这里根据 <a href="https://draveness.me/layout-performance" target="_blank" rel="noopener">从 Auto Layout 的布局算法谈性能</a> 里的测试代码进行修改，对 Frame / Auto Layout / FlexBox 进行布局，分段测算 10 ～ 350 个 UIView 的布局时间。取 100 次布局时间的平均值作为结果,耗时单位为秒。</p>
+<p>结果如下图:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d27446d5177d?w=1886&amp;h=1418&amp;f=png&amp;s=225064" alt="ZenonHuang_FlexBox_2"></p>
+<p>虽然测试结果难免有偏差，但是根据折线图可以明显发现，FlexBox 的布局性能是比较接近 Frame 的。 </p>
+<p><code>60 FPS</code> 作为一个 iOS 流畅度的黄金标准，要求布局在 0.0166667 s 内完成，<code>Auto Layout</code> 在超过 50 个视图的时候，可能保持流畅就会开始有问题了。</p>
+<p>本次测试使用的机器配置如下：<br><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d27446a5cc5a?w=291&amp;h=150&amp;f=png&amp;s=44836" alt="ZenonHuang_FlexBox_3"></p>
+<p>采用 Xcode9.2 ,iPad Pro (12.9-inch)(2nd generation) 模拟器。</p>
+<p>测试布局的项目代码上传在 <a href="https://github.com/ZenonHuang/MyDemos/tree/master/LayoutTest" target="_blank" rel="noopener">GitHub</a></p>
+<h1 id="FlexBox-是什么？"><a href="#FlexBox-是什么？" class="headerlink" title="FlexBox 是什么？"></a>FlexBox 是什么？</h1><p><code>FlexBox</code> 是一种 UI 布局方式，并得到了所有浏览器的支持。<code>FlexBox</code> 首先是基于 <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Box_Model/Introduction_to_the_CSS_box_model" target="_blank" rel="noopener"><em>盒装状型</em></a> 的，Flexible 意味着弹性，使其能适应不同屏幕，补充盒状模型的灵活性。</p>
+<p><code>FlexBox</code> 把每个视图，都看作一个矩形盒子，拥有内外边距，沿着主轴方向排列，并且，同级的视图之间没有依赖。</p>
+<p>和 <code>Auto Layout</code> 类似，<code>FlexBox</code> 采用了描述性的语言去进行布局，而不像 Frame 直接用绝对值坐标进行布局。</p>
+<blockquote>
+<p>弹性布局的主要思想是让 Flex Container 有能力来改变 Flex Item 的宽度和高度，以填满可用空间（主要是为了容纳所有类型的显示设备和屏幕尺寸）的能力。</p>
+</blockquote>
+<p>最重要的是, <code>FlexBox</code> 布局与方向无关，常规的布局设计缺乏灵活性，无法支持大型和复杂的应用程序（特别是涉及到方向转变，缩放、拉伸和收缩等）。</p>
+<h2 id="FlexBox-组成"><a href="#FlexBox-组成" class="headerlink" title="FlexBox 组成"></a>FlexBox 组成</h2><p>采用 <code>FlexBox</code> 布局的元素，称为 <code>Flex Container</code>。</p>
+<p><code>Flex Container</code> 的所有子元素，称为 <code>Flex Item</code>。</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d2744660ab9c?w=602&amp;h=300&amp;f=png&amp;s=17165" alt="ZenonHuang_FlexBox_4"></p>
+<p>下面会讲一下 FlexBox 里面的一些概念，方便之后进行 FlexBox 的使用。</p>
+<h3 id="Flex-Container"><a href="#Flex-Container" class="headerlink" title="Flex Container"></a>Flex Container</h3><p>前面提到了，<code>FlexBox</code> 的一个特点，就是视图之间，是没有依赖的。</p>
+<p><code>Flex Item</code> 的排布，就依赖于 <code>Flex Container</code> 的属性设置，而不用相互之间进行设置。</p>
+<p>所以先说一下 <code>Flex Containner</code> 的属性设置。</p>
+<h4 id="Flex-Direction"><a href="#Flex-Direction" class="headerlink" title="Flex Direction"></a>Flex Direction</h4><p>FlexBox 有一个 <code>主轴(main axis)</code> 和 <code>侧轴(cross axis)</code>的概念。侧轴垂直于主轴。</p>
+<p>它们可以是水平，也可以是垂直。</p>
+<p>主轴默认为 <code>Row</code> , 侧轴默认为 <code>Column</code>：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d27447ccff3d?w=769&amp;h=276&amp;f=png&amp;s=60925" alt="0DF515D1-1EEF-4C38-9782-F875C1433AE0"></p>
+<p><code>Flex Direction</code> 决定了 <code>Flex Containner</code> 内的主轴排布方向。</p>
+<p>主轴默认为 Row (从左到右):</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d274448a4734?w=338&amp;h=50&amp;f=jpeg&amp;s=7002" alt="87691D2C-34C3-4805-B960-4D8217717D98"></p>
+<p>同时，也可以设置 RowRevers(从右至左):<br><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d274f5df32a4?w=329&amp;h=50&amp;f=png&amp;s=7728" alt="1F430BC5-A0BE-474B-9791-23F2B308AEE9"></p>
+<p>Column(从上到下):<br><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d274f3d36520?w=119&amp;h=200&amp;f=png&amp;s=7603" alt="AA2DF5F6-1164-4440-ACF2-9897D0D82730"></p>
+<p>ColumnRevers(从下到上):<br><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d274f88da247?w=98&amp;h=200&amp;f=png&amp;s=7477" alt="C33D6321-66C3-4A78-B429-E82B3F83CB6E"></p>
+<h4 id="Flex-Wrap"><a href="#Flex-Wrap" class="headerlink" title="Flex Wrap"></a>Flex Wrap</h4><p>Flex Wrap 决定在轴线上排列不下时，视图的换行方式。</p>
+<p>Flex Wrap 默认设置为 NoWrap，不会换行，一直沿着主轴排列到屏幕之外:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d274fd9310c9?w=419&amp;h=50&amp;f=png&amp;s=9444" alt="9C0FD351-E504-4A6B-A442-E3DE1E084FAC"></p>
+<p>设置为 Wrap ,则空间不足时，自动换行:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d27504a1e778?w=202&amp;h=50&amp;f=png&amp;s=6615" alt="2C14AAC1-6DDB-4450-B393-5497E0743AFC"></p>
+<p>设置 WrapReverse，则换行方向与 Wrap 相反:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d275053823fd?w=203&amp;h=50&amp;f=png&amp;s=6569" alt="35B10621-C2BD-4699-B5B5-4383B35F510E"></p>
+<p>这是一个非常有用的属性。比如典型的<code>九宫格布局</code>，iOS 如果不是用 <code>UICollectionView</code> 做，那么就需要保存 <code>9</code> 个实例，然后做判断，计算 frame ，可维护性实在不高。使用<code>UICollectionView</code> 可以很好的解决布局，但很多场景并不能复用，做起来也不是特别简单。 </p>
+<p>FlexBox 布局的话，用 <code>Flex Wrap</code> 属性设置 <code>Wrap</code> 就可以直接搞定。</p>
+<p>移动平台上相似的方案，比如 Android 的 Linear Layout 和 iOS 的 UIStackView ，但却远没有 FlexBox 强大。</p>
+<h4 id="Display"><a href="#Display" class="headerlink" title="Display"></a>Display</h4><p>Display 选择是否计算它，默认为 Flex. 如果设置为 None 自动忽略该视图的计算。</p>
+<p>在根据逻辑显示 UI 时，比较有用。</p>
+<p>比如我们现有的业务，需要显示的腾讯身份标示。按照一般做法，多个 icon 互相连成一排，根据身份去设置不同的距离，同时隐藏其他 icon ,比较的麻烦。iOS 最好的办法是使用 UIStackView ，这又有版本兼容等问题。而使用 FlexBox 布局,当不是某个身份时，只要设置 Display 为 None,就不会被纳入 UI 计算当中。</p>
+<h4 id="Justify-Content"><a href="#Justify-Content" class="headerlink" title="Justify Content"></a>Justify Content</h4><p><code>Justify Content</code> 用于定义 <code>Flex Item</code> 在主轴上的对齐方式:FlexStart(主轴起点对齐)，FlexEnd(主轴终点对齐)，Center(居中对齐)。</p>
+<p>还有SpaceBetween（两端对齐）:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d2751e764ed5?w=414&amp;h=50&amp;f=png&amp;s=7247" alt="7F4F84F0-6B50-462A-BDA6-D11D087FFCE0"></p>
+<p>设置两端对齐，让 <code>Flex Item</code> 之间的间隔相等。</p>
+<p>SpaceAround(外边距相等排列)：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d27526597add?w=412&amp;h=50&amp;f=png&amp;s=7178" alt="3B7E08DD-6F78-4A8D-9D56-07565E5F9E24"></p>
+<p>让每个 <code>Flex Item</code> 四周的外边距相等</p>
+<h4 id="Align-Items"><a href="#Align-Items" class="headerlink" title="Align Items"></a>Align Items</h4><p><code>Align Items</code> 定义 <code>Flex Item</code> 在侧轴上的对齐方式。</p>
+<p>除了可以和主轴对齐方式  <code>Justify Content</code> 一样设置FlexStart ,FlexEnd,Center,SpaceBetween,SpaceAround 之外，还有 Baseline(基线对齐)：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d27528e5b368?w=346&amp;h=100&amp;f=png&amp;s=6160" alt="25B54897-E6D4-4742-837E-13E5E4D827DA"></p>
+<p>如图所示，它是基于 <code>Flex Item</code> 的第一行文字的基线对齐。</p>
+<p><code>Baseline</code> 如果 <code>Flex Item</code> 的行内轴与侧轴为同一条，则该值与 <code>FlexStart</code> 等效。 其它情况下，该值将参与基线对齐。</p>
+<p>Stretch：<br><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d27529552a7b?w=341&amp;h=100&amp;f=png&amp;s=6099" alt="F40B6D31-225F-4A99-9209-15886475CC1F"></p>
+<p><code>Stretch</code> 让 <code>Flex Item</code> 拉伸填充整个<code>Flex Container</code>。<code>Stretch</code>会使<code>Flex Item</code>的外边距在遵照对应属性限制下,尽可能接近所在行或列的尺寸。</p>
+<p>如果 <code>Flex Item</code> 未设置数值,或设为 <strong><code>auto</code></strong>，将占满整个<code>Flex Container</code>的高度</p>
+<h4 id="Align-Content"><a href="#Align-Content" class="headerlink" title="Align Content"></a>Align Content</h4><p><code>Align Content</code> 也是侧轴在 <code>Flex Item</code> 里的对齐方式，只不过是以一整个行，作为最小单位。</p>
+<p>注意，如果<code>Flex Item</code>只有一根轴线（只有一行的<code>Flex Itme</code>），该属性不起作用。</p>
+<p>调整为 <code>FlexWrap</code> 为 <code>Wrap</code>,效果才显示出来： </p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d2754269c25f?w=271&amp;h=300&amp;f=png&amp;s=24290" alt="6C8FB222-16DC-4B6E-A2D9-251C4CA69F8E"></p>
+<h3 id="Flex-Item"><a href="#Flex-Item" class="headerlink" title="Flex Item"></a>Flex Item</h3><p>在上面说完了 <code>Flex Container</code> 的属性,终于说到了 <code>Flex Item</code>.  <code>Flex Container</code> 里的属性，都是作用于自己包含的 <code>Flex Item</code>，<code>Flex Item</code> 的属性，都是作用于自己本身，. </p>
+<h4 id="AlignSelf"><a href="#AlignSelf" class="headerlink" title="AlignSelf"></a>AlignSelf</h4><p><code>AlignSelf</code> 可以让单个 <code>Flex Item</code> 与其它 <code>Flex Item</code> 有不一样的对齐方式，覆盖 <code>Align Items</code>属性。</p>
+<p>默认值为<code>auto</code>，表示继承<code>Flex Container</code>的<code>Align Items</code>属性。如果它本身没有<code>Flex Container</code>，则等同于<code>Stretch</code>。 </p>
+<h4 id="FlexGrow"><a href="#FlexGrow" class="headerlink" title="FlexGrow"></a>FlexGrow</h4><p><code>FlexGrow</code> 可以设置分配<code>剩余空间</code>的<code>比例</code>。即如何扩大。</p>
+<p><code>FlexGrow</code> 默认值为 <code>0</code>，如果没有去定义 <code>FlexGrow</code>，该布局是不会拥有分配剩余空间权利的。</p>
+<p>例如：</p>
+<p>整体宽度 100 , sub1 宽为 10 ，sub2 宽为 20 ，则<code>剩余空间</code>为 70。</p>
+<p>设置 <code>FlexGrow</code> 就是分配这 70 宽度的比例。</p>
+<p>再说比例值的问题:</p>
+<p>如果所有 <code>Flex Item</code> 的 <code>FlexGrow</code> 属性都为 <code>1</code> ，如果有剩余空间的话，则等分剩余空间。</p>
+<p>如果一个 <code>Flex Item</code> 的 <code>FlexGrow</code> 属性为 <code>2</code>，其余 <code>Flex Item</code> 都为 <code>1</code> ，则前者占据的剩余空间将比其他 <code>Flex Item</code> 多 <code>1</code> 倍。</p>
+<h4 id="FlexShrink"><a href="#FlexShrink" class="headerlink" title="FlexShrink"></a>FlexShrink</h4><p>与 <code>FlexGrow</code> 处理空间剩余相反，<code>FlexShrink</code> 用来处理空间不足的情况。即怎么缩小。</p>
+<p><code>FlexShrink</code> 默认为1，即如果空间不足，该项目将缩小</p>
+<p>如果所有 <code>Flex Item</code> 的 <code>FlexShrink</code> 属性都为 <code>1</code>，当空间不足时，都将等比例缩小。</p>
+<p>如果一个 <code>Flex Item</code> 的 <code>FlexShrink</code> 属性为 <code>0</code> ，其余 <code>Flex Item</code> 都为<code>1</code>，则空间不足时，<code>FlexShrink</code> 为 <code>0</code> 的前者不缩小。</p>
+<h4 id="FlexBasis"><a href="#FlexBasis" class="headerlink" title="FlexBasis"></a>FlexBasis</h4><p><code>FlexBasis</code> 定义了在分配多余的空间之前， <code>Flex Item</code> 占据的 <code>main size（主轴空间）</code>。浏览器根据这个属性，计算主轴是否有多余空间。</p>
+<p><code>FlexBasis</code> 的默认值为 <code>auto</code>，即 <code>Flex Item</code> 的本来大小。</p>
+<p>想了解更多 FlexBox 属性，可以参考 <a href="https://css-tricks.com/snippets/css/a-guide-to-flexbox/" target="_blank" rel="noopener">A Complete Guide to Flexbox</a></p>
+<h1 id="FlexBox-的实现-–-Yoga"><a href="#FlexBox-的实现-–-Yoga" class="headerlink" title="FlexBox 的实现 – Yoga"></a>FlexBox 的实现 – Yoga</h1><p>最开头已经介绍过，FlexBox 布局已经应用于几个知名的开源项目，它们用到的就是来自于 Facebook 的 Yoga.</p>
+<p><a href="https://github.com/facebook/yoga" target="_blank" rel="noopener">Yoga</a> 是由 C 实现的 Flexbox 布局引擎，性能和稳定性已经在各大项目中得到了很好的验证,但不足的是 Yoga 只实现了 W3C 标准的一个子集。</p>
+<p>下面将针对 Yoga  iOS 上的实现 <a href="https://github.com/facebook/yoga/tree/master/YogaKit" target="_blank" rel="noopener"><code>YogaKit</code></a> 做一些讲解。</p>
+<p>基于上面对 <code>FlexBox</code> 布局的基本了解，作一些简单的布局。</p>
+<h2 id="YGLayout"><a href="#YGLayout" class="headerlink" title="YGLayout"></a>YGLayout</h2><p>整个 YogaKit 的关键，就在于  <code>YGLayout</code> 对象当中。通过  <code>YGLayout</code> 来设置布局属性。</p>
+<p>在 <code>UIView+Yoga.h</code> 的文件里:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> The YGLayout that is attached to this view. It is lazily created.</span><br><span class="line"> */</span><br><span class="line">@property (nonatomic, readonly, strong) YGLayout *yoga;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> In ObjC land, every time you access `view.yoga.*` you are adding another `objc_msgSend`</span><br><span class="line"> to your code. If you plan on making multiple changes to YGLayout, it&apos;s more performant</span><br><span class="line"> to use this method, which uses a single objc_msgSend call.</span><br><span class="line"> */</span><br><span class="line">- (void)configureLayoutWithBlock:(YGLayoutConfigurationBlock)block</span><br><span class="line">    NS_SWIFT_NAME(configureLayout(block:));</span><br></pre></td></tr></table></figure>
+<p>可以看到一个名为 <code>yoga</code> 的 <code>YGLayout</code> 只读对象，和 <code>configureLayoutWithBlock:(YGLayoutConfigurationBlock)block</code> 方法，并且还使用了  <code>NS_SWIFT_NAME()</code> 来定义在 Swift 里的方法名。</p>
+<p>这样我们就可以直接使用 UIView 的实例对象，来直接设置它对应的布局了。</p>
+<h3 id="isEnabled"><a href="#isEnabled" class="headerlink" title="isEnabled"></a>isEnabled</h3><p><code>YGLayout.h</code> 里是这么定义 <code>isEnabled</code> 的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> The property that decides during layout/sizing whether or not styling properties should be applied.</span><br><span class="line"> Defaults to NO.</span><br><span class="line"> */</span><br><span class="line">@property (nonatomic, readwrite, assign, setter=setEnabled:) BOOL isEnabled;</span><br></pre></td></tr></table></figure>
+<p><code>isEnabled</code> 默认为 <code>NO</code>，需要我们在布局期间设置为 <code>YES</code>，来开启 Yoga 样式.</p>
+<h3 id="applyLayoutPreservingOrigin"><a href="#applyLayoutPreservingOrigin" class="headerlink" title="applyLayoutPreservingOrigin:"></a>applyLayoutPreservingOrigin:</h3><p>对于这个方法，头文件里是这么解释的:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> Perform a layout calculation and update the frames of the views in the hierarchy with the results.</span><br><span class="line"> If the origin is not preserved, the root view&apos;s layout results will applied from &#123;0,0&#125;.</span><br><span class="line"> */</span><br><span class="line">- (void)applyLayoutPreservingOrigin:(BOOL)preserveOrigin</span><br><span class="line">    NS_SWIFT_NAME(applyLayout(preservingOrigin:));</span><br></pre></td></tr></table></figure>
+<p>简单来说，就是用于执行 layout 计算的。所以，一旦在布局代码完成之后，就要在<code>根视图</code>的属性 yoga 对象上调用这个方法，应用布局到<code>根视图</code>和<code>子视图</code>。</p>
+<h2 id="布局演示"><a href="#布局演示" class="headerlink" title="布局演示"></a>布局演示</h2><p>下面通过实例来介绍如何使用 <code>Yoga</code> 进行 <code>FlexBox</code> 布局。</p>
+<h3 id="居中显示"><a href="#居中显示" class="headerlink" title="居中显示"></a>居中显示</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">[self configureLayoutWithBlock:^(YGLayout * layout) &#123;</span><br><span class="line">                layout.isEnabled = YES;</span><br><span class="line">                layout.justifyContent =  YGJustifyCenter;</span><br><span class="line">                layout.alignItems     =  YGAlignCenter;</span><br><span class="line">            &#125;];</span><br><span class="line">        </span><br><span class="line">[self.redView configureLayoutWithBlock:^(YGLayout * layout) &#123;</span><br><span class="line">                layout.isEnabled = YES;</span><br><span class="line">                layout.width=layout.height= 100;</span><br><span class="line">            &#125;];</span><br><span class="line">            </span><br><span class="line">[self addSubview:self.redView];</span><br><span class="line"></span><br><span class="line">[self.yoga applyLayoutPreservingOrigin:YES];</span><br></pre></td></tr></table></figure>
+<p>效果如下:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d27539c27747?w=168&amp;h=300&amp;f=png&amp;s=4181" alt="75F9B6E0-1C63-4A91-97EE-3F3A6087BE3B"></p>
+<p>我们真正的布局代码，只用设置 <code>Flex Container</code> 的 <code>justifyContent</code> 和 <code>alignItems</code> 就可以了.</p>
+<h3 id="嵌套布局"><a href="#嵌套布局" class="headerlink" title="嵌套布局"></a>嵌套布局</h3><p>让一个 <code>view</code> 略小于其 <code>superView</code>,边距为10:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[self.yellowView configureLayoutWithBlock:^(YGLayout *layout) &#123;</span><br><span class="line">            layout.isEnabled = YES;</span><br><span class="line">            layout.margin = 10;</span><br><span class="line">            layout.flexGrow = 1;</span><br><span class="line">        &#125;];</span><br><span class="line">[self.redView addSubview:self.yellowView];</span><br></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d2754cd48389?w=169&amp;h=300&amp;f=png&amp;s=4414" alt="E2BE382B-85DA-47E9-93D3-FD94DD7A1ABA"></p>
+<p>布局代码只用设置, View 的 <code>margin</code> 和 <code>flexGrow</code>.</p>
+<h3 id="等间距排列"><a href="#等间距排列" class="headerlink" title="等间距排列"></a>等间距排列</h3><p>纵向等间距的排列一组 view:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[self configureLayoutWithBlock:^(YGLayout *layout) &#123;</span><br><span class="line">    layout.isEnabled = YES;</span><br><span class="line">    </span><br><span class="line">    layout.justifyContent =  YGJustifySpaceBetween;</span><br><span class="line">    layout.alignItems     =  YGAlignCenter;</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line">for ( int i = 1 ; i &lt;= 10 ; ++i )</span><br><span class="line">&#123;</span><br><span class="line">    UIView *item = [UIView new];</span><br><span class="line">    item.backgroundColor = [UIColor colorWithHue:( arc4random() % 256 / 256.0 )</span><br><span class="line">                                      saturation:( arc4random() % 128 / 256.0 ) + 0.5</span><br><span class="line">                                      brightness:( arc4random() % 128 / 256.0 ) + 0.5</span><br><span class="line">                                           alpha:1];</span><br><span class="line">    [item  configureLayoutWithBlock:^(YGLayout *layout) &#123;</span><br><span class="line">        layout.isEnabled = YES;</span><br><span class="line">        </span><br><span class="line">        layout.height     = 10*i;</span><br><span class="line">        layout.width      = 10*i;</span><br><span class="line">    &#125;];</span><br><span class="line">    </span><br><span class="line">    [self addSubview:item];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>效果如下:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d2754fec530a?w=169&amp;h=300&amp;f=png&amp;s=5987" alt="8E963A9D-F9AF-47A6-966C-5AEAA836E598"></p>
+<p>只要设置 <code>Flex Container</code> 的 <code>layout.justifyContent =  YGJustifySpaceBetween</code>，就可以很轻松的做到。</p>
+<h3 id="等间距，自动设宽"><a href="#等间距，自动设宽" class="headerlink" title="等间距，自动设宽"></a>等间距，自动设宽</h3><p>让两个高度为 <code>100</code> 的 <code>view</code> 垂直居中,等宽,等间隔排列,间隔为10.自动计算其宽度：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[self configureLayoutWithBlock:^(YGLayout *layout) &#123;</span><br><span class="line">    layout.isEnabled = YES;</span><br><span class="line">    layout.flexDirection  =  YGFlexDirectionRow;</span><br><span class="line">    layout.alignItems     =  YGAlignCenter;</span><br><span class="line">    </span><br><span class="line">    layout.paddingHorizontal = 5;</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">YGLayoutConfigurationBlock layoutBlock =^(YGLayout *layout) &#123;</span><br><span class="line">    layout.isEnabled = YES;</span><br><span class="line">    </span><br><span class="line">    layout.height= 100;</span><br><span class="line">    layout.marginHorizontal = 5;</span><br><span class="line">    layout.flexGrow = 1;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">[self.redView configureLayoutWithBlock:layoutBlock];</span><br><span class="line">[self.yellowView configureLayoutWithBlock:layoutBlock];</span><br><span class="line"></span><br><span class="line">[self addSubview:self.redView];</span><br><span class="line">[self addSubview:self.yellowView];</span><br></pre></td></tr></table></figure>
+<p>效果如下 :</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d2756ab3039f?w=169&amp;h=300&amp;f=png&amp;s=4475" alt="7221D26D-E78E-4AF3-B129-6D983C842"></p>
+<p>我们只要设置 <code>Flex Container</code> 的 paddingHorizontal ，以及 <code>Flex Item</code>的marginHorizontal，flexGrow 就可以了。并且可以复用  <code>Flex Item</code> 的 layout 布局样式。</p>
+<h3 id="UIScrollView-排列自动计算-contentSize"><a href="#UIScrollView-排列自动计算-contentSize" class="headerlink" title="UIScrollView 排列自动计算 contentSize"></a>UIScrollView 排列自动计算 contentSize</h3><p>在 <code>UIScrollView</code> 顺序排列一些 <code>view</code>,并自动计算 <code>contentSize</code>：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">[self configureLayoutWithBlock:^(YGLayout *layout) &#123;</span><br><span class="line">    layout.isEnabled = YES;</span><br><span class="line">    layout.justifyContent =  YGJustifyCenter;</span><br><span class="line">    layout.alignItems     =  YGAlignStretch;</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line">UIScrollView *scrollView = [[UIScrollView alloc] init] ;</span><br><span class="line">scrollView.backgroundColor = [UIColor grayColor];</span><br><span class="line">[scrollView configureLayoutWithBlock:^(YGLayout *layout) &#123;</span><br><span class="line">    layout.isEnabled = YES;</span><br><span class="line"></span><br><span class="line">    layout.flexDirection = YGFlexDirectionColumn;</span><br><span class="line">    layout.height =500;</span><br><span class="line">&#125;];</span><br><span class="line">[self addSubview:scrollView];</span><br><span class="line"></span><br><span class="line">UIView *contentView = [UIView new];</span><br><span class="line">[contentView configureLayoutWithBlock:^(YGLayout * _Nonnull layout) &#123;</span><br><span class="line">    layout.isEnabled = YES;</span><br><span class="line">&#125;];</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">for ( int i = 1 ; i &lt;= 20 ; ++i )</span><br><span class="line">&#123;</span><br><span class="line">    UIView *item = [UIView new];</span><br><span class="line">    item.backgroundColor = [UIColor colorWithHue:( arc4random() % 256 / 256.0 )</span><br><span class="line">                                      saturation:( arc4random() % 128 / 256.0 ) + 0.5</span><br><span class="line">                                      brightness:( arc4random() % 128 / 256.0 ) + 0.5</span><br><span class="line">                                           alpha:1];</span><br><span class="line">    [item  configureLayoutWithBlock:^(YGLayout *layout) &#123;</span><br><span class="line">        layout.isEnabled = YES;</span><br><span class="line"></span><br><span class="line">        layout.height     = 20*i;</span><br><span class="line">        layout.width      = 100;</span><br><span class="line">        layout.marginLeft = 10;</span><br><span class="line">    &#125;];</span><br><span class="line"></span><br><span class="line">    [contentView addSubview:item];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">[scrollView addSubview:contentView];</span><br><span class="line">[scrollView.yoga applyLayoutPreservingOrigin:YES];</span><br><span class="line">scrollView.contentSize = contentView.bounds.size;</span><br></pre></td></tr></table></figure>
+<p>效果如下:</p>
+<p><img src="https://user-gold-cdn.xitu.io/2017/12/25/1608d2756ff7af1e?w=171&amp;h=300&amp;f=jpeg&amp;s=4742" alt="679CD74E-2C82-4B4F-871A-46D42832C8CB"></p>
+<p>布置 <code>UIScrollView</code> 主要是使用了一个中间 <code>contentView</code>,起到了计算 <code>scrollview</code> 的 <code>contentSize</code> 的作用。这里要注意的是，要在<code>scrollview</code>调用完 <code>applyLayoutPreservingOrigin:</code> 后进行设置,否则得不到结果。</p>
+<p>UIScrollView 的用法，目前在网上也没找到比较官方的示例，完全是笔者自己摸索的，欢迎知道的大佬指教。</p>
+<blockquote>
+<p>上面所用的示例代码，已经上传至 <a href="https://github.com/ZenonHuang/MyDemos/tree/master/YogaSample" target="_blank" rel="noopener">GitHub</a></p>
+</blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>FlexBox 的确是一个非常适用于移动端的布局方式，语意清晰，性能稳定，现在移动端 UI 视图越来越复杂，尤其是在所有浏览器都已经支持了 FlexBox 之后，作为移动开发者有必要了解新的解决方式。</p>
+<p>大家在熟练使用 YogaKit 的方式之后，也可以尝试自己封装一套布局代码，加快开发效率。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考:"></a>参考:</h1><p><a href="http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html" target="_blank" rel="noopener">Flex 布局教程：语法篇</a></p>
+<p><a href="http://yangjh.oschina.io/front-end/css/flex.html" target="_blank" rel="noopener">FlexBox 布局模型</a></p>
+<p><a href="https://facebook.github.io/yoga/docs/api/yogakit/" target="_blank" rel="noopener">YogaKit</a></p>
+<p><a href="https://www.raywenderlich.com/161413/yoga-tutorial-using-cross-platform-layout-engine?utm_source=raywenderlich.com+Weekly&amp;utm_campaign=e7e557ef6a-raywenderlich_com_Weekly_Issue_125&amp;utm_medium=email&amp;utm_term=0_83b6edc87f-e7e557ef6a-415701885" target="_blank" rel="noopener">Yoga Tutorial: Using a Cross-Platform Layout Engine</a></p>
+<p><a href="https://draveness.me/layout-performance" target="_blank" rel="noopener">从 Auto Layout 的布局算法谈性能</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/17/technology/2017-12-15-iOSframework/" rel="next" title="关于 iOS 中的库">
+                <i class="fa fa-chevron-left"></i> 关于 iOS 中的库
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/" rel="prev" title="你真的会判断 _objc_msgForward_stret 吗">
+                你真的会判断 _objc_msgForward_stret 吗 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2112728" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/author.jpg"
+                alt="ZenonHuang" />
+            
+              <p class="site-author-name" itemprop="name">ZenonHuang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#为什么要了解-FlexBox"><span class="nav-number">1.</span> <span class="nav-text">为什么要了解 FlexBox?</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Auto-Layout-的原理"><span class="nav-number">1.1.</span> <span class="nav-text">Auto Layout 的原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Cassowary"><span class="nav-number">1.1.1.</span> <span class="nav-text">Cassowary</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Frame-Auto-Layout-FlexBox-的性能对比"><span class="nav-number">1.2.</span> <span class="nav-text">Frame / Auto Layout  / FlexBox 的性能对比</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FlexBox-是什么？"><span class="nav-number">2.</span> <span class="nav-text">FlexBox 是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#FlexBox-组成"><span class="nav-number">2.1.</span> <span class="nav-text">FlexBox 组成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Flex-Container"><span class="nav-number">2.1.1.</span> <span class="nav-text">Flex Container</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Flex-Direction"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">Flex Direction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Flex-Wrap"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">Flex Wrap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Display"><span class="nav-number">2.1.1.3.</span> <span class="nav-text">Display</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Justify-Content"><span class="nav-number">2.1.1.4.</span> <span class="nav-text">Justify Content</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Align-Items"><span class="nav-number">2.1.1.5.</span> <span class="nav-text">Align Items</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Align-Content"><span class="nav-number">2.1.1.6.</span> <span class="nav-text">Align Content</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Flex-Item"><span class="nav-number">2.1.2.</span> <span class="nav-text">Flex Item</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AlignSelf"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">AlignSelf</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlexGrow"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">FlexGrow</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlexShrink"><span class="nav-number">2.1.2.3.</span> <span class="nav-text">FlexShrink</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FlexBasis"><span class="nav-number">2.1.2.4.</span> <span class="nav-text">FlexBasis</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FlexBox-的实现-–-Yoga"><span class="nav-number">3.</span> <span class="nav-text">FlexBox 的实现 – Yoga</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#YGLayout"><span class="nav-number">3.1.</span> <span class="nav-text">YGLayout</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#isEnabled"><span class="nav-number">3.1.1.</span> <span class="nav-text">isEnabled</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#applyLayoutPreservingOrigin"><span class="nav-number">3.1.2.</span> <span class="nav-text">applyLayoutPreservingOrigin:</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#布局演示"><span class="nav-number">3.2.</span> <span class="nav-text">布局演示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#居中显示"><span class="nav-number">3.2.1.</span> <span class="nav-text">居中显示</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#嵌套布局"><span class="nav-number">3.2.2.</span> <span class="nav-text">嵌套布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#等间距排列"><span class="nav-number">3.2.3.</span> <span class="nav-text">等间距排列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#等间距，自动设宽"><span class="nav-number">3.2.4.</span> <span class="nav-text">等间距，自动设宽</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UIScrollView-排列自动计算-contentSize"><span class="nav-number">3.2.5.</span> <span class="nav-text">UIScrollView 排列自动计算 contentSize</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">5.</span> <span class="nav-text">参考:</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZenonHuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://zenonhuang.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://zenonhuang.me/2017/12/25/technology/2017-12-19-FlexBoxForiOS/';
+          this.page.identifier = '2017/12/25/technology/2017-12-19-FlexBoxForiOS/';
+          this.page.title = 'iOS 上的 FlexBox 布局';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://zenonhuang.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("k2TRBWba0l1Gs8oDHKfxxSXD-gzGzoHsz", "lb4xG7itO28IvwoxTwydiiJC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

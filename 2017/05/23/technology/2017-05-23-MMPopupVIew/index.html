@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为了自制一个弹出框，对2个自己平常比较常用的弹框库的源码进行学习">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MMPopupView 源码阅读">
+<meta property="og:url" content="https://zenonhuang.me/2017/05/23/technology/2017-05-23-MMPopupVIew/index.html">
+<meta property="og:site_name" content="ZenonHuang">
+<meta property="og:description" content="为了自制一个弹出框，对2个自己平常比较常用的弹框库的源码进行学习">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7xibqv.com1.z0.glb.clouddn.com/2015-09-07-opensource-mmpopupview8.jpg">
+<meta property="og:updated_time" content="2018-09-18T13:45:17.818Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MMPopupView 源码阅读">
+<meta name="twitter:description" content="为了自制一个弹出框，对2个自己平常比较常用的弹框库的源码进行学习">
+<meta name="twitter:image" content="http://7xibqv.com1.z0.glb.clouddn.com/2015-09-07-opensource-mmpopupview8.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zenonhuang.me/2017/05/23/technology/2017-05-23-MMPopupVIew/"/>
+
+
+
+
+
+  <title>MMPopupView 源码阅读 | ZenonHuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZenonHuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">人若无名，便可安心练剑</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zenonhuang.me/2017/05/23/technology/2017-05-23-MMPopupVIew/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZenonHuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZenonHuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MMPopupView 源码阅读</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-23T15:25:00+08:00">
+                2017-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/23/technology/2017-05-23-MMPopupVIew/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/23/technology/2017-05-23-MMPopupVIew/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/05/23/technology/2017-05-23-MMPopupVIew/" class="leancloud_visitors" data-flag-title="MMPopupView 源码阅读">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  为了自制一个弹出框，对2个自己平常比较常用的弹框库的源码进行学习
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="MMPopupView"><a href="#MMPopupView" class="headerlink" title="MMPopupView"></a>MMPopupView</h2><p><a href="https://github.com/adad184/MMPopupView" target="_blank" rel="noopener">MMPopupView</a> 是我自己比较喜欢的一个库，风格简洁好看，调用和自定义都很方便。缺点是对横竖屏的支持不是很好。</p>
+<p>在我初学的时候，也经常阅读作者的博客学习。</p>
+<p>以下是 MMPopupView 的整体结构：</p>
+<p><img src="http://7xibqv.com1.z0.glb.clouddn.com/2015-09-07-opensource-mmpopupview8.jpg" alt="MMPopupView结构"></p>
+<p>这次阅读，就到 MMPopupView 的阶段，因为之后的如 MMAlertView , MMSheetView 等都是基于 MMPopupView 自定义出来的。</p>
+<h3 id="MMPopupWindow"><a href="#MMPopupWindow" class="headerlink" title="MMPopupWindow"></a>MMPopupWindow</h3><p>首先从作为所有 UI 的容器MMPopupWindow说起。</p>
+<h4 id="单例"><a href="#单例" class="headerlink" title="单例"></a>单例</h4><p>在 MMPopupWindow 的类里，可以看到单例方法 ：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">+ (MMPopupWindow *)sharedWindow</span><br><span class="line">&#123;</span><br><span class="line">    static MMPopupWindow *window;</span><br><span class="line">    static dispatch_once_t onceToken;</span><br><span class="line">    </span><br><span class="line">    dispatch_once(&amp;onceToken, ^&#123;</span><br><span class="line">        window = [[MMPopupWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];</span><br><span class="line">        window.rootViewController = [UIViewController new];</span><br><span class="line">    &#125;);</span><br><span class="line">    </span><br><span class="line">    return window;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先初始化一个全屏大小的 window,然后为 window 设定 rootViewController 。</p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>初始化的方法为:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">- (instancetype)initWithFrame:(CGRect)frame</span><br><span class="line">&#123;</span><br><span class="line">    self = [super initWithFrame:frame];</span><br><span class="line">    </span><br><span class="line">    if ( self )</span><br><span class="line">    &#123;</span><br><span class="line">        self.windowLevel = UIWindowLevelStatusBar + 1;</span><br><span class="line">        </span><br><span class="line">        UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionTap:)];</span><br><span class="line">        gesture.cancelsTouchesInView = NO;</span><br><span class="line">        gesture.delegate = self;</span><br><span class="line">        [self addGestureRecognizer:gesture];</span><br><span class="line">    &#125;</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="windowLevel"><a href="#windowLevel" class="headerlink" title="windowLevel"></a>windowLevel</h5><p>注意到有一个 windowLevel 的设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">self.windowLevel = UIWindowLevelStatusBar + 1;</span><br></pre></td></tr></table></figure>
+<p>windowLevel 为 UIWindowLevel 类型. </p>
+<p>而 UIWindowLevel 实际的值为 CGFloat 类型 .</p>
+<p>UIWindow 在显示时，会根据 UIWindowLevel 做排序，Level 值高的将排在前面。</p>
+<p>系统有三个 UIWindowLevel 层级:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">UIKIT_EXTERN const UIWindowLevel UIWindowLevelNormal;</span><br><span class="line">UIKIT_EXTERN const UIWindowLevel UIWindowLevelAlert;</span><br><span class="line">UIKIT_EXTERN const UIWindowLevel UIWindowLevelStatusBar __TVOS_PROHIBITED;</span><br></pre></td></tr></table></figure>
+<p>UIWindow 的默认级别是 UIWindowLevelNormal .</p>
+<p>对应的关系为： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIWindowLevelNormal &lt; UIWindowLevelStatusBar &lt; UIWindowLevelAlert .</span><br></pre></td></tr></table></figure>
+<p>而 UIWindowLevel 的值可以是任意的，代码里的 <code>UIWindowLevelStatusBar + 1</code> 表示级别在 StatusBar 和 Alert 之间：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">UIWindowLevelStatusBar &lt; windowLevel &lt; UIWindowLevelAlert</span><br></pre></td></tr></table></figure>
+<h5 id="添加手势"><a href="#添加手势" class="headerlink" title="添加手势"></a>添加手势</h5><p>这里添加了一个 tap 的手势：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionTap:)];</span><br><span class="line">      gesture.cancelsTouchesInView = NO;</span><br><span class="line">      gesture.delegate = self;</span><br><span class="line">      [self addGestureRecognizer:gesture];</span><br></pre></td></tr></table></figure>
+<p>可以看到，在指定手势响应方法之外，对 <code>cancelsTouchesInView</code> 设置为 NO.</p>
+<p><code>cancelsTouchesInView</code> 默认为 YES，当识别到手势的时候，会终止发送所有触摸事件。<br><code>cancelsTouchesInView</code> 为NO,则不发送终止触摸的消息，让 Tap 手势和其它响应方法，同时响应触摸事件。</p>
+<h4 id="Tap-手势代理"><a href="#Tap-手势代理" class="headerlink" title="Tap 手势代理"></a>Tap 手势代理</h4><p>设置是否响应点击操作,返回NO代表不做操作,返回YES则会做出响应.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch</span><br><span class="line">&#123;</span><br><span class="line">    //self.attachView.mm_dimBackgroundView 为  self.attachView 的半透明黑色背景</span><br><span class="line">    return ( touch.view == self.attachView.mm_dimBackgroundView );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的代码可以看到，从判断 touch.view 和 self.attachView.mm_dimBackgroundView是否一样，来决定做不做响应。所以只有点击背景时，才会有响应。</p>
+<h4 id="attachView"><a href="#attachView" class="headerlink" title="attachView"></a>attachView</h4><p>从下面代码看到，attachView实际就是根控制器的视图。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (UIView *)attachView</span><br><span class="line">&#123;</span><br><span class="line">    return self.rootViewController.view;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="手势响应事件"><a href="#手势响应事件" class="headerlink" title="手势响应事件"></a>手势响应事件</h4><p>下面是响应点击的代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">- (void)actionTap:(UITapGestureRecognizer*)gesture</span><br><span class="line">&#123;</span><br><span class="line">    if ( self.touchWildToHide &amp;&amp; !self.mm_dimBackgroundAnimating )</span><br><span class="line">    &#123;</span><br><span class="line">        for ( UIView *v in [self attachView].mm_dimBackgroundView.subviews )</span><br><span class="line">        &#123;</span><br><span class="line">            if ( [v isKindOfClass:[MMPopupView class]] )</span><br><span class="line">            &#123;</span><br><span class="line">                MMPopupView *popupView = (MMPopupView*)v;</span><br><span class="line">                [popupView hide];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当 touchWildToHide 为 YES ,以及 mm_dimBackgroundAnimating 为NO,则会把 [self attachView].mm_dimBackgroundView 里的所有 MMPopupView 实例隐藏。</p>
+<h4 id="cacheWindow"><a href="#cacheWindow" class="headerlink" title="cacheWindow"></a>cacheWindow</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (void)cacheWindow</span><br><span class="line">&#123;</span><br><span class="line">    [self makeKeyAndVisible];</span><br><span class="line">    [[[UIApplication sharedApplication].delegate window] makeKeyAndVisible];</span><br><span class="line">    </span><br><span class="line">    [self attachView].mm_dimBackgroundView.hidden = YES;</span><br><span class="line">    self.hidden = YES;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先 MMPopupWindow 发送 makeKeyAndVisible 消息，让它成为应用的主窗口并显示。</p>
+<p>再获取 AppDelegate 的 window 让它成为主窗口并显示。</p>
+<p>再将背景和MMPopupWindow都给隐藏。</p>
+<h3 id="MMPopupView-1"><a href="#MMPopupView-1" class="headerlink" title="MMPopupView"></a>MMPopupView</h3><h4 id="初始化设置"><a href="#初始化设置" class="headerlink" title="初始化设置"></a>初始化设置</h4><h5 id="setup"><a href="#setup" class="headerlink" title="setup"></a>setup</h5><p>首先初始化调用了 <code>setup</code> 方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">- (void)setup</span><br><span class="line">&#123;</span><br><span class="line">    self.type = MMPopupTypeAlert;</span><br><span class="line">    self.animationDuration = 0.3f;</span><br><span class="line">    self.attachedView = [MMPopupWindow sharedWindow].attachView;</span><br><span class="line">    </span><br><span class="line">    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(notifyHideAll:) name:MMPopupViewHideAllNotification object:nil];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>指定 <code>type</code> 为 MMPopupTypeAlert. <code>animationDuration</code> 为 0.3 秒.</p>
+<p>设置 <code>MMPopupView</code> 的 attachedView 为 <code>MMPopupWindow</code> 的  attachedView .</p>
+<p>设置了一个名为 <code>MMPopupViewHideAllNotification</code>  的通知，和处理通知消息的方法 <code>notifyHideAll:</code></p>
+<p>看一下 <code>setType:</code> 方法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">- (void)setType:(MMPopupType)type</span><br><span class="line">&#123;</span><br><span class="line">    _type = type;</span><br><span class="line">    </span><br><span class="line">    switch (type)</span><br><span class="line">    &#123;</span><br><span class="line">        case MMPopupTypeAlert:</span><br><span class="line">        &#123;</span><br><span class="line">            self.showAnimation = [self alertShowAnimation];</span><br><span class="line">            self.hideAnimation = [self alertHideAnimation];</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        case MMPopupTypeSheet:</span><br><span class="line">        &#123;</span><br><span class="line">            self.showAnimation = [self sheetShowAnimation];</span><br><span class="line">            self.hideAnimation = [self sheetHideAnimation];</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        case MMPopupTypeCustom:</span><br><span class="line">        &#123;</span><br><span class="line">            self.showAnimation = [self customShowAnimation];</span><br><span class="line">            self.hideAnimation = [self customHideAnimation];</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">            </span><br><span class="line">        default:</span><br><span class="line">            break;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码可以看到，在判断 Type 后，都是针对两个 MMPopupView 的属性 showAnimation 和 hideAnimation 做设置。</p>
+<p>它们都是 MMPopupBlock 类型的 block：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">@property (nonatomic, copy) MMPopupBlock   showAnimation;       // custom show animation block.</span><br><span class="line">@property (nonatomic, copy) MMPopupBlock   hideAnimation;       // custom hide animation block.</span><br></pre></td></tr></table></figure>
+<p>通过以上两个属性来设置 弹出 和 隐藏 动画。</p>
+<h4 id="显示"><a href="#显示" class="headerlink" title="显示"></a>显示</h4><h5 id="showWithBlock"><a href="#showWithBlock" class="headerlink" title="showWithBlock"></a>showWithBlock</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">- (void)showWithBlock:(MMPopupCompletionBlock)block</span><br><span class="line">&#123;</span><br><span class="line">    if ( block )</span><br><span class="line">    &#123;</span><br><span class="line">        self.showCompletionBlock = block;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if ( !self.attachedView )</span><br><span class="line">    &#123;</span><br><span class="line">        self.attachedView = [MMPopupWindow sharedWindow].attachView;</span><br><span class="line">    &#125;</span><br><span class="line">    [self.attachedView mm_showDimBackground];</span><br><span class="line">    </span><br><span class="line">    MMPopupBlock showAnimation = self.showAnimation;</span><br><span class="line">    </span><br><span class="line">    NSAssert(showAnimation, @&quot;show animation must be there&quot;);</span><br><span class="line">    </span><br><span class="line">    showAnimation(self);</span><br><span class="line">    </span><br><span class="line">    if ( self.withKeyboard )</span><br><span class="line">    &#123;</span><br><span class="line">        [self showKeyboard];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>判断 MMPopupCompletionBlock ，进行设置。</p>
+<p>判断 attachView,进行设置。</p>
+<p>显示 attachedView 背景。</p>
+<p>用 NSAssert 检测，调用 showAnimation 的动画 block。</p>
+<p>然后检测是否有键盘一起弹出。</p>
+<h4 id="隐藏"><a href="#隐藏" class="headerlink" title="隐藏"></a>隐藏</h4><h5 id="hideWithBlock"><a href="#hideWithBlock" class="headerlink" title="hideWithBlock"></a>hideWithBlock</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">- (void)hideWithBlock:(MMPopupCompletionBlock)block</span><br><span class="line">&#123;</span><br><span class="line">    if ( block )</span><br><span class="line">    &#123;</span><br><span class="line">        self.hideCompletionBlock = block;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    if ( !self.attachedView )</span><br><span class="line">    &#123;</span><br><span class="line">        self.attachedView = [MMPopupWindow sharedWindow].attachView;</span><br><span class="line">    &#125;</span><br><span class="line">    [self.attachedView mm_hideDimBackground];</span><br><span class="line">    </span><br><span class="line">    if ( self.withKeyboard )</span><br><span class="line">    &#123;</span><br><span class="line">        [self hideKeyboard];</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    MMPopupBlock hideAnimation = self.hideAnimation;</span><br><span class="line">    </span><br><span class="line">    NSAssert(hideAnimation, @&quot;hide animation must be there&quot;);</span><br><span class="line">    </span><br><span class="line">    hideAnimation(self);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>判断 MMPopupCompletionBlock ，进行设置。</p>
+<p>判断 attachView,进行设置。</p>
+<p>隐藏 attachedView 背景。</p>
+<p>然后检测是否有键盘，一起隐藏。</p>
+<p>用 NSAssert 检测，调用 hideAnimation 的动画 block。</p>
+<h3 id="MMPopupCategory"><a href="#MMPopupCategory" class="headerlink" title="MMPopupCategory"></a>MMPopupCategory</h3><h4 id="Associated-Object"><a href="#Associated-Object" class="headerlink" title="Associated Object"></a>Associated Object</h4><p>MMPopupCategory 里的很多方法都利用到了 Associated Object ,也就是 关联对象 来添加实例变量和获取实例变量。</p>
+<p>这里是关联对象 getter/setter 方法的原型：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">id objc_getAssociatedObject(id object, const void *key);</span><br><span class="line"></span><br><span class="line">void objc_setAssociatedObject(id object, const void *key, id value, objc_AssociationPolicy policy);</span><br></pre></td></tr></table></figure>
+<p>object 是要添加属性的对象， key 是变量名称，value 是你要给定的值。</p>
+<p>而 policy 为 objc_AssociationPolicy 类型，是一个枚举:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">typedef OBJC_ENUM(uintptr_t, objc_AssociationPolicy) &#123;</span><br><span class="line">    OBJC_ASSOCIATION_ASSIGN = 0,           /**&lt; Specifies a weak reference to the associated object. */</span><br><span class="line">    OBJC_ASSOCIATION_RETAIN_NONATOMIC = 1, /**&lt; Specifies a strong reference to the associated object. </span><br><span class="line">                                            *   The association is not made atomically. */</span><br><span class="line">    OBJC_ASSOCIATION_COPY_NONATOMIC = 3,   /**&lt; Specifies that the associated object is copied. </span><br><span class="line">                                            *   The association is not made atomically. */</span><br><span class="line">    OBJC_ASSOCIATION_RETAIN = 01401,       /**&lt; Specifies a strong reference to the associated object.</span><br><span class="line">                                            *   The association is made atomically. */</span><br><span class="line">    OBJC_ASSOCIATION_COPY = 01403          /**&lt; Specifies that the associated object is copied.</span><br><span class="line">                                            *   The association is made atomically. */</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>不同的 <code>objc_AssociationPolicy</code> 对应了不通的属性修饰符：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:left">objc_AssociationPolicy</th>
+<th style="text-align:center">modifier</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left">OBJC_ASSOCIATION_ASSIGN</td>
+<td style="text-align:center">assign</td>
+</tr>
+<tr>
+<td style="text-align:left">OBJC_ASSOCIATION_RETAIN_NONATOMIC</td>
+<td style="text-align:center">nonatomic, strong</td>
+</tr>
+<tr>
+<td style="text-align:left">OBJC_ASSOCIATION_COPY_NONATOMIC</td>
+<td style="text-align:center">nonatomic, copy</td>
+</tr>
+<tr>
+<td style="text-align:left">OBJC_ASSOCIATION_RETAIN</td>
+<td style="text-align:center">atomic, strong</td>
+</tr>
+<tr>
+<td style="text-align:left">OBJC_ASSOCIATION_COPY</td>
+<td style="text-align:center">atomic, copy</td>
+</tr>
+</tbody>
+</table>
+<p>而一般实现的属性都是用 <code>nonatomic</code> 和 <code>strong</code> 修饰符, 可以选择<code>OBJC_ASSOCIATION_RETAIN_NONATOMIC</code>。</p>
+<p>具体的需要根据场景去确定。</p>
+<h4 id="mm-dimBackgroundView"><a href="#mm-dimBackgroundView" class="headerlink" title="mm_dimBackgroundView"></a>mm_dimBackgroundView</h4><p>这里的 mm_dimBackgroundView 位于 MMPopupCategory 里，根据代码可以看出来，是作为半透明黑色背景的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">//mm_dimBackgroundView</span><br><span class="line">- (UIView *)mm_dimBackgroundView</span><br><span class="line">&#123;</span><br><span class="line">    UIView *dimView = objc_getAssociatedObject(self, mm_dimBackgroundViewKey);</span><br><span class="line">    </span><br><span class="line">    if ( !dimView )</span><br><span class="line">    &#123;</span><br><span class="line">        dimView = [UIView new];</span><br><span class="line">        [self addSubview:dimView];</span><br><span class="line">        [dimView mas_makeConstraints:^(MASConstraintMaker *make) &#123;</span><br><span class="line">            make.edges.equalTo(self);</span><br><span class="line">        &#125;];</span><br><span class="line">        dimView.alpha = 0.0f;</span><br><span class="line">        dimView.backgroundColor = MMHexColor(0x0000007F);</span><br><span class="line">        dimView.layer.zPosition = FLT_MAX;</span><br><span class="line">        </span><br><span class="line">        self.mm_dimAnimationDuration = 0.3f;</span><br><span class="line">        </span><br><span class="line">        objc_setAssociatedObject(self, mm_dimBackgroundViewKey, dimView, OBJC_ASSOCIATION_RETAIN_NONATOMIC);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    return dimView;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次阅读的源码结构很清晰，不算难懂。</p>
+<p>除了解到整个 MMPopupView 的设计思路之外，从中也学习到一些额外的知识和技巧。</p>
+<p>打算学习它的方式，给出常用的 AlertView , SheetView ，方便使用者直接使用。<br>并提供内置动画，也支持自定义动画。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/源码阅读/" rel="tag"># 源码阅读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/19/technology/2017--05-19-HZImageFilter/" rel="next" title="CoreImage滤镜实践">
+                <i class="fa fa-chevron-left"></i> CoreImage滤镜实践
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/23/technology/2017-05-25-TBActionSheet/" rel="prev" title="TBActionSheet 源码阅读">
+                TBActionSheet 源码阅读 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2112728" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/author.jpg"
+                alt="ZenonHuang" />
+            
+              <p class="site-author-name" itemprop="name">ZenonHuang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#MMPopupView"><span class="nav-number">1.</span> <span class="nav-text">MMPopupView</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MMPopupWindow"><span class="nav-number">1.1.</span> <span class="nav-text">MMPopupWindow</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#单例"><span class="nav-number">1.1.1.</span> <span class="nav-text">单例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化"><span class="nav-number">1.1.2.</span> <span class="nav-text">初始化</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#windowLevel"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">windowLevel</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#添加手势"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">添加手势</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tap-手势代理"><span class="nav-number">1.1.3.</span> <span class="nav-text">Tap 手势代理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#attachView"><span class="nav-number">1.1.4.</span> <span class="nav-text">attachView</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#手势响应事件"><span class="nav-number">1.1.5.</span> <span class="nav-text">手势响应事件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cacheWindow"><span class="nav-number">1.1.6.</span> <span class="nav-text">cacheWindow</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MMPopupView-1"><span class="nav-number">1.2.</span> <span class="nav-text">MMPopupView</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化设置"><span class="nav-number">1.2.1.</span> <span class="nav-text">初始化设置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#setup"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">setup</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#显示"><span class="nav-number">1.2.2.</span> <span class="nav-text">显示</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#showWithBlock"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">showWithBlock</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#隐藏"><span class="nav-number">1.2.3.</span> <span class="nav-text">隐藏</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#hideWithBlock"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">hideWithBlock</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MMPopupCategory"><span class="nav-number">1.3.</span> <span class="nav-text">MMPopupCategory</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Associated-Object"><span class="nav-number">1.3.1.</span> <span class="nav-text">Associated Object</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mm-dimBackgroundView"><span class="nav-number">1.3.2.</span> <span class="nav-text">mm_dimBackgroundView</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZenonHuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://zenonhuang.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://zenonhuang.me/2017/05/23/technology/2017-05-23-MMPopupVIew/';
+          this.page.identifier = '2017/05/23/technology/2017-05-23-MMPopupVIew/';
+          this.page.title = 'MMPopupView 源码阅读';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://zenonhuang.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("k2TRBWba0l1Gs8oDHKfxxSXD-gzGzoHsz", "lb4xG7itO28IvwoxTwydiiJC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

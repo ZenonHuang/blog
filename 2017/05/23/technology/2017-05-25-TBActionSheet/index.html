@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="为了自制一个弹出框，对2个自己平常比较常用的弹框库的源码进行学习">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TBActionSheet 源码阅读">
+<meta property="og:url" content="https://zenonhuang.me/2017/05/23/technology/2017-05-25-TBActionSheet/index.html">
+<meta property="og:site_name" content="ZenonHuang">
+<meta property="og:description" content="为了自制一个弹出框，对2个自己平常比较常用的弹框库的源码进行学习">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/TBActionSheet/overview.jpg">
+<meta property="og:updated_time" content="2018-09-18T13:45:17.818Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="TBActionSheet 源码阅读">
+<meta name="twitter:description" content="为了自制一个弹出框，对2个自己平常比较常用的弹框库的源码进行学习">
+<meta name="twitter:image" content="http://7ni3rk.com1.z0.glb.clouddn.com/TBActionSheet/overview.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zenonhuang.me/2017/05/23/technology/2017-05-25-TBActionSheet/"/>
+
+
+
+
+
+  <title>TBActionSheet 源码阅读 | ZenonHuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZenonHuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">人若无名，便可安心练剑</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zenonhuang.me/2017/05/23/technology/2017-05-25-TBActionSheet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZenonHuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZenonHuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">TBActionSheet 源码阅读</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-23T17:25:00+08:00">
+                2017-05-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/23/technology/2017-05-25-TBActionSheet/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/23/technology/2017-05-25-TBActionSheet/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/05/23/technology/2017-05-25-TBActionSheet/" class="leancloud_visitors" data-flag-title="TBActionSheet 源码阅读">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  为了自制一个弹出框，对2个自己平常比较常用的弹框库的源码进行学习
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="https://github.com/yulingtianxia/TBActionSheet" target="_blank" rel="noopener">TBActionSheet</a>  是杨萧玉做的一个库，已经在腾讯的厂子里用了。</p>
+<p>TBActionSheet 对横竖屏状态支持的很好，同时还有一个很不错的点，就是可以在显示后动态更新 UI。</p>
+<p>几乎就是我心里对弹框库的期待了。</p>
+<p>然而因为支持的功能太多，里面的 api 太多了，而且不能自定义弹出和隐藏动画（给自己一个造轮子的理由..）。</p>
+<p>以下是 TBActionSheet 的结构：</p>
+<p><img src="http://7ni3rk.com1.z0.glb.clouddn.com/TBActionSheet/overview.jpg" alt="TBActionSheet"></p>
+<p>这次阅读分析，主要针对 <code>TBActionSheetController</code> 和 <code>TBActionSheet</code> 两个类.</p>
+<h1 id="TBActionSheetController"><a href="#TBActionSheetController" class="headerlink" title="TBActionSheetController"></a>TBActionSheetController</h1><p>首先添加 TBActionSheet ，然后对 横竖屏 ／ 状态栏 ／ actionSheet 做的一些设置：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">//返回YES可以自动旋转 </span><br><span class="line">- (BOOL)shouldAutorotate</span><br><span class="line">&#123;</span><br><span class="line">    return YES;</span><br><span class="line">&#125;</span><br><span class="line">//返回支持的方向</span><br><span class="line">- (UIInterfaceOrientationMask)supportedInterfaceOrientations</span><br><span class="line">&#123;</span><br><span class="line">    return self.actionSheet.supportedInterfaceOrientations;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//设置 StatusBarStyle</span><br><span class="line">- (UIStatusBarStyle)preferredStatusBarStyle</span><br><span class="line">&#123;</span><br><span class="line">    UIWindow *window = self.actionSheet.previousKeyWindow;</span><br><span class="line">    if (!window) &#123;</span><br><span class="line">        window = [[UIApplication sharedApplication].windows firstObject];</span><br><span class="line">    &#125;</span><br><span class="line">    return [[window tb_viewControllerForStatusBarStyle] preferredStatusBarStyle];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//是否隐藏 statusBar</span><br><span class="line">- (BOOL)prefersStatusBarHidden</span><br><span class="line">&#123;</span><br><span class="line">    UIWindow *window = self.actionSheet.previousKeyWindow;</span><br><span class="line">    if (!window) &#123;</span><br><span class="line">        window = [[UIApplication sharedApplication].windows firstObject];</span><br><span class="line">    &#125;</span><br><span class="line">    return [[window tb_viewControllerForStatusBarHidden] prefersStatusBarHidden];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//旋转完成之后的回调方法</span><br><span class="line">- (void)didRotateFromInterfaceOrientation:(UIInterfaceOrientation)fromInterfaceOrientation</span><br><span class="line">&#123;</span><br><span class="line">    if (self.actionSheet.blurEffectEnabled &amp;&amp; !kiOS8Later) &#123;</span><br><span class="line">        [self.actionSheet setupStyle];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里的巧妙之处，在于使用了控制器处理了旋转问题。</p>
+<h1 id="TBActionSheet"><a href="#TBActionSheet" class="headerlink" title="TBActionSheet"></a>TBActionSheet</h1><p>在 TBActionSheet 里面，使用到了 +(void)initialize 的类方法 ,并且使用 appearance 来做一些初始化设置。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">+ (void)initialize</span><br><span class="line">&#123;</span><br><span class="line">    if (self != [TBActionSheet class]) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    TBActionSheet *appearance = [self appearance];</span><br><span class="line">    appearance.buttonHeight = 56;</span><br><span class="line">     ······</span><br><span class="line">    appearance.supportedInterfaceOrientations = UIInterfaceOrientationMaskAll;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="initialize"><a href="#initialize" class="headerlink" title="initialize"></a>initialize</h2><p>initialize 在程序里的每个类都会调用一次，与 init 方法有所不同。</p>
+<p>例如： </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Duck *duck1=[Duck new];</span><br><span class="line">Duck *duck2=[Duck new];</span><br><span class="line">Duck *duck3=[Duck new];</span><br></pre></td></tr></table></figure>
+<p>只有在第一次实例化 duck1 的时候，调用一次 initialize 方法。之后的 duck2, duck3 都不会再调用。 </p>
+<p>运行时间的行为之一就是initialize.</p>
+<p>如果一个子类没有实现 initialize 类方法，那么超类会调用这个方法两次，一次为自己，而一次为子类。</p>
+<h2 id="UIAppearance"><a href="#UIAppearance" class="headerlink" title="UIAppearance"></a>UIAppearance</h2><p>我们肯定使用过如下类似的代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[[UINavigationBar appearance] setTintColor:myColor]</span><br></pre></td></tr></table></figure>
+<p>以此全局设置某个控件的属性的代码</p>
+<p>不过在自定义的时候， 对 appearance 的使用还</p>
+<p>UIAppearance 使得视图和控件的外观在整个 App 范围内统一定义。</p>
+<p>UIAppearance是一个协议：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">+ (instancetype)appearance;</span><br><span class="line">+ (instancetype)appearanceWhenContainedInInstancesOfClasses:(NSArray&lt;Class &lt;UIAppearanceContainer&gt;&gt; *)containerTypes NS_AVAILABLE_IOS(9_0);</span><br></pre></td></tr></table></figure>
+<p>如 UIView 实现了 UIAppearance 这两种协议，既可以获取外观代理，也可以作为外观容器。</p>
+<p>而 UIViewController 则是仅实现了 UIAppearanceContainer 协议，很简单，它本身是控制器而不是 view，作为容器，为 UIView 等服务。</p>
+<p>要对让相应的属性支持 appearance 设置的话，要在后面使用 <code>UI_APPEARANCE_SELECTOR</code> :</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">@property (nonatomic, strong) UIColor *headerColor UI_APPEARANCE_SELECTOR;</span><br></pre></td></tr></table></figure>
+<p>注意：appearance 生效是在被添加到视图时，所以，在此之后设置 appearance，则不会起作用。而在手动设置属性之后被添加到视图树上，手动设置的会被覆盖。</p>
+<h2 id="可变参数"><a href="#可变参数" class="headerlink" title="可变参数"></a>可变参数</h2><p>一个可变参数函数是指一个函数拥有不定的参数，即为一个函数可接收多个参数。</p>
+<p>最经典的就是 NSLog（ C 为 printf ） ，它可以指定格式的输出，格式化输出的内容。</p>
+<p>看到初始化方法里，有这么一段：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">- (instancetype)initWithTitle:(NSString *)title </span><br><span class="line">                     delegate:(id&lt;TBActionSheetDelegate&gt;)delegate </span><br><span class="line">            cancelButtonTitle:(NSString *)cancelButtonTitle </span><br><span class="line">       destructiveButtonTitle:(NSString *)destructiveButtonTitle </span><br><span class="line">            otherButtonTitles:(NSString *)otherButtonTitles, ...</span><br><span class="line">&#123;</span><br><span class="line">    va_list argList;</span><br><span class="line">    // 从 otherButtonTitles 开始遍历参数，不包括 otherButtonTitles 本身.</span><br><span class="line">    va_start(argList, otherButtonTitles);</span><br><span class="line">    self = [self initWithTitle:title</span><br><span class="line">                       message:nil</span><br><span class="line">                      delegate:delegate</span><br><span class="line">             cancelButtonTitle:cancelButtonTitle</span><br><span class="line">        destructiveButtonTitle:destructiveButtonTitle</span><br><span class="line">         firstOtherButtonTitle:otherButtonTitles</span><br><span class="line">                     titleList:argList];</span><br><span class="line">    va_end(argList);</span><br><span class="line">    return self;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先看到 <code>otherButtonTitles:(NSString *)otherButtonTitles, ...</code> ,这里就传递了一个可变参数。</p>
+<h3 id="va-list"><a href="#va-list" class="headerlink" title="va_list"></a>va_list</h3><p>定义一个指向个数可变的参数列表指针.</p>
+<p>说明一个变量ap(argument pointer – 可变参数指针），此变量将依次引用可变参数列表中用省略号“…”代替的每一个参数。即指向将要操作的变参。 </p>
+<p><code>va_list</code> 的定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#ifndef _VA_LIST_T</span><br><span class="line">#define _VA_LIST_T</span><br><span class="line">typedef __darwin_va_list va_list;</span><br><span class="line">#endif /* _VA_LIST_T */</span><br></pre></td></tr></table></figure>
+<p><code>va_list</code> 实际上是 <code>__darwin_va_list</code> 的别名。</p>
+<p><code>__darwin_va_list</code> 的定义如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#if (__GNUC__ &gt; 2)</span><br><span class="line">typedef __builtin_va_list	__darwin_va_list;	/* va_list */</span><br><span class="line">#else</span><br><span class="line">typedef void *			__darwin_va_list;	/* va_list */</span><br><span class="line">#endif</span><br></pre></td></tr></table></figure>
+<p>这里看到，针对 <code>__GUNUC__</code> 的判断有不同的定义。</p>
+<p> <code>__builtin_va_list</code> 等带有 <code>__builtin</code> 都是编译器所能识别的函数，无法看到具体处理了。</p>
+<h3 id="va-start-args-firstArg"><a href="#va-start-args-firstArg" class="headerlink" title="va_start(args,firstArg)"></a>va_start(args,firstArg)</h3><p>初始化变量刚定义的 va_list 变量，这个宏的第二个参数是第一个可变参数的前一个参数，是一个固定的参数.</p>
+<h3 id="va-end-args"><a href="#va-end-args" class="headerlink" title="va_end(args)"></a>va_end(args)</h3><p>清空参数列表，并置参数指针 args 无效</p>
+<h3 id="va-arg-ap-type"><a href="#va-arg-ap-type" class="headerlink" title="va_arg(ap, type)"></a>va_arg(ap, type)</h3><p>该表达式具有变长参数列表中下一个参数的值和类型。每次调用 va_arg 都会修改，用 va_list 声明的对象从而使该对象指向参数列表中的下一个参数。</p>
+<p>接收 argList 的函数处理代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">····</span><br><span class="line">NSString* eachArg;</span><br><span class="line">while ((eachArg = va_arg(argList, NSString*))) &#123;</span><br><span class="line">      // 从 args 中遍历出参数，NSString* 指明类型</span><br><span class="line">      [self addButtonWithTitle:eachArg style:TBActionButtonStyleDefault];</span><br><span class="line">&#125;</span><br><span class="line">····</span><br></pre></td></tr></table></figure>
+<p>在处理 argList 的时候，使用 <code>va_arg(ap, type)</code> 返回可变的参数。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>TBActionSheet 使用了 frame 做布局，里面有大量计算的代码。就没有再仔细去看计算的细节了。作者考虑比较周全，除了没有自定义动画，可以说是非常好了。</p>
+<p>initialize / UIApperance / 可变参数 的使用，都是我以前没有接触到的。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/源码阅读/" rel="tag"># 源码阅读</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/23/technology/2017-05-23-MMPopupVIew/" rel="next" title="MMPopupView 源码阅读">
+                <i class="fa fa-chevron-left"></i> MMPopupView 源码阅读
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/06/01/technology/2017-06-05-CocoaPodsRepo/" rel="prev" title="私有 CocoaPods 的仓库">
+                私有 CocoaPods 的仓库 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2112728" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/author.jpg"
+                alt="ZenonHuang" />
+            
+              <p class="site-author-name" itemprop="name">ZenonHuang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#TBActionSheetController"><span class="nav-number">1.</span> <span class="nav-text">TBActionSheetController</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TBActionSheet"><span class="nav-number">2.</span> <span class="nav-text">TBActionSheet</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#initialize"><span class="nav-number">2.1.</span> <span class="nav-text">initialize</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UIAppearance"><span class="nav-number">2.2.</span> <span class="nav-text">UIAppearance</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#可变参数"><span class="nav-number">2.3.</span> <span class="nav-text">可变参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#va-list"><span class="nav-number">2.3.1.</span> <span class="nav-text">va_list</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#va-start-args-firstArg"><span class="nav-number">2.3.2.</span> <span class="nav-text">va_start(args,firstArg)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#va-end-args"><span class="nav-number">2.3.3.</span> <span class="nav-text">va_end(args)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#va-arg-ap-type"><span class="nav-number">2.3.4.</span> <span class="nav-text">va_arg(ap, type)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZenonHuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://zenonhuang.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://zenonhuang.me/2017/05/23/technology/2017-05-25-TBActionSheet/';
+          this.page.identifier = '2017/05/23/technology/2017-05-25-TBActionSheet/';
+          this.page.title = 'TBActionSheet 源码阅读';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://zenonhuang.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("k2TRBWba0l1Gs8oDHKfxxSXD-gzGzoHsz", "lb4xG7itO28IvwoxTwydiiJC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

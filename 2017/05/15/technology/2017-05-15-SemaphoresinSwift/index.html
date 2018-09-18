@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="swift" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="转自简书Arco翻译的文章">
+<meta name="keywords" content="swift">
+<meta property="og:type" content="article">
+<meta property="og:title" content="(轉)Swift 中的信號量">
+<meta property="og:url" content="https://zenonhuang.me/2017/05/15/technology/2017-05-15-SemaphoresinSwift/index.html">
+<meta property="og:site_name" content="ZenonHuang">
+<meta property="og:description" content="转自简书Arco翻译的文章">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*8ZCGzvA6DjfR9JoamqauoQ.jpeg">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*nfAYVSYFMB874-z4sfJ_YQ.jpeg">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*p54pBislRafckGffcDqRdA.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*-_owdkyNPRUQS5a5yjdEkA.jpeg">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*3GANzX3n1uEiuhXE49fcrg.jpeg">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*OjtJO8-44tStXpRS8y1N-A.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*g7SMrR7svWNetOqjSGIEYA.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*eCFBl9XpF6JYX1b8xwD26w.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*_ASgiqbV_o9caE7M7hNBpQ.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*cVvGM-1NRH7kouSRu2mSRQ.png">
+<meta property="og:image" content="https://cdn-images-1.medium.com/max/1600/1*Nmcb2GTIk-PO0TNPNPD8Mw.jpeg">
+<meta property="og:updated_time" content="2018-09-18T13:45:17.818Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="(轉)Swift 中的信號量">
+<meta name="twitter:description" content="转自简书Arco翻译的文章">
+<meta name="twitter:image" content="https://cdn-images-1.medium.com/max/1600/1*8ZCGzvA6DjfR9JoamqauoQ.jpeg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zenonhuang.me/2017/05/15/technology/2017-05-15-SemaphoresinSwift/"/>
+
+
+
+
+
+  <title>(轉)Swift 中的信號量 | ZenonHuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZenonHuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">人若无名，便可安心练剑</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zenonhuang.me/2017/05/15/technology/2017-05-15-SemaphoresinSwift/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZenonHuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZenonHuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">(轉)Swift 中的信號量</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-15T10:50:46+08:00">
+                2017-05-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/05/15/technology/2017-05-15-SemaphoresinSwift/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/05/15/technology/2017-05-15-SemaphoresinSwift/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/05/15/technology/2017-05-15-SemaphoresinSwift/" class="leancloud_visitors" data-flag-title="(轉)Swift 中的信號量">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  转自简书Arco翻译的文章
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="譯-Swift-中的信號量-🚦"><a href="#譯-Swift-中的信號量-🚦" class="headerlink" title="(譯) Swift 中的信號量 🚦"></a>(譯) Swift 中的信號量 🚦</h1><p>作者 <a href="http://www.jianshu.com/u/07d93406ec39" target="_blank" rel="noopener">Arco_vv</a><br><a href="http://www.jianshu.com/p/f191383473ba" target="_blank" rel="noopener">简书链接</a> </p>
+<blockquote>
+<p><a href="https://medium.com/swiftly-swift/a-quick-look-at-semaphores-6b7b85233ddb" target="_blank" rel="noopener">原文在此</a>，并經由<a href="https://medium.com/@zntfdr" target="_blank" rel="noopener">作者</a>的同意，擁有翻譯的權利。</p>
+</blockquote>
+<p>首先，如果你對 GCD 或者是隊列調度 (Dispatch Queue) 不夠熟悉，請先讀下這篇來自 <a href="https://medium.com/@appcodamobile" target="_blank" rel="noopener">AppCoda</a> 的<a href="http://www.appcoda.com/grand-central-dispatch/" target="_blank" rel="noopener">好文章</a>。</p>
+<p>回到正軌，是時候開始講一些關於信號量 (Semaphores) 的事情了！</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*8ZCGzvA6DjfR9JoamqauoQ.jpeg" alt=""></p>
+<p>Traffic Light by spaztacular</p>
+<h2 id="介紹"><a href="#介紹" class="headerlink" title="介紹"></a>介紹</h2><p>想象出一個場景：有一群作家只能共用一支筆，因此很明顯在某個時間範圍內，只有一名作家可以使用這支筆。</p>
+<p>現在，把這群作家想象成我們程式碼中的線程，而那支筆就是我們共享的資源(它可以是任何東西，一個文件，一個變量，或者有做某事的權利)。</p>
+<p>因此我們的問題就在於，如何確保我們的資源是互斥的 <a href="https://en.wikipedia.org/wiki/Mutual_exclusion" target="_blank" rel="noopener">(mutually exclusive)</a> 呢？</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*nfAYVSYFMB874-z4sfJ_YQ.jpeg" alt=""></p>
+<p>Streetless traffic light by Sylvain Bourdos</p>
+<h2 id="實現我們的訪問資源控制器-Resource-Control-Access"><a href="#實現我們的訪問資源控制器-Resource-Control-Access" class="headerlink" title="實現我們的訪問資源控制器 (Resource Control Access)"></a>實現我們的訪問資源控制器 (Resource Control Access)</h2><p>有些人或許會開始想：我只要有一個 resourceIsAvailable 的布林值，依據 true/false 來控制不就行了？</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">if resourceIsAvailable &#123;</span><br><span class="line">    resourceIsAvailable = false</span><br><span class="line">    useResource()</span><br><span class="line">    resourceIsAvailable = true</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    // resource is not available, wait or do something else</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>這樣實現的問題就在於：當處於並發時，我們并不能保證知曉究竟是哪一條線程將執行下一步，無論它的優先權是什麼。</p>
+<h2 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h2><p>想象一下，我們有兩個線程，線程 A 和線程 B，來實現以上的代碼，來共享一個互斥的資源：</p>
+<ul>
+<li>線程 A 讀取 if 條件並且發現這個資源是可用的。</li>
+<li>但在下一行 (resourceIsAvailable = true) 被執行之前，處理器轉向了線程 B，它也讀取了 if 條件。</li>
+<li>這時候我們就有兩個線程都相信這個資源是可被使用的，並且他們都去執行了 <em>useResource</em> 閉包。</li>
+</ul>
+<p>離開 GCD 來寫線程安全的代碼并不是一個簡單的任務。</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*p54pBislRafckGffcDqRdA.png" alt=""></p>
+<p>At the lights by petemc</p>
+<h2 id="思考信號量是怎麼工作的"><a href="#思考信號量是怎麼工作的" class="headerlink" title="思考信號量是怎麼工作的"></a>思考信號量是怎麼工作的</h2><p>通過三個步驟：</p>
+<ol>
+<li>當我們想使用一個共享的資源，我們對其信號量發出一個請求；</li>
+<li>一旦信號量給了我們綠燈，我們就能假定這個資源是我們的並且我們能夠使用它；</li>
+<li>一旦這個資源不再被需要，我們再給這個信號量發送一個示意 (signal)，允許它將這個資源分配給其他的線程。</li>
+</ol>
+<p>當有且只有一個資源，並其只能被一個線程在任意時間使用，你就可以將其請求/示意 (request/signal)，思考為加鎖/解鎖 (lock/unlock)。</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*-_owdkyNPRUQS5a5yjdEkA.jpeg" alt=""></p>
+<p>Robots/Traffic Light by mallix</p>
+<h2 id="這個場景的背後發生了什麼"><a href="#這個場景的背後發生了什麼" class="headerlink" title="這個場景的背後發生了什麼"></a>這個場景的背後發生了什麼</h2><h3 id="結構："><a href="#結構：" class="headerlink" title="結構："></a>結構：</h3><p>一個信號量由兩部分組成：</p>
+<ul>
+<li>一個計數器 (counter) 來讓信號量知曉有多少線程可以使用這些資源；</li>
+<li>一個 <em>先入先出隊列 (FIFO)</em> 用於追蹤等待資源的線程；</li>
+</ul>
+<h3 id="資源請求：wait"><a href="#資源請求：wait" class="headerlink" title="資源請求：wait()"></a>資源請求：wait()</h3><p>當信號量接收到一個請求，它會先檢查它的計數器是否超過0：</p>
+<ul>
+<li>如果是，信號量會將計數器減量，并給這個線程綠燈；</li>
+<li>如果不是，則將這個線程放在隊列的最後；</li>
+</ul>
+<h3 id="資源釋放：signal"><a href="#資源釋放：signal" class="headerlink" title="資源釋放：signal()"></a>資源釋放：signal()</h3><p>當信號量接收到一個示意，他會先檢查它的先入先出隊列是否有其他線程：</p>
+<ul>
+<li>如果有，信號量會拉出第一個線程，并給這個線程綠燈；</li>
+<li>如果不是，則給它的計數器增量；</li>
+</ul>
+<h3 id="警告：忙碌等待"><a href="#警告：忙碌等待" class="headerlink" title="警告：忙碌等待"></a>警告：忙碌等待</h3><p>當一個線程發送一個 <em>wait()</em> 的資源請求給信號量，該線程會被 <em>凍結 (freeze)</em> 直到信號量告訴它綠燈。</p>
+<p>⚠️如果你在主線程上干這事，整個 App 都會凍結住！⚠️</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*3GANzX3n1uEiuhXE49fcrg.jpeg" alt=""></p>
+<p>STOP Traffic Lights &amp; Sunset by eyecmore</p>
+<h2 id="在-Swift-中通過-GCD-使用信號量"><a href="#在-Swift-中通過-GCD-使用信號量" class="headerlink" title="在 Swift 中通過 GCD 使用信號量"></a>在 Swift 中通過 GCD 使用信號量</h2><p>寫一些代碼吧！</p>
+<h3 id="宣告"><a href="#宣告" class="headerlink" title="宣告"></a>宣告</h3><p>聲明一個信號量是很簡單的事情：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let semaphore = DispatchSemaphore(value: 1)</span><br></pre></td></tr></table></figure>
+<p>參數 <em>value</em> 代表有多少線程可以經信號量創建後來訪問該資源。</p>
+<h3 id="資源請求"><a href="#資源請求" class="headerlink" title="資源請求"></a>資源請求</h3><p><strong>請求</strong> 信號量的資源，我們只要調用如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">semaphore.wait()</span><br></pre></td></tr></table></figure>
+<p>需要注意的是信號量并不會在物理上給我們任何東西。資源需要在線程自己的域 (scope) 中準備完畢，我們只在請求和釋放的調用中使用這個資源。</p>
+<p>一旦信號量給予我們他的許可，線程就會恢復他的正常執行，并考慮如何使用他的資源。</p>
+<h3 id="資源釋放"><a href="#資源釋放" class="headerlink" title="資源釋放"></a>資源釋放</h3><p><strong>釋放</strong> 這個資源：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">semaphore.signal()</span><br></pre></td></tr></table></figure>
+<p>只要我們向信號量示意後，我們就不再被允許使用資源，直到我們再次請求。</p>
+<h2 id="信號量-Playgrounds"><a href="#信號量-Playgrounds" class="headerlink" title="信號量 Playgrounds"></a>信號量 Playgrounds</h2><p>我們跟隨 <a href="https://medium.com/@appcodamobile" target="_blank" rel="noopener">AppCoda</a> <a href="http://www.appcoda.com/grand-central-dispatch/" target="_blank" rel="noopener">文章</a> 的一些例子，來看看信號量的表現吧！</p>
+<blockquote>
+<p>提示：這是 Xcode 的 Playground 例子。Swift Playgrounds 還尚未支持記錄這件事情。等待 WWDC17 吧！</p>
+</blockquote>
+<p>在這些 playgrounds 中，我們擁有兩個線程，其中一個有較高的優先權。他們都要打印10次一個 emoji 以及遞增的數字。</p>
+<h3 id="Semaphore-less-Playground"><a href="#Semaphore-less-Playground" class="headerlink" title="Semaphore-less Playground"></a>Semaphore-less Playground</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">import Foundation</span><br><span class="line">import PlaygroundSupport</span><br><span class="line"></span><br><span class="line">let higherPriority = DispatchQueue.global(qos: .userInitiated)</span><br><span class="line">let lowerPriority = DispatchQueue.global(qos: .utility)</span><br><span class="line"></span><br><span class="line">func asyncPrint(queue: DispatchQueue, symbol: String) &#123;</span><br><span class="line">  queue.async &#123;</span><br><span class="line">    for i in 0...10 &#123;</span><br><span class="line">      print(symbol, i)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">asyncPrint(queue: higherPriority, symbol: &quot;🔴&quot;)</span><br><span class="line">asyncPrint(queue: lowerPriority, symbol: &quot;🔵&quot;)</span><br><span class="line"></span><br><span class="line">PlaygroundPage.current.needsIndefiniteExecution = true</span><br></pre></td></tr></table></figure>
+<p>正如你所想象的那樣，擁有更高優先權的線程也同樣會在大部分時間先完成事情：</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*OjtJO8-44tStXpRS8y1N-A.png" alt=""></p>
+<p>Semaphore-less Playground</p>
+<h3 id="Semaphore-Playground"><a href="#Semaphore-Playground" class="headerlink" title="Semaphore Playground"></a>Semaphore Playground</h3><p>在這個例子中，我們仍然會使用原先的代碼，但我們會給一個線程在一個時間內印出 emoji + 數字 序列的權利。</p>
+<p>因此我們需要決定一個信號量以及更新我們的 <em>asyncPrint</em> 函數：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">import Foundation</span><br><span class="line">import PlaygroundSupport</span><br><span class="line"></span><br><span class="line">let higherPriority = DispatchQueue.global(qos: .userInitiated)</span><br><span class="line">let lowerPriority = DispatchQueue.global(qos: .utility)</span><br><span class="line"></span><br><span class="line">let semaphore = DispatchSemaphore(value: 1)</span><br><span class="line"></span><br><span class="line">func asyncPrint(queue: DispatchQueue, symbol: String) &#123;</span><br><span class="line">  queue.async &#123;</span><br><span class="line">    print(&quot;\(symbol) waiting&quot;)</span><br><span class="line">    semaphore.wait()  // requesting the resource</span><br><span class="line"></span><br><span class="line">    for i in 0...10 &#123;</span><br><span class="line">      print(symbol, i)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    print(&quot;\(symbol) signal&quot;)</span><br><span class="line">    semaphore.signal() // releasing the resource</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">asyncPrint(queue: higherPriority, symbol: &quot;🔴&quot;)</span><br><span class="line">asyncPrint(queue: lowerPriority, symbol: &quot;🔵&quot;)</span><br><span class="line"></span><br><span class="line">PlaygroundPage.current.needsIndefiniteExecution = true</span><br></pre></td></tr></table></figure>
+<p>我還增加了一對 <em>print</em> 指令表明在我們的任務中每一個線程的實際狀態。</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*g7SMrR7svWNetOqjSGIEYA.png" alt=""></p>
+<p>Semaphore Playground</p>
+<p>正如你所見，當一個線程開始打印它的序列時，其他線程都必須等待，直到最開始的那個完畢。然後信號量會接收到來自第一個線程的 <em>示意</em> ，有且在這個時候，第二個線程才能開始打印它自己的序列。</p>
+<p>第二個線程在哪裡打印 <em>wait()</em> 的請求并不是重點，重點是它都必須等待直到其他的線程已經完成。</p>
+<h3 id="優先權倒置-Priority-Inversion"><a href="#優先權倒置-Priority-Inversion" class="headerlink" title="優先權倒置 (Priority Inversion)"></a>優先權倒置 (Priority Inversion)</h3><p>現在我們理解了每件事情的發生，請看一下以下的記錄：</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*eCFBl9XpF6JYX1b8xwD26w.png" alt=""></p>
+<p>Priority Inversion</p>
+<p>在上面的代碼的情況下，處理器決定先執行了低優先權的線程。</p>
+<p>當這種情況發生時，高優先權線程必須等待低優先權線程的完成。實際上確實會發生這種情況。這個問題在於低優先權線程後面有高優先權線程在等待，這種現象叫做 <a href="https://en.wikipedia.org/wiki/Priority_inversion" target="_blank" rel="noopener">優先權倒置 (Priority Inversion)</a></p>
+<blockquote>
+<p>譯者注：優先權倒置，又稱優先權反轉、優先權逆轉、優先權翻轉，是一種不希望發生的任務調度狀態。在該種狀態下，一個高優先級任務間接被一個低優先級任務所搶先(preemtped)，使得兩個任務的相對優先級被倒置。<br>這往往出現在一個高優先級任務等待訪問一個被低優先級任務正在使用的臨界資源，從而阻塞了高優先級任務；同時，該低優先級任務被一個次高優先級的任務所搶先，從而無法及時地釋放該臨界資源。這種情況下，該次高優先級任務獲得執行權。<br>在多數個案，發生優先權倒置並不導致直接傷害──高優先權任務的延遲執行不被察覺，最終，低優先權任務釋放共享資源。雖然，亦存在很多情況優先權倒置會導致嚴重問題。<br>—— 摘自維基百科</p>
+</blockquote>
+<p>信號量并不屬於這種情況，因為實際上任何人都可以呼叫 <em>call()</em> 函數 (而並不是因為這個線程正在使用這個資源的原因)。</p>
+<h3 id="線程飢餓-Thread-Starvation"><a href="#線程飢餓-Thread-Starvation" class="headerlink" title="線程飢餓 (Thread Starvation)"></a>線程飢餓 (Thread Starvation)</h3><p>讓我們想象出一個更糟糕的情況：在我們的高和低優先權的線程中，有1000個以上的中優先權的線程。</p>
+<p>如果我們有一個像之前所提到的 <em>優先權倒置</em> 的情況，高優先權線程就必須等待低優先權線程，但在更多時候，處理器會執行中優先權的線程，因為和低優先權線程相比，他們有跟高的權利。</p>
+<p>在這個劇本中，我們的高優先權線程正在餓死 CPU 的時間（這也就是線程飢餓的概念）。</p>
+<h3 id="解決方案"><a href="#解決方案" class="headerlink" title="解決方案"></a>解決方案</h3><p>我認為，信號量在使用的時候，最好保證每個訪問的線程都處於同樣的優先權當中。如果你認為這沒辦法解決你的問題，我推薦你看一下其他的解決之道，例如 <a href="https://en.wikipedia.org/wiki/Critical_section" target="_blank" rel="noopener">Regions</a> 和 <a href="https://en.wikipedia.org/wiki/Monitor_(synchronization" target="_blank" rel="noopener">Monitors</a>)。</p>
+<h2 id="Playground-死鎖-Deadlock-Playground"><a href="#Playground-死鎖-Deadlock-Playground" class="headerlink" title="Playground 死鎖 (Deadlock Playground)"></a>Playground 死鎖 (Deadlock Playground)</h2><p>這次我們使用兩個線程來使用兩個互斥的資源 “A” 和 “B”。</p>
+<p>如果兩種資源可以分開來使用，那麼為每一個資源定義一個信號量則是有意義的。如果不行的話，一個信號量就足夠管理兩個資源了。</p>
+<p>在這裡，我想用先前一種情況 (2資源，2信號量) 作為例子：高優先權的線程將先使用資源 “A”，然後是資源 “B”；而我們的低優先權線程將會先使用資源 “B”，然後是資源 “A”。</p>
+<p>代碼如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">import Foundation</span><br><span class="line">import PlaygroundSupport</span><br><span class="line"></span><br><span class="line">let higherPriority = DispatchQueue.global(qos: .userInitiated)</span><br><span class="line">let lowerPriority = DispatchQueue.global(qos: .utility)</span><br><span class="line"></span><br><span class="line">let semaphoreA = DispatchSemaphore(value: 1)</span><br><span class="line">let semaphoreB = DispatchSemaphore(value: 1)</span><br><span class="line"></span><br><span class="line">func asyncPrint(queue: DispatchQueue, symbol: String, firstResource: String, firstSemaphore: DispatchSemaphore, secondResource: String, secondSemaphore: DispatchSemaphore) &#123;</span><br><span class="line">  func requestResource(_ resource: String, with semaphore: DispatchSemaphore) &#123;</span><br><span class="line">    print(&quot;\(symbol) waiting resource \(resource)&quot;)</span><br><span class="line">    semaphore.wait()  // requesting the resource</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  queue.async &#123;</span><br><span class="line">    requestResource(firstResource, with: firstSemaphore)</span><br><span class="line">    for i in 0...10 &#123;</span><br><span class="line">      if i == 5 &#123;</span><br><span class="line">        requestResource(secondResource, with: secondSemaphore)</span><br><span class="line">      &#125;</span><br><span class="line">      print(symbol, i)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    print(&quot;\(symbol) releasing resources&quot;)</span><br><span class="line">    firstSemaphore.signal() // releasing first resource</span><br><span class="line">    secondSemaphore.signal() // releasing second resource</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">asyncPrint(queue: higherPriority, symbol: &quot;🔴&quot;, firstResource: &quot;A&quot;, firstSemaphore: semaphoreA, secondResource: &quot;B&quot;, secondSemaphore: semaphoreB)</span><br><span class="line">asyncPrint(queue: lowerPriority, symbol: &quot;🔵&quot;, firstResource: &quot;B&quot;, firstSemaphore: semaphoreB, secondResource: &quot;A&quot;, secondSemaphore: semaphoreA)</span><br><span class="line"></span><br><span class="line">PlaygroundPage.current.needsIndefiniteExecution = true</span><br></pre></td></tr></table></figure>
+<p>如果我們足夠幸運，會發生以下的情況：</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*_ASgiqbV_o9caE7M7hNBpQ.png" alt=""></p>
+<p>Happened one</p>
+<p>簡單來說，高優先權線程將會被第一個資源所服務，然後是第二個資源。只有在那完成之後，處理器才會轉移去處理低優先權的線程。</p>
+<p>但是，如果我們運氣比較差，同樣也會發生這種情況：</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*cVvGM-1NRH7kouSRu2mSRQ.png" alt=""></p>
+<p>Happened two</p>
+<p>兩個線程都沒有完成他們的任務！讓我們回顧一下當前狀態：</p>
+<ul>
+<li>高優先權線程正在等待那個被低優先權線程持有的資源 “B”。</li>
+<li>低優先權線程正在等待那個被高優先權線程持有的資源 “A”。</li>
+</ul>
+<p>兩個線程都在等待那個不可能到來的資源：歡迎來到<a href="https://en.wikipedia.org/wiki/Deadlock" target="_blank" rel="noopener">線程死鎖</a>的世界！</p>
+<h3 id="解決方案-1"><a href="#解決方案-1" class="headerlink" title="解決方案"></a>解決方案</h3><p>想要避免<a href="https://en.wikipedia.org/wiki/Deadlock" target="_blank" rel="noopener">死鎖</a>并不是一件容易的事情。最好的解決方案就是通過你的代碼——編寫出不可能發生這種情況的代碼——<a href="https://en.wikipedia.org/wiki/Deadlock_prevention_algorithms" target="_blank" rel="noopener">阻止這種情況的發生</a>。</p>
+<p>舉例來說，在其他 OS 系統中，一個死鎖線程可能會被殺死 (為了釋放他所佔有的所有資源)，并因此而希望其他線程可以繼續執行他們的任務。</p>
+<p>或者你可以試試看使用 <a href="https://en.wikipedia.org/wiki/Ostrich_algorithm" target="_blank" rel="noopener">Ostrich_Algorithm</a> 😆。</p>
+<p><img src="https://cdn-images-1.medium.com/max/1600/1*Nmcb2GTIk-PO0TNPNPD8Mw.jpeg" alt=""></p>
+<p>Let Me Keep My Memories by Thomas Hawk</p>
+<h2 id="總結"><a href="#總結" class="headerlink" title="總結"></a>總結</h2><p>信號量是一個棒的一個概念，在許多應用中可以非常方便的使用。只是你要小心：過馬路的時候要看看左右兩邊。</p>
+<hr>
+<h3 id="作者"><a href="#作者" class="headerlink" title="作者"></a>作者</h3><p><a href="https://twitter.com/zntfdr" target="_blank" rel="noopener">Federico</a> is a Bangkok-based Software Engineer with a strong passion for Swift, Minimalism, Design, and iOS Development.</p>
+<h3 id="譯者"><a href="#譯者" class="headerlink" title="譯者"></a>譯者</h3><p><a href="http://www.jianshu.com/u/07d93406ec39" target="_blank" rel="noopener">Arco</a>，iOS 開發，目前正在台灣工作。</p>
+<hr>
+<p>經由譯者許可才可進行轉發。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/资料/" rel="tag"># 资料</a>
+          
+            <a href="/tags/swift/" rel="tag"># swift</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/04/09/life/2017-04-09-anxietyOfLeanring/" rel="next" title="关于学习的焦虑感">
+                <i class="fa fa-chevron-left"></i> 关于学习的焦虑感
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/19/technology/2017--05-19-HZImageFilter/" rel="prev" title="CoreImage滤镜实践">
+                CoreImage滤镜实践 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2112728" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/author.jpg"
+                alt="ZenonHuang" />
+            
+              <p class="site-author-name" itemprop="name">ZenonHuang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#譯-Swift-中的信號量-🚦"><span class="nav-number">1.</span> <span class="nav-text">(譯) Swift 中的信號量 🚦</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#介紹"><span class="nav-number">1.1.</span> <span class="nav-text">介紹</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#實現我們的訪問資源控制器-Resource-Control-Access"><span class="nav-number">1.2.</span> <span class="nav-text">實現我們的訪問資源控制器 (Resource Control Access)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例子"><span class="nav-number">1.3.</span> <span class="nav-text">例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#思考信號量是怎麼工作的"><span class="nav-number">1.4.</span> <span class="nav-text">思考信號量是怎麼工作的</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#這個場景的背後發生了什麼"><span class="nav-number">1.5.</span> <span class="nav-text">這個場景的背後發生了什麼</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#結構："><span class="nav-number">1.5.1.</span> <span class="nav-text">結構：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#資源請求：wait"><span class="nav-number">1.5.2.</span> <span class="nav-text">資源請求：wait()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#資源釋放：signal"><span class="nav-number">1.5.3.</span> <span class="nav-text">資源釋放：signal()</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#警告：忙碌等待"><span class="nav-number">1.5.4.</span> <span class="nav-text">警告：忙碌等待</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在-Swift-中通過-GCD-使用信號量"><span class="nav-number">1.6.</span> <span class="nav-text">在 Swift 中通過 GCD 使用信號量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#宣告"><span class="nav-number">1.6.1.</span> <span class="nav-text">宣告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#資源請求"><span class="nav-number">1.6.2.</span> <span class="nav-text">資源請求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#資源釋放"><span class="nav-number">1.6.3.</span> <span class="nav-text">資源釋放</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#信號量-Playgrounds"><span class="nav-number">1.7.</span> <span class="nav-text">信號量 Playgrounds</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Semaphore-less-Playground"><span class="nav-number">1.7.1.</span> <span class="nav-text">Semaphore-less Playground</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Semaphore-Playground"><span class="nav-number">1.7.2.</span> <span class="nav-text">Semaphore Playground</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#優先權倒置-Priority-Inversion"><span class="nav-number">1.7.3.</span> <span class="nav-text">優先權倒置 (Priority Inversion)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#線程飢餓-Thread-Starvation"><span class="nav-number">1.7.4.</span> <span class="nav-text">線程飢餓 (Thread Starvation)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#解決方案"><span class="nav-number">1.7.5.</span> <span class="nav-text">解決方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Playground-死鎖-Deadlock-Playground"><span class="nav-number">1.8.</span> <span class="nav-text">Playground 死鎖 (Deadlock Playground)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#解決方案-1"><span class="nav-number">1.8.1.</span> <span class="nav-text">解決方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#總結"><span class="nav-number">1.9.</span> <span class="nav-text">總結</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#作者"><span class="nav-number">1.9.1.</span> <span class="nav-text">作者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#譯者"><span class="nav-number">1.9.2.</span> <span class="nav-text">譯者</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZenonHuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://zenonhuang.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://zenonhuang.me/2017/05/15/technology/2017-05-15-SemaphoresinSwift/';
+          this.page.identifier = '2017/05/15/technology/2017-05-15-SemaphoresinSwift/';
+          this.page.title = '(轉)Swift 中的信號量';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://zenonhuang.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("k2TRBWba0l1Gs8oDHKfxxSXD-gzGzoHsz", "lb4xG7itO28IvwoxTwydiiJC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

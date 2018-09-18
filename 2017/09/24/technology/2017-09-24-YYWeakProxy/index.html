@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近工作使用 CAAnimation ,它的代理为 strong ，使用 YYWeakProxy 解决。故而阅读其代码学习。">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="YYKit(一)--YYWeakProxy">
+<meta property="og:url" content="https://zenonhuang.me/2017/09/24/technology/2017-09-24-YYWeakProxy/index.html">
+<meta property="og:site_name" content="ZenonHuang">
+<meta property="og:description" content="最近工作使用 CAAnimation ,它的代理为 strong ，使用 YYWeakProxy 解决。故而阅读其代码学习。">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-18T13:45:17.819Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="YYKit(一)--YYWeakProxy">
+<meta name="twitter:description" content="最近工作使用 CAAnimation ,它的代理为 strong ，使用 YYWeakProxy 解决。故而阅读其代码学习。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zenonhuang.me/2017/09/24/technology/2017-09-24-YYWeakProxy/"/>
+
+
+
+
+
+  <title>YYKit(一)--YYWeakProxy | ZenonHuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZenonHuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">人若无名，便可安心练剑</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zenonhuang.me/2017/09/24/technology/2017-09-24-YYWeakProxy/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZenonHuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZenonHuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">YYKit(一)--YYWeakProxy</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-09-24T10:25:00+08:00">
+                2017-09-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/09/24/technology/2017-09-24-YYWeakProxy/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/09/24/technology/2017-09-24-YYWeakProxy/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/09/24/technology/2017-09-24-YYWeakProxy/" class="leancloud_visitors" data-flag-title="YYKit(一)--YYWeakProxy">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  最近工作使用 CAAnimation ,它的代理为 strong ，使用 YYWeakProxy 解决。故而阅读其代码学习。
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="YYWeakProxy-v1-0-9"><a href="#YYWeakProxy-v1-0-9" class="headerlink" title="YYWeakProxy v1.0.9"></a><a href="https://github.com/ibireme/YYKit/blob/4e1bd1cfcdb3331244b219cbd37cc9b1ccb62b7a/YYKit/Utility/YYWeakProxy.h" target="_blank" rel="noopener">YYWeakProxy v1.0.9</a></h1><h2 id="YYWeakProxy-作用"><a href="#YYWeakProxy-作用" class="headerlink" title="YYWeakProxy 作用"></a>YYWeakProxy 作用</h2><p>关于 YYWeakProxy 的作用，在它的头文件就可以清楚的看到:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> A proxy used to hold a weak object.</span><br><span class="line"> It can be used to avoid retain cycles, such as the target in NSTimer or CADisplayLink.</span><br><span class="line"> </span><br><span class="line"> sample code:</span><br><span class="line"> </span><br><span class="line">     @implementation MyView &#123;</span><br><span class="line">        NSTimer *_timer;</span><br><span class="line">     &#125;</span><br><span class="line">     </span><br><span class="line">     - (void)initTimer &#123;</span><br><span class="line">        YYWeakProxy *proxy = [YYWeakProxy proxyWithTarget:self];</span><br><span class="line">        _timer = [NSTimer timerWithTimeInterval:0.1 target:proxy selector:@selector(tick:) userInfo:nil repeats:YES];</span><br><span class="line">     &#125;</span><br><span class="line">     </span><br><span class="line">     - (void)tick:(NSTimer *)timer &#123;...&#125;</span><br><span class="line">     @end</span><br><span class="line"> */</span><br></pre></td></tr></table></figure>
+<p>YYWeakProxy 是用来持有一个 weak 对象的代理，避免循环引用。</p>
+<p>这里引用链是：</p>
+<blockquote>
+<p>self -&gt; timer -&gt; proxy -&gt; (消息转发)target -&gt; self</p>
+</blockquote>
+<p>由于 target 为弱引用，当 self 引用计数为 0 时, target 将为 nil, 于是打破了引用链。</p>
+<h2 id="NSProxy"><a href="#NSProxy" class="headerlink" title="NSProxy"></a>NSProxy</h2><p>YYWeakProxy 继承于 NSProxy.</p>
+<p>NSProxy 是什么？</p>
+<p>NSProxy 是除了NSObject之外的另一个基类。</p>
+<p>同时它也是一个抽象类，你可以通过继承它，并重写消息转发的方法，以实现消息转发到另一个实例的目的。</p>
+<p>文档是这么说的:</p>
+<blockquote>
+<p><code>NSProxy</code> implements the basic methods required of a root class, including those defined in the <a href="https://developer.apple.com/documentation/objectivec/nsobjectprotocol" target="_blank" rel="noopener"><code>NSObjectProtocol</code></a> protocol. However, as an abstract class it doesn’t provide an initialization method, and it raises an exception upon receiving any message it doesn’t respond to. A concrete subclass must therefore provide an initialization or creation method and override the <a href="https://developer.apple.com/documentation/foundation/nsproxy/1416417-forwardinvocation" target="_blank" rel="noopener"><code>forwardInvocation(_:)</code></a> and <a href="https://developer.apple.com/documentation/foundation/nsproxy/1589828-methodsignatureforselector" target="_blank" rel="noopener"><code>methodSignatureForSelector:</code></a> methods to handle messages that it doesn’t implement itself</p>
+</blockquote>
+<p><code>NSProxy</code>可以说除了重载消息转发机制外没有别的用法，这也是它被设计的初衷，自己什么都不干，转给代理对象就好。往 <code>proxy</code> 发消息是注定会走消息转发的。</p>
+<p>文档规定，NSProxy 子类必须重写这两个方法进行消息转发：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">- (void)forwardInvocation:(NSInvocation *)anInvocation;</span><br><span class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)sel;</span><br></pre></td></tr></table></figure>
+<h3 id="NSProxy-和-NSObject-差异"><a href="#NSProxy-和-NSObject-差异" class="headerlink" title="NSProxy 和 NSObject 差异"></a>NSProxy 和 NSObject 差异</h3><p>两者同样都可以作为消息转发创建的代理类，但是存在一定的差异。</p>
+<h4 id="NSProxy-自动转发"><a href="#NSProxy-自动转发" class="headerlink" title="NSProxy 自动转发"></a>NSProxy 自动转发</h4><p>通过继承自 <code>NSObject</code> 的代理类是不会自动转发 <code>respondsToSelector:和isKindOfClass:</code> 这两个方法的, 而继承自 <code>NSProxy</code> 的代理类却是可以的.</p>
+<h4 id="NSObject-的所有-Category-方法不能完成转发"><a href="#NSObject-的所有-Category-方法不能完成转发" class="headerlink" title="NSObject 的所有 Category 方法不能完成转发"></a>NSObject 的所有 Category 方法不能完成转发</h4><p>例如 <code>valueForKey:</code> 是定义在 <code>NSKeyValueCoding</code> 这个 NSObject 的 <code>Category</code> 中的方法.</p>
+<p>通过继承自 NSObject 的代理类，无法完成 NSObject 的 Category 里方法的转发。</p>
+<p>原因是 NSObject 具备了这样的接口, 而消息转发是只有当接收者无法处理时，才会走 <code>forwardInvocation:</code> 方法。</p>
+<h3 id="NSProxy-模拟多继承"><a href="#NSProxy-模拟多继承" class="headerlink" title="NSProxy 模拟多继承"></a>NSProxy 模拟多继承</h3><p>NSProxy 可以通过消息的转发，模拟多继承的效果。让 proxy 接受处理多个不同 class 里的消息。</p>
+<h2 id="YYWeakProxy-实现"><a href="#YYWeakProxy-实现" class="headerlink" title="YYWeakProxy 实现"></a>YYWeakProxy 实现</h2><p>YYWeakProxy 作为 NSProxy 的子类， <code>必须</code> 实现     <code>forwardInvocation:</code> 和 <code>methodSignatureForSelector:</code> 方法进行对象转发，这是在苹果官方文档中说明的。</p>
+<p>以开头的场景为例子,当发送消息时,proxy 的方法列表里找不到 <code>tick:</code> ,就会开始走消息转发。</p>
+<h3 id="消息转发机制"><a href="#消息转发机制" class="headerlink" title="消息转发机制"></a>消息转发机制</h3><p>当对象接受到无法响应的消息时，就会进入消息转发(message forwarding)的流程。</p>
+<h4 id="转发流程"><a href="#转发流程" class="headerlink" title="转发流程"></a>转发流程</h4><h5 id="Dynamic-method-resolution"><a href="#Dynamic-method-resolution" class="headerlink" title="Dynamic method resolution"></a>Dynamic method resolution</h5><p>第一阶段，先征询消息接收者所属的类，看其是否能动态添加方法，以处理当前这个无法响应的 selector，这叫做 动态方法解析（dynamic method resolution）。</p>
+<p>如果运行期系统（runtime system） 第一阶段执行结束，接收者就无法再以动态新增方法的手段来响应消息，进入第二阶段。</p>
+<p>调用以下两个方法，对其进行解析，动态增加方法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">+ (BOOL)resolveInstanceMethod:(SEL)sel</span><br><span class="line"></span><br><span class="line">+ (BOOL)resolveClassMethod:(SEL)sel</span><br></pre></td></tr></table></figure>
+<p>首先，系统会调用resolveInstanceMethod(当然，如果这个方法是一个类方法，就会调用resolveClassMethod)让你自己为这个方法增加实现。</p>
+<h5 id="Fast-forwarding"><a href="#Fast-forwarding" class="headerlink" title="Fast forwarding"></a>Fast forwarding</h5><p>第二阶段，看看有没有其他对象能处理此消息。</p>
+<p>如果有，运行期系统会把消息转发给那个对象，转发过程结束；<br>如果没有，则启动完整的消息转发机制。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (id)forwardingTargetForSelector:(SEL)aSelector;</span><br></pre></td></tr></table></figure>
+<h5 id="Normal-forwarding"><a href="#Normal-forwarding" class="headerlink" title="Normal forwarding"></a>Normal forwarding</h5><p>第三阶段，完整的消息转发机制。运行期系统会把与消息有关的全部细节，都封装到 NSInvocation 对象中，再给接收者最后一次机会，令其设法解决当前还未处理的消息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector;</span><br><span class="line"></span><br><span class="line">- (void)forwardInvocation:(NSInvocation *)invocation;</span><br></pre></td></tr></table></figure>
+<p><code>methodSignatureForSelector</code>用来生成方法签名，这个签名就是给<code>forwardInvocation</code>中的参数NSInvocation调用的。</p>
+<p>如果 <code>methodSignatureForSelector:</code> 返回nil，Runtime则会发出<code>doesNotRecognizeSelector:</code>消息，程序这时也就挂掉了。</p>
+<h3 id="YYWeakProxy-的消息转发实现"><a href="#YYWeakProxy-的消息转发实现" class="headerlink" title="YYWeakProxy 的消息转发实现"></a>YYWeakProxy 的消息转发实现</h3><h4 id="forwardingTargetForSelector"><a href="#forwardingTargetForSelector" class="headerlink" title="forwardingTargetForSelector"></a>forwardingTargetForSelector</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (id)forwardingTargetForSelector:(SEL)selector &#123;</span><br><span class="line">    return _target;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong><code>forwardingTargetForSelector</code></strong> 会返回你需要转发消息的对象，假如返回的是 nil，那么就走到 <code>forwardInvocation:</code> 做转发处理。</p>
+<p>这里返回的是 _target 对象，那么实际就是调用 _target 对应的 selector 。</p>
+<h4 id="methodSignatureForSelector"><a href="#methodSignatureForSelector" class="headerlink" title="methodSignatureForSelector"></a>methodSignatureForSelector</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">- (NSMethodSignature *)methodSignatureForSelector:(SEL)selector &#123;</span><br><span class="line">    return [NSObject instanceMethodSignatureForSelector:@selector(init)];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里返回的是 NSObject 的 init 方法的签名。</p>
+<h4 id="forwardInvocation"><a href="#forwardInvocation" class="headerlink" title="forwardInvocation"></a>forwardInvocation</h4><p>这里只进行对 invocation 设置了一个返回值的类型，却并没有做转发。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (void)forwardInvocation:(NSInvocation *)invocation &#123;</span><br><span class="line">    void *null = NULL;</span><br><span class="line">    [invocation setReturnValue:&amp;null];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="setReturnValue"><a href="#setReturnValue" class="headerlink" title="setReturnValue"></a>setReturnValue</h5><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">- (void)setReturnValue:(void *)retLoc;</span><br></pre></td></tr></table></figure>
+<p><a href="https://developer.apple.com/documentation/foundation/nsinvocation/1437848-setreturnvalue?language=objc" target="_blank" rel="noopener">苹果文档</a> 对于 setReturnValue 的解释是： </p>
+<blockquote>
+<p>Sets the receiver’s return value.</p>
+</blockquote>
+<p>设置消息接受者的返回值。 </p>
+<p>这里应该是没有返回值。</p>
+<h4 id="YYWeakProxy-的实际指向"><a href="#YYWeakProxy-的实际指向" class="headerlink" title="YYWeakProxy 的实际指向"></a>YYWeakProxy 的实际指向</h4><p>由于在 <code>forwardingTargetForSelector:</code> 方法里，返回的实际上是 weak 修饰的 target 。 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">YYWeakProxy *proxy = [YYWeakProxy proxyWithTarget:self];</span><br></pre></td></tr></table></figure>
+<p>所以这段代码里，target 就是 weak 修饰的 self。</p>
+<p>这就意味着当 self 引用计数为 0 的时候， target 将被置为 nil.从而打破循环引用.</p>
+<h3 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h3><p>根据消息转发的机制，我们知道，如果 <code>forwardingTargetForSelector:</code> 方法里，返回了不为 nil 的对象。那么就不会进入后面的转发方法。</p>
+<p>YYWeakProxy 里重写的 <code>methodSignatureForSelector</code> 和 <code>forwardInvocation</code> 方法内容，又是有什么具体的作用呢？</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/24/life/2017-07-24-self-discipline/" rel="next" title="自律以自救">
+                <i class="fa fa-chevron-left"></i> 自律以自救
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/17/technology/2017-12-15-iOSframework/" rel="prev" title="关于 iOS 中的库">
+                关于 iOS 中的库 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2112728" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/author.jpg"
+                alt="ZenonHuang" />
+            
+              <p class="site-author-name" itemprop="name">ZenonHuang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#YYWeakProxy-v1-0-9"><span class="nav-number">1.</span> <span class="nav-text">YYWeakProxy v1.0.9</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#YYWeakProxy-作用"><span class="nav-number">1.1.</span> <span class="nav-text">YYWeakProxy 作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NSProxy"><span class="nav-number">1.2.</span> <span class="nav-text">NSProxy</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NSProxy-和-NSObject-差异"><span class="nav-number">1.2.1.</span> <span class="nav-text">NSProxy 和 NSObject 差异</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#NSProxy-自动转发"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">NSProxy 自动转发</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#NSObject-的所有-Category-方法不能完成转发"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">NSObject 的所有 Category 方法不能完成转发</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NSProxy-模拟多继承"><span class="nav-number">1.2.2.</span> <span class="nav-text">NSProxy 模拟多继承</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YYWeakProxy-实现"><span class="nav-number">1.3.</span> <span class="nav-text">YYWeakProxy 实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#消息转发机制"><span class="nav-number">1.3.1.</span> <span class="nav-text">消息转发机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#转发流程"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">转发流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Dynamic-method-resolution"><span class="nav-number">1.3.1.1.1.</span> <span class="nav-text">Dynamic method resolution</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Fast-forwarding"><span class="nav-number">1.3.1.1.2.</span> <span class="nav-text">Fast forwarding</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Normal-forwarding"><span class="nav-number">1.3.1.1.3.</span> <span class="nav-text">Normal forwarding</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#YYWeakProxy-的消息转发实现"><span class="nav-number">1.3.2.</span> <span class="nav-text">YYWeakProxy 的消息转发实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#forwardingTargetForSelector"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">forwardingTargetForSelector</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#methodSignatureForSelector"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">methodSignatureForSelector</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#forwardInvocation"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">forwardInvocation</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#setReturnValue"><span class="nav-number">1.3.2.3.1.</span> <span class="nav-text">setReturnValue</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#YYWeakProxy-的实际指向"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">YYWeakProxy 的实际指向</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#疑问"><span class="nav-number">1.3.3.</span> <span class="nav-text">疑问</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZenonHuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://zenonhuang.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://zenonhuang.me/2017/09/24/technology/2017-09-24-YYWeakProxy/';
+          this.page.identifier = '2017/09/24/technology/2017-09-24-YYWeakProxy/';
+          this.page.title = 'YYKit(一)--YYWeakProxy';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://zenonhuang.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("k2TRBWba0l1Gs8oDHKfxxSXD-gzGzoHsz", "lb4xG7itO28IvwoxTwydiiJC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

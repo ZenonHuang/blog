@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="iOS" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="从 JSPatch/Aspects 的代码里，学习探究 _objc_msgForward_stret 的判断">
+<meta name="keywords" content="iOS">
+<meta property="og:type" content="article">
+<meta property="og:title" content="你真的会判断 _objc_msgForward_stret 吗">
+<meta property="og:url" content="https://zenonhuang.me/2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/index.html">
+<meta property="og:site_name" content="ZenonHuang">
+<meta property="og:description" content="从 JSPatch/Aspects 的代码里，学习探究 _objc_msgForward_stret 的判断">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-09-18T13:45:17.820Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="你真的会判断 _objc_msgForward_stret 吗">
+<meta name="twitter:description" content="从 JSPatch/Aspects 的代码里，学习探究 _objc_msgForward_stret 的判断">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zenonhuang.me/2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/"/>
+
+
+
+
+
+  <title>你真的会判断 _objc_msgForward_stret 吗 | ZenonHuang</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ZenonHuang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">人若无名，便可安心练剑</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://zenonhuang.me/2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ZenonHuang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/author.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ZenonHuang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">你真的会判断 _objc_msgForward_stret 吗</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-31T14:25:00+08:00">
+                2017-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/技术/" itemprop="url" rel="index">
+                    <span itemprop="name">技术</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/" class="leancloud_visitors" data-flag-title="你真的会判断 _objc_msgForward_stret 吗">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+              <div class="post-description">
+                  从 JSPatch/Aspects 的代码里，学习探究 _objc_msgForward_stret 的判断
+              </div>
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>本文需要对消息转发机制有了解，建议阅读 <a href="http://yulingtianxia.com/blog/2016/06/15/Objective-C-Message-Sending-and-Forwarding/" target="_blank" rel="noopener">Objective-C 消息发送与转发机制原理</a></p>
+</blockquote>
+<p>恰巧在 8 月学习 Method Swizzling ，阅读了 Aspects 和 JSPatch 做方法替换的处理，注意到了我们这次介绍的主角 –<code>_objc_msgForward_stret</code>.</p>
+<blockquote>
+<p><a href="https://github.com/bang590/JSPatch" target="_blank" rel="noopener">JSPatch</a> 目前的 Star 数已经破万，知名度可见一斑。面试时，也会经常被提及。<a href="https://github.com/steipete/Aspects" target="_blank" rel="noopener">Aspects</a>也是一个在 AOP 方面非常著名的库。</p>
+</blockquote>
+<p>在消息转发时，我们根据方法返回值的类型，来决定 IMP 使用 <code>_objc_msgForward</code> 或者 <code>_objc_msgForward_stret</code>.</p>
+<p>根据苹果的文档描述，使用 <code>_objc_msgForward_stret</code> 的肯定是一个结构体:</p>
+<blockquote>
+<p>Sends a message with a data-structure return value to an instance of a class.</p>
+</blockquote>
+<p>然而，不同 CPU 架构下，判断 <code>_objc_msgForward_stret</code> 的规则也有差异。下面就来看看两个著名开源库的做法。</p>
+<h2 id="JSPatch-的判断"><a href="#JSPatch-的判断" class="headerlink" title="JSPatch 的判断"></a>JSPatch 的判断</h2><p>首先我们来看 JSPatch , 在 JPEngine.m 文件里的 overrideMethod 方法,是如何去判断是否使用 <code>_objc_msgForward_stret</code>:</p>
+<pre><code>IMP msgForwardIMP = _objc_msgForward;
+#if !defined(__arm64__)
+    if (typeDescription[0] == &apos;{&apos;) {
+        //In some cases that returns struct, we should use the &apos;_stret&apos; API:
+        //http://sealiesoftware.com/blog/archive/2008/10/30/objc_explain_objc_msgSend_stret.html
+        //NSMethodSignature knows the detail but has no API to return, we can only get the info from debugDescription.
+        NSMethodSignature *methodSignature = [NSMethodSignature signatureWithObjCTypes:typeDescription];
+        if ([methodSignature.debugDescription rangeOfString:@&quot;is special struct return? YES&quot;].location != NSNotFound) {
+            msgForwardIMP = (IMP)_objc_msgForward_stret;
+        }
+    }
+#endif
+</code></pre><p>上面的代码，第一判断在非 <code>arm64</code> 下，第二判断是否为 <code>union</code> 或者 <code>struct</code> (详见<a href="https://developer.apple.com/library/content/documentation/Cocoa/Conceptual/ObjCRuntimeGuide/Articles/ocrtTypeEncodings.html#//apple_ref/doc/uid/TP40008048-CH100" target="_blank" rel="noopener">Type Encodings</a>  )。</p>
+<p>最后，通过判断方法签名的 debugDescription 是不是包含特定字符串-<code>is special struct return? YES</code>，进而决定是否使用 <code>_objc_msgForward_stret</code> .可以说是一个非常 trick 的做法了.</p>
+<p>关于 <code>Special Struct</code> ，JSPatch 作者自己也在 <a href="https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3" target="_blank" rel="noopener">JSPatch 实现原理详解</a> 中提到了原因.文章说明在非 arm64 下都会存在 <code>Special Struct</code> 这样的问题。而具体判断的规则，苹果并没有提供给我们，所以使用到了这样的方法进行判断也是无奈之举。</p>
+<p>好在经过大量项目运行以来，证明这个方法还是靠谱的。</p>
+<h2 id="Aspects-的判断"><a href="#Aspects-的判断" class="headerlink" title="Aspects 的判断"></a>Aspects 的判断</h2><p>Aspects 同样也是一个非常有名的开源项目,查看 Aspects 中与 <code>_objc_msgForward_stret</code> 相关的 commit,作者对  <code>Special Struct</code> 的判断颇下功夫，前后修改了很多次。</p>
+<p>最后的版本是这样的:</p>
+<pre><code>static IMP aspect_getMsgForwardIMP(NSObject *self, SEL selector) {
+IMP msgForwardIMP = _objc_msgForward;
+#if !defined(__arm64__)
+// As an ugly internal runtime implementation detail in the 32bit runtime, we need to determine of the method we hook returns a struct or anything larger than id.
+// https://developer.apple.com/library/mac/documentation/DeveloperTools/Conceptual/LowLevelABI/000-Introduction/introduction.html
+// https://github.com/ReactiveCocoa/ReactiveCocoa/issues/783
+// http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042e/IHI0042E_aapcs.pdf (Section 5.4)
+Method method = class_getInstanceMethod(self.class, selector);
+const char *encoding = method_getTypeEncoding(method);
+BOOL methodReturnsStructValue = encoding[0] == _C_STRUCT_B;
+if (methodReturnsStructValue) {
+    @try {
+        NSUInteger valueSize = 0;
+        NSGetSizeAndAlignment(encoding, &amp;valueSize, NULL);
+
+        if (valueSize == 1 || valueSize == 2 || valueSize == 4 || valueSize == 8) {
+            methodReturnsStructValue = NO;
+        }
+    } @catch (__unused NSException *e) {}
+}
+if (methodReturnsStructValue) {
+    msgForwardIMP = (IMP)_objc_msgForward_stret;
+}
+#endif
+ return msgForwardIMP;
+}
+</code></pre><p>与 JSPatch 相同，只对非 arm64 判断使用 <code>_objc_msgForward_stret</code>. </p>
+<p>最大的不同，在于 <code>Aspects</code> 是判断方法返回值的内存大小，来决定是否使用<code>_objc_msgForward_stret</code>。</p>
+<p>根据代码上的注释，作者参考了 苹果的 <code>OS X ABI Function Call Guide</code> ,以及 ARM 遵循的标准  <code>Procedure Call Standard for the
+ARM® Architecture</code>.</p>
+<h2 id="官方文档的解释"><a href="#官方文档的解释" class="headerlink" title="官方文档的解释"></a>官方文档的解释</h2><p>抱着搞明白的心态，我也去看了上述文档里面关于 <code>Return Values</code> 的说明:</p>
+<blockquote>
+<p>一般来说，函数的返回值，和函数存储在同一个寄存器当中。但是有些 <strong>Special Struct</strong> 太大了，超出了寄存器能存储的范围，就只能放置一个指针在存储器上，指向内存中返回值所在的地址。</p>
+</blockquote>
+<p>专门查阅了 <code>System V Application Binary Interface</code> 中的 <a href="http://www.sco.com/developers/devspecs/abi386-4.pdf" target="_blank" rel="noopener">Intel386 Architecture<br>Processor Supplement</a> ，这里对于返回值为结构体类型的存储，有一个比较清楚的界定:</p>
+<blockquote>
+<p>Structures. The called function returns structures according to their aligned size.</p>
+<ul>
+<li>Structures 1 or 2 bytes in size are placed in EAX.</li>
+<li>Structures 4 or 8 bytes in size are placed in: EAX and EDX.</li>
+<li>Structures of other sizes are placed at the address supplied by the caller. For example, the C++ language occasionally forces the compiler to return a value in memory when it would normally be returned in registers. See Passing Arguments for more information.</li>
+</ul>
+</blockquote>
+<p>IA-32 说明 1,2,4,8 字节大小的结构体，被存储在寄存器中。其它大小的结构体,被放置的在寄存器中的，则是结构体的指针。</p>
+<p>Aspects 中的判断，应该就是基于这个的。我心想，靠谱了。</p>
+<p>仿佛学习到姿势的我，兴冲冲的去对 JSPatch 提了一个 PR .</p>
+<p>事实证明，我还是太年轻 ，<a href="https://travis-ci.org/bang590/JSPatch/builds/262684614?utm_source=github_status&amp;utm_medium=notification" target="_blank" rel="noopener">测试结果</a> 是这样的:</p>
+<blockquote>
+<p>Xcode7.3 iPhone4s(8.1) 成功</p>
+<p>Xcode7.3 iPhone6s(9.3) 失败</p>
+</blockquote>
+<p>发现是在 64 位底下，一些结构体判断失败了。因为在 IA-32 下，寄存器是 32 位的。而新的机型，比如这里测试的 6s 模拟器，则属于 x86-64 ,寄存器是 64 位的。</p>
+<p>所以需要增加对 16 字节的判断。</p>
+<p>于是，本地对 6s 进行测试通过后，又增加了一次提交:</p>
+<pre><code>if (valueSize == 1 || valueSize == 2 || valueSize == 4 || valueSize == 8 || valueSize == 16) {
+                 methodReturnsStructValue = NO;
+}
+</code></pre><p>然而….<a href="https://travis-ci.org/bang590/JSPatch/builds/262684614?utm_source=github_status&amp;utm_medium=notification" target="_blank" rel="noopener">测试结果</a> 还是不行:</p>
+<blockquote>
+<p>Xcode7.3 iPhone4s(8.1) 失败</p>
+<p>Xcode7.3 iPhone6s(9.3) 成功</p>
+</blockquote>
+<p>上面说了，16 字节的判断是在 64 位机型情况下做的，所以在的 32 位的机型上， 也对 16 字节进行处理，继续使用 <code>_objc_msgForward</code> 是会 Crash 的。 </p>
+<p>再增加一次<a href="https://github.com/bang590/JSPatch/pull/795/commits/fa2523c33727048771b4e555cce1edae06ca67f4" target="_blank" rel="noopener">提交</a>:</p>
+<pre><code>#if defined(__LP64__) &amp;&amp; __LP64__
+          if (valueSize == 16) {
+             methodReturnsStructValue = NO;
+          }
+#endif
+</code></pre><p>终于通过了<a href="https://travis-ci.org/bang590/JSPatch/builds/264604490?utm_source=github_status&amp;utm_medium=notification" target="_blank" rel="noopener">测试</a>，完美 : )</p>
+<p>这里说明一下，为什么寄存器所能存储的结构体，是本身处理器位数的 2 倍的问题:</p>
+<p>比如，在 <code>x86-64</code> 中，<code>RAX</code> 通常用于存储函数调用的返回结果，但同时也在乘法和除法指令中。在 imul  指令中，2 个 64 位的乘法最多会产生 128 位的结果，就需要 <code>RAX</code> 与 <code>RDX</code> 共同存储乘法结果. <code>IA-32</code> 也是同样的道理.</p>
+<p>在苹果描述 <code>32bit-PowerPC</code> 函数规则的文档里，关于 <code>Returning Results</code> 的也有 2 个寄存器共同存储 1 个返回值情况的描述:</p>
+<blockquote>
+<p>Values of type long long are returned in the high word of GPR3 and the low word of GPR4.</p>
+</blockquote>
+<p>按照上述结果，Aspects 是有问题的，果然经过测试，在 64 位模拟器上返回结构体 Crash 了，这里是我提供的 <a href="https://github.com/steipete/Aspects/pull/127" target="_blank" rel="noopener"><code>复现过程</code></a>。</p>
+<h2 id="ARM-中的处理"><a href="#ARM-中的处理" class="headerlink" title="ARM 中的处理"></a>ARM 中的处理</h2><p>说完了模拟器中的处理，再来看看真机的规则。</p>
+<p>查看苹果的  <a href="https://developer.apple.com/library/content/documentation/Xcode/Conceptual/iPhoneOSABIReference/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009020-SW1" target="_blank" rel="noopener">iOS ABI Function Call Guide</a> ， ARMv6 ,ARMv7 等遵循的规则一致。找到   <code>Procedure Call Standard for the ARM Architecture (AAPCS)</code>。有一份在线的 PDF，里面对 <code>Result Return</code> 有比较完整的说明:</p>
+<blockquote>
+<p>The manner in which a result is returned from a function is determined by the type of that result.<br>For the base standard:</p>
+<ul>
+<li>A Half-precision Floating Point Type is returned in the least significant 16 bits of r0.</li>
+<li>A Fundamental Data Type that is smaller than 4 bytes is zero- or sign-extended to a word and returned in r0.</li>
+<li>A word-sized Fundamental Data Type (e.g., int, float) is returned in r0.</li>
+<li>A double-word sized Fundamental Data Type (e.g., long long, double and 64-bit containerized vectors) is<br>returned in r0 and r1.</li>
+<li>A 128-bit containerized vector is returned in r0-r3.</li>
+<li>A Composite Type not larger than 4 bytes is returned in r0. The format is as if the result had been stored in<br>memory at a word-aligned address and then loaded into r0 with an LDR instruction. Any bits in r0 that lie<br>outside the bounds of the result have unspecified values.</li>
+<li>A Composite Type larger than 4 bytes, or whose size cannot be determined statically by both caller and<br>callee, is stored in memory at an address passed as an extra argument when the function was called (§5.5,<br>rule A.4). The memory to be used for the result may be modified at any point during the function call.</li>
+</ul>
+</blockquote>
+<p>上面总结我们要的关键信息，大于 4 字节的复合类型返回值，会被存储在内存中的地址上，作为一个额外的参数传递。</p>
+<h3 id="ARM64-为什么没有大小限制？"><a href="#ARM64-为什么没有大小限制？" class="headerlink" title="ARM64 为什么没有大小限制？"></a>ARM64 为什么没有大小限制？</h3><p>前面一直判断的，都属于非 ARM64 的，我也很好奇，为什么 ARM64 就没有问题？</p>
+<p>查看关于 <code>ARM64</code> 调用规则文档里的 <code>Result Return</code> 说明:</p>
+<p>The manner in which a result is returned from a function is determined by the type of that result:</p>
+<ul>
+<li>If the type, T, of the result of a function is such that:<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">void func(T arg)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>would require that arg be passed as a value in a register (or set of registers) according to the rules in §5.4<br>Parameter Passing, then the result is returned in the same registers as would be used for such an argument.</p>
+<ul>
+<li>Otherwise, the caller shall reserve a block of memory of sufficient size and alignment to hold the result. The<br>address of the memory block shall be passed as an additional argument to the function in x8. The callee may<br>modify the result memory block at any point during the execution of the subroutine (there is no requirement for<br>the callee to preserve the value stored in x8).</li>
+</ul>
+<p>上面说到 x8 寄存器。查看关于返回值的寄存器功能的说明，如下:</p>
+<table>
+<thead>
+<tr>
+<th>寄存器</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>r0…r7</td>
+<td>Parameter/result registers</td>
+</tr>
+<tr>
+<td>r8</td>
+<td>Indirect result location register</td>
+</tr>
+</tbody>
+</table>
+<p>第一条说的，就是返回值会和参数存在一样的寄存器，也就是 x0-x7 中。</p>
+<p>第二条说的，除了第一条的情况之外，调用者就会为这个函数预留一各足够大小和对齐的内存块，存在 x8 寄存器中。</p>
+<p>由于第二条规则，我们可以知道，只要返回的不是 <code>void</code>. arm64 上存储的返回值都是通过指向内存的指针来做的。我也拿了一个非常大的结构体进行验证：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">typedef struct &#123;</span><br><span class="line">    CGRect rect;</span><br><span class="line">    CGSize size;</span><br><span class="line">    CGPoint orign;</span><br><span class="line">&#125;TestStruct;</span><br><span class="line"></span><br><span class="line">typedef struct &#123;</span><br><span class="line">    TestStruct struct1;</span><br><span class="line">    TestStruct struct2;</span><br><span class="line">    TestStruct struct3;</span><br><span class="line">    TestStruct struct4;</span><br><span class="line">    TestStruct struct5;</span><br><span class="line">    TestStruct struct6;</span><br><span class="line">    TestStruct struct7;</span><br><span class="line">    TestStruct struct8;</span><br><span class="line">    TestStruct struct9;</span><br><span class="line">    TestStruct struct10;</span><br><span class="line">&#125;TestBigStruct;</span><br></pre></td></tr></table></figure>
+<p>测试 <code>TestBigStruct</code> ，打印它的方法签名的 <code>debugDescription</code>,包含的内容是 <code>is special struct return? NO</code>. valueSize 却是 640，寄存器肯定是存放不下,使用的指针指向内存。</p>
+<h3 id="规则汇总"><a href="#规则汇总" class="headerlink" title="规则汇总"></a>规则汇总</h3><p>判定<code>返回值</code>的<code>Special Struct</code>的条件:<br>|机器 | 条件 |<br>| — | — |<br>|i386 | 大小非 1，2，4，8 字节|<br>|x86-64| 大小非 1，2，4，8，16 字节|<br>|arm-32|大于4字节|<br>|arm-64|不存在的 ：）|</p>
+<p>当然，还有判断方法签名的 <code>debugDescription</code> 是否含有 <code>is special struct return? YES</code> 的方法。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>因为包含有 PowerPC-32／PowerPC-64／IA-32／X86-64／ARMv6／ARMv7／ARM64 这么多个体系的英文说明，很多还是关于寄存器和汇编的，可以说看的我非常痛苦了。同时收获也是非常大的。</p>
+<p>说起来对 <code>JSPatch</code> 的原理解读文章，应该没有谁写的比作者本人还好了，里面介绍了项目实际遇到的各种难点。读完下来，其中关于 <code>super关键字</code> 的解读，给了我另一个问题的灵感。</p>
+<p>建议大家学习新知识时，不妨结合知名的项目进行借鉴，能学到许多知识 : )</p>
+<p>这次的探究过程，完全属于本菜鸟自己瞎摸索的，如果有不对的地方，希望大家多拍砖，让我进一步学习。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://developer.apple.com/library/content/documentation/DeveloperTools/Conceptual/LowLevelABI/000-Introduction/introduction.html#//apple_ref/doc/uid/TP40002437-SW1" target="_blank" rel="noopener">Introduction to OS X ABI Function Call Guide</a></p>
+<p><a href="https://www.ibm.com/developerworks/cn/linux/l-powarch/index.html" target="_blank" rel="noopener">PowerPC 体系结构开发者指南</a></p>
+<p><a href="http://www.sco.com/developers/devspecs/abi386-4.pdf" target="_blank" rel="noopener">Intel386 Architecture<br>Processor Supplement</a></p>
+<p><a href="https://developer.apple.com/library/content/documentation/Xcode/Conceptual/iPhoneOSABIReference/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009020-SW1" target="_blank" rel="noopener">iOS ABI Function Call Guide</a></p>
+<p><a href="http://infocenter.arm.com/help/topic/com.arm.doc.ihi0055b/IHI0055B_aapcs64.pdf" target="_blank" rel="noopener">Procedure Call Standard for the<br>ARM 64-bit Architecture</a></p>
+<p><a href="http://infocenter.arm.com/help/topic/com.arm.doc.ihi0042f/IHI0042F_aapcs.pdf" target="_blank" rel="noopener">Procedure Call Standard for the<br>ARM® Architecture</a></p>
+<p> <a href="https://github.com/bang590/JSPatch/wiki/JSPatch-%E5%AE%9E%E7%8E%B0%E5%8E%9F%E7%90%86%E8%AF%A6%E8%A7%A3" target="_blank" rel="noopener">JSPatch 实现原理详解</a> </p>
+<p><a href="http://sealiesoftware.com/blog/archive/2008/10/30/objc_explain_objc_msgSend_stret.html" target="_blank" rel="noopener">objc_msgSend_stret</a></p>
+<p><a href="http://blog.sunnyxx.com/2016/08/13/reunderstanding-runtime-1/" target="_blank" rel="noopener">重识 Objective-C Runtime - 看透 Type 与 Value</a></p>
+<p><a href="http://blog.csdn.net/dagnet/article/details/6162168" target="_blank" rel="noopener">什么是-x86、i386、ia32等等</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/25/technology/2017-12-19-FlexBoxForiOS/" rel="next" title="iOS 上的 FlexBox 布局">
+                <i class="fa fa-chevron-left"></i> iOS 上的 FlexBox 布局
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/01/01/life/2017-12-31-2017Complete/" rel="prev" title="2017 年总结">
+                2017 年总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=2112728" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/author.jpg"
+                alt="ZenonHuang" />
+            
+              <p class="site-author-name" itemprop="name">ZenonHuang</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">41</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JSPatch-的判断"><span class="nav-number">1.1.</span> <span class="nav-text">JSPatch 的判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Aspects-的判断"><span class="nav-number">1.2.</span> <span class="nav-text">Aspects 的判断</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#官方文档的解释"><span class="nav-number">1.3.</span> <span class="nav-text">官方文档的解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ARM-中的处理"><span class="nav-number">1.4.</span> <span class="nav-text">ARM 中的处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ARM64-为什么没有大小限制？"><span class="nav-number">1.4.1.</span> <span class="nav-text">ARM64 为什么没有大小限制？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#规则汇总"><span class="nav-number">1.4.2.</span> <span class="nav-text">规则汇总</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">1.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">2.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ZenonHuang</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://zenonhuang.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'https://zenonhuang.me/2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/';
+          this.page.identifier = '2017/12/31/technology/2017-12-28-detectionForObjcMsgForwardStret/';
+          this.page.title = '你真的会判断 _objc_msgForward_stret 吗';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://zenonhuang.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("k2TRBWba0l1Gs8oDHKfxxSXD-gzGzoHsz", "lb4xG7itO28IvwoxTwydiiJC");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
