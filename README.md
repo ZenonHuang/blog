@@ -1,6 +1,6 @@
 # ZenonHuang 的博客
 
-![cover](./gif/andrew-gloor-unsplash.jpg)
+![cover](./images/andrew-gloor-unsplash.jpg)
 
 这个仓库用来存放我日常的文章记录
 
