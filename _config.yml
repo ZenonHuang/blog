@@ -83,5 +83,5 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@github.com:zenonhuang/zenonhuang.github.io.git
+  repository: git@git.coding.net:zenon/Blog.git
   branch: master
